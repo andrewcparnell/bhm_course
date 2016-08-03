@@ -10,10 +10,6 @@ The course covers the full gamut from simple regression models through to full g
 
 Research postgraduates, practicing academics, or other professionals from any field who would like to learn about Bayesian modelling and how it can help them produce better quality information from their data. 
 
-## Format
-
-There will be morning lectures based on the modules outlined in the course timetable. In the afternoon there will be practicals based on the topics covered that morning. Data sets for computer practicals will be provided by the instructors, but participants are welcome to bring their own data.
-
 ## Pre-requisites
 
 Participants should have :
