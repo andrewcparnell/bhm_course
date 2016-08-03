@@ -1,0 +1,337 @@
+---
+title: "Time Series for Climatologists and Ecologists: Syllabus"
+author: "Andrew C Parnell and Doug McNeall"
+date: "26 April 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 1: Time series analysis in climatology and ecology: some examples and general goals (DM)
+Tuesday 10th May 9:15-10:00
+
+------
+
+# Module 2: An introduction to Bayesian statistics (AP)
+Tuesday 10th May 10:45-11:30
+
+Learning outcomes:
+
+- Understand the terms prior, likelihood and posterior
+- Know what a posterior probability distribution is, and why we take samples from it
+- Know how to formulate of a linear regression model in a Bayesian format
+- Be able to suggest appropriate prior distributions for different situations
+
+Slides:
+
+1. Title
+2. Who was Bayes?
+3. Why Bayes?
+4. Bayes theorem in maths and English
+5. A very basic Bayesian model with R code
+6. Understanding the different parts of a Bayesian model
+7. Lots of probability distributions
+8. Choosing a likelihood and a prior
+9. An example: linear regression
+10. Simulating from the prior and the likelihood
+11. Posterior computation in JAGS
+12. Calculating the posterior vs sampling from it
+13. Things you can do with posterior samples
+14. Summary so far: for and against Bayes
+15. How to create Bayesian models: a general recipe (start with the data, fit it into a framework, LR, GLM, TS, then look at the parameters, and think of what priors are suitable)
+16. Checking assumptions (e.g. residuals)
+17. The danger of vague priors
+18. Replication in Science and the horror of p-values
+19. Bayesian time series, some general notation
+20. General tips: build one model for all the data, use informative priors, check your model
+
+------
+
+# Module 3: The JAGS software with simple examples (AP)
+Tuesday 10th May 12:00-12:45
+
+Learning outcomes:
+
+- Understand the code and the output from a JAGS model
+- Be able to write and run JAGS models for linear and logistic regression
+- Be able to change the prior distributions in a JAGS model
+- Be comfortable with plotting and manipulating the output from JAGS
+
+Relevant JAGS files:
+```
+jags_linear_regression.R
+jags_logistic_regression.R
+```
+
+Slides:
+
+1. Title
+2. What is JAGS?
+3. Why JAGS?
+4. The general framework for running jags
+5. Step 1: model code
+6. Step 2: setting up the data
+7. Step 3: running jags
+8. Setting the number of iterations, the size of the burn-in and the amount of thinning
+9. Exploring the posterior distribution and checking convergence
+10. Example 1. linear regression
+11. Ex. model code
+12. Ex. running the model
+13. Getting the posterior simulations
+14. Creating plots
+15. Example 2. logistic regression
+16. Model code. The likelihood and the link function
+17. Running the model
+18. Exploring the posterior
+19. Checking the assumptions
+20. Summary and conclusions
+
+------
+
+# Practical 1: Revision of R and introduction to JAGS (DM)
+Tuesday 10th May 14:00-15:30
+
+------
+
+# Module 4: AR(1) models and Random walks (DM)
+Wednesday 11th May 9:15-10:00
+
+------
+
+# Module 5: MA and ARIMA models (AP)
+Wednesday 11th May 10:45-11:30
+
+Learning outcomes:
+
+- Recognise and understand the basic theory behind MA(1) and MA(q) models
+- Recognise the basic ARMA(p,q) formulation
+- Understand what an ARIMA(p,d,q) model is
+- How to fit all of the above in JAGS
+
+Relevant JAGS file:
+```
+jags_moving_average.R
+jags_ARMA.R
+jags_ARIMA.R
+```
+
+Slides:
+
+1. Title
+2. Learning outcomes
+3. Reminder: AR models
+4. Intro to Moving Average Models
+5. Moving average models in the ACF/PACF
+6. Example 1: MA(1)
+7. Simulating from the MA(1) process
+8. JAGS code
+9. Extending to MA(q)
+10. JAGS code
+11. Combining AR and MA into ARMA
+12. Combining ARMA with the random walk to produce ARIMA
+13. Example: the ARIMA(1,0,1) model
+14. Example: the ARIMA(1,1,1) model
+15. General format: the ARIMA(p,d,q) model
+16. Priors for ARIMA models
+17. Example: hadcrut data
+18. Predicting the future
+19. Summary
+
+------
+
+# Module 6: ARIMAX, model choice, and forecasting (AP)
+Wednesday 11th May 12:00-12:45
+
+Learning outcomes:
+
+- Be able to add on components to ARIMA models
+- Understand the issues with fitting ARIMAX and other extensions to ARIMA models
+- Understand how to create forecasts with JAGS via the NA method
+- Know how to perform model choice with DIC
+- Know how to perform model choice with cross-validation
+- Know the basics of forecast calibration and scoring rules
+
+Relevant JAGS file:
+```
+jags_ARIMAX.R
+```
+
+Slides:
+
+1. Title
+2. Learning outcomes
+3. The great advantage of Bayes: bolting together models
+4. Mixing up GLMs with time series models: some basic ideas
+5. The ARIMAX framework
+6. JAGS code for an ARIMAX model
+7. Example: ARIMAX applied to the hadcrut data
+8. JAGS and the NA trick
+9. The NA trick for producing fitted values
+10. The NA trick for producing forecasts
+11. Bayesian model choice
+12. The Deviance Information Criterion
+13. The components of DIC 
+14. Example: choosing the order of an ARIMAX model 
+15. Using cross-validation to choose between models
+16. Example: Estimating AR performance
+17. Measuring the quality of a forecast; scoring rules
+18. Summary
+
+------
+
+# Practical 2: Fitting ARIMA models in JAGS (DM)
+Wednesday 11th May 14:00-15:30
+
+------
+
+# Module 7: Models with changing variance and frequency models (AP)
+Thursday 12th May 9:15-10:00
+
+Learning outcomes: 
+
+- Understand how to fit ARCH, GARCH and SVM models in JAGS
+- Know how to check assumptions for these methods
+- Understand the basis of seasonal models
+- Know the difference between time and frequency domain models and be able to implement a Fourier model
+
+Relevant JAGS file:
+```
+jags_ARCH.R
+jags_GARCH.R
+jags_SVM.R
+jags_Fourier.R
+```
+
+Slides:
+
+1. Title
+2. Learning outcomes
+3. General principles of models for changing variance
+4. Extension 1: ARCH 
+5. JAGS code for ARCH models
+6. Example model run
+10. Example forecasts for ARCH models
+11. From ARCH to GARCH
+12. Example of using the GARCH model
+13. Using DIC to compare ARCH and GARCH
+14. Stochastic Volatility Modelling
+15. JAGS code for SVMs
+16. Example of SVMs and comparison of DIC
+17. Time series in the frequency domain
+18. Methods for estimating seasonal models
+19. Estimating frequencies via a Fourier model
+20. JAGS code for a Fourier model
+21. Example: the Lynx data
+22. Individual vs joint frequency models
+23. Plotting the periodogram
+24. Bayesian vs traditional frequency analysis
+25. Summary
+
+------
+
+# Module 8: Gaussian processes for time series (DM)
+Thursday 12th May 10:45-11:30
+
+------
+
+# Practical 3: Fitting Gaussian processes in JAGS (DM)
+Thursday 12th May 12:00-12:45 and 14:00-15:00
+
+------
+
+# Module 9: Models for continuous time series (AP)
+Friday 13th May 9:15-10:00
+
+Learning outcomes: 
+
+- Understand the differences between continuous and discrete time series
+- Understand the basics of Brownian motion
+- Extend the AR model to the Ornstein Uhlenbeck process
+- Ito formulation vs Euler-Maruyama methods
+- Forecasting and interpolation for continuous time models
+- Fit different types of change point models
+
+Relevant JAGS file:
+```
+jags_autoregressive.R (revision)
+jags_BM.R
+jags_OU.R
+jags_changepoint.R
+```
+
+Slides:
+
+1. Title
+2. Learning outcomes
+3. Discrete time vs continuous time
+4. Some models for continuous time we have already met
+5. Brownian motion
+6. JAGS code for simple Brownian Motion
+7. Example: ice core data
+8. Revision of the AR(1) process
+9. The Ornstein Uhlenbeck process
+10. JAGS code for the OU process
+11. Example: ice core data
+12. Comparing between BM and OU
+13. Ito vs Euler-Marayuma forms
+14. Forecasting and interpolation for the BM and OU processes
+15. Introduction to change point models
+16. Dscontinuous change point models
+17. JAGS code
+18. Continuous change point models
+19. JAGS code 
+20. Example: change points of global temperature
+21. Plotting the change point
+22. Summary
+
+
+------
+
+# Module 10: Extensions: state space models, and multivariate time series (AP)
+Friday 13th May 10:45-11:30
+
+Learning outcomes: 
+
+- Learn the basics of parameter and state estimation for simple state space models
+- Create and fit some basic multivariate time series models
+- Understand the state of the art in time series models, including latent factor models, dynamic parameter models,
+
+Relevant JAGS file:
+```
+jags_statespace.R
+jags_multivariate_AR.R (not written yet)
+jags_multivariate_statespace.R (not written yet)
+```
+
+Slides:
+
+1. Title
+2. Learning outcomes
+3. Introduction to state space models
+4. JAGS code for a linear state space model
+5. Priors for state space models
+6. Example: palaeoclimate reconstruction
+7. Palaeoclimate reconstruction results
+8. Introduction to multivariate models
+9. The Vector AR model
+10. JAGS code for the VAR model
+11. Example
+12. Multivariate state-space models
+13. Example: Palaeoclimate reconstruction
+14. Mixing up Gaussian processes and state space models
+15. Co-integrated models
+16. Other types of multivariate model
+17. Multivariate Gaussian processes
+18. Dynamic linear models
+19. Latent factor time series models
+20. Summary
+
+
+
+------
+
+# Practical 4: Bring your own data (AP and DM)
+Friday 13th May 12:00-13:30
+

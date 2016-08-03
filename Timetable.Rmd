@@ -1,0 +1,54 @@
+---
+title: "Introduction to Bayesian hierarchical modelling using R: course timetable"
+author: "Andrew Parnell"
+date: "August 2016"
+output: html_document
+---
+
+Module pre-requisites can be found [here](https://rawgit.com/andrewcparnell/bhm_course/master/Prerequisites.html). All the raw files and code can be found [here](https://github.com/andrewcparnell/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). A pre-course questionnaire is available [here](http://goo.gl/forms/uKokzhP39E). All links below are in pdf format for you to annotate.
+
+## Day 1: Basic concepts
+
+Time  | Class
+------------- | ----------------------------------------------------
+9:00-10:30 | [Introduction to Bayesian Statistics](https://rawgit.com/andrewcparnell/bhm_course/master/slides/mod_1_examples_goals/module_1_examples_goals.html)
+10:30-11:00 | Coffee break
+11:00-12:45 | [Linear and generalised linear models (GLMs)](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_2_intro_bayes/module_2_intro_Bayes.html)
+12:45-14:00 | Lunch
+14:00-15:30 | [Practical: Using R, Jags and Stan for fitting GLMs](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_3_JAGS/module_3_JAGS.html)
+15:30-16:00 | Coffee break
+16:00-17:30 | Round table discussion: Understanding Bayesian models 
+
+## Day 2: Hierarchical modelling
+
+Time  | Class
+------------- | ----------------------------------------------------
+9:00-10:30 | [Simple hierarchical regression models](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_4_ar1_random_walks/module_4_ar1_random_walks.html)
+10:30-11:00 | Coffee break
+11:00-12:45 | [Hierarchical models for non-Gaussian data](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_5_ma_and_arima/module_5_ma_and_arima.html)
+12:45-14:00 | Lunch 
+14:00-15:30 | [Practical: Fitting hierarchical models](https://rawgit.com/andrewcparnell/tsme_course/master/practicals/practical_2_jags_arima.html)
+15:30-16:00 | Coffee break
+16:00-17:30 | Discussion: Interpreting hierarchical model output
+
+## Day 3: Advanced hierarchical models
+
+Time  | Class
+------------- | ----------------------------------------------------
+9:00-10:30 | [Multivariate and multi-layer hierarchical models](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_10_state_space_multivariate/module_10_state_space_multivariate.html)
+10:30-11:00 | Coffee break
+11:00-12:45 | [Practical: Advanced examples of hierarchical models](https://rawgit.com/andrewcparnell/tsme_course/master/practicals/practical_3_Gaussian_processes.html) 
+12:45-14:00 | Lunch 
+14:00-15:30 | [Practical (continued)](https://rawgit.com/andrewcparnell/tsme_course/master/practicals/practical_3_Gaussian_processes.html) 
+15:30- | Class trip
+
+## Day 4: Hierarchical models as tools
+
+Time  | Class
+------------- | ----------------------------------------------------
+9:00-10:30 | [Partial pooling, zero-inflation, and missing data](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_7_garch_svms_seasonal/module_7_garch_svms_seasonal.html)
+10:30-11:00 | Coffee break
+11:00-12:45 | [Shrinkage and variable selection](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_10_state_space_multivariate/module_10_state_space_multivariate.html)
+12:45-14:00 | Lunch
+14:00-17:30 | Bring your own data
+
