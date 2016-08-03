@@ -1,10 +1,10 @@
 ---
-title: "Pre-requisites"
-author: "Andrew Parnell and Doug McNeall"
+title: "Pre-requisites for Bayesian Hierarchical Modelling course"
+author: "Andrew Parnell"
 output: html_document
 ---
 
-In preparation for the course please install the following, preferably in the below suggested order.
+In preparation for the course please install the following, preferably in the below suggested order. Make sure you run these before you arrive in case of poor (or crowded!) internet.
 
 Remember you will need to bring your own personal computer for the duration of the course.
 
@@ -16,37 +16,18 @@ Install the following using the corresponding links
 
 -	Rstudio (optional but recommended): [https://www.rstudio.com](https://www.rstudio.com)
 
--	JAGS: [http://mcmc-jags.sourceforge.net](http://sourceforge.net/projects/mcmc-jags/files/)
+-	JAGS: http://sourceforge.net/projects/mcmc-jags/files/
 
 ### Step 2
 
 Now install the following packages by going into Rstudio (or R) and typing:
 ```{r,eval=FALSE}
-install.packages(c('R2jags', 'rdatamarket'))
+install.packages(c('rjags','rstan'))
 ```
 
-### Step 3
-
-Check that everything works by going to a command line terminal and typing `jags`. If it opens successfully type `exit`. 
-
-Now go into R and copy and paste the following text:
-```{r,eval=FALSE}
-library(R2jags)
-model_code="
-model {
-  y ~ dnorm(mu,1)
-  mu ~ dnorm(0,1)
-}
-"
-model=jags(data=list(y=1),
-           model.file=textConnection(model_code),
-           parameters.to.save = 'mu',
-           n.chains=1)
-plot(model)
-```
-This should produce a plot.
+Note: this might take a while as these are pretty big and complicated packages.
 
 ### Troubleshooting
 
-If you run into any problems please drop us a line at <andrew.parnell@ucd.ie> or <dougmcneall@gmail.com>.
+If you run into any problems please drop me a line at <andrew.parnell@ucd.ie>.
 
