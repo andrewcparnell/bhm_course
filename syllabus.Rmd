@@ -1,7 +1,7 @@
 ---
-title: "Time Series for Climatologists and Ecologists: Syllabus"
-author: "Andrew C Parnell and Doug McNeall"
-date: "26 April 2016"
+title: "Introduction to Bayesian hierarchical modelling using R: syllabus"
+author: "Andrew C Parnell"
+date: "August 2016"
 output: html_document
 ---
 
@@ -9,16 +9,9 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Module 1: Time series analysis in climatology and ecology: some examples and general goals (DM)
-Tuesday 10th May 9:15-10:00
-
-------
-
-# Module 2: An introduction to Bayesian statistics (AP)
-Tuesday 10th May 10:45-11:30
+# Class 1: Introduction to Bayesian Statistics
 
 Learning outcomes:
-
 - Understand the terms prior, likelihood and posterior
 - Know what a posterior probability distribution is, and why we take samples from it
 - Know how to formulate of a linear regression model in a Bayesian format
@@ -29,23 +22,71 @@ Slides:
 1. Title
 2. Who was Bayes?
 3. Why Bayes?
-4. Bayes theorem in maths and English
-5. A very basic Bayesian model with R code
-6. Understanding the different parts of a Bayesian model
-7. Lots of probability distributions
-8. Choosing a likelihood and a prior
-9. An example: linear regression
-10. Simulating from the prior and the likelihood
-11. Posterior computation in JAGS
-12. Calculating the posterior vs sampling from it
-13. Things you can do with posterior samples
-14. Summary so far: for and against Bayes
-15. How to create Bayesian models: a general recipe (start with the data, fit it into a framework, LR, GLM, TS, then look at the parameters, and think of what priors are suitable)
-16. Checking assumptions (e.g. residuals)
-17. The danger of vague priors
-18. Replication in Science and the horror of p-values
-19. Bayesian time series, some general notation
-20. General tips: build one model for all the data, use informative priors, check your model
+4. Bayes' theorem in maths and English
+5. A very simple linear regression example
+6. From parameters to data
+7. Using prior information
+8. A very basic Bayesian model with R code
+9. Understanding the different parts of a Bayesian model
+10. Lots of probability distributions
+11. Choosing a likelihood and a prior
+12. An example: linear regression
+13. Simulating from the prior and the likelihood
+14. Posterior computation in JAGS
+15. Posterior computation in Stan
+16. Stan vs JAGS
+17. Calculating the posterior vs sampling from it
+18. Things you can do with posterior samples
+19. Summary so far: for and against Bayes
+20. How to create Bayesian models: a general recipe (start with the data, fit it into a framework, LR, GLM, TS, then look at the parameters, and think of what priors are suitable)
+21. Checking assumptions (e.g. residuals)
+22. The danger of vague priors
+23. Replication in Science and the horror of p-values
+24. Example 1: 8 Schools
+25. Example 2: ??? - something hierarchical but simple LR
+26. Example 3: ??? - something hierarchical and also non-linear
+27. General tips: build one model for all the data, use informative priors, check your model
+
+Code: 
+`???.R`
+
+------
+
+# Class 2: Linear and generalised linear models (GLMs)
+
+Learning outcomes:
+
+- Understand the basic formulation of a GLM in a Bayesian context
+- Understand the code for a GLM in JAGS/Stan
+- Be able to pick a link function for a given data set
+- Know how to check model assumptions for a GLM
+
+Slides:
+
+1. Title
+2. Revision: linear models
+3. From LM to GLM
+4. The data generating process for a standard LM
+5. The data generating process for a logistic regression
+6. Other types of GLM
+7. Example ?? 
+8. Fitting linear regression models in JAGS
+9. Fitting linear regression models in Stan
+10. Checking convergence - later?
+11. Other model checks
+12. Link functions
+13. Directed Acyclic Graphs
+14. What are JAGS and Stan doing in the background?
+15. Markov chain Monte Carlo
+16. The Metropolis Algorithm
+17. How many iterations?
+17. Interpreting the output
+18. Example 1: 
+19. Example 2: 
+
+Code: 
+`???.R`
+
 
 ------
 
