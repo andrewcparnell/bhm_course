@@ -17,38 +17,42 @@ Learning outcomes:
 - Know how to formulate of a linear regression model in a Bayesian format
 - Be able to suggest appropriate prior distributions for different situations
 
+Code: 
+```
+???.R
+```
+
 Slides:
 
 1. Title
-2. Who was Bayes?
-3. Why Bayes?
-4. Bayes' theorem in maths and English
-5. A very simple linear regression example
-6. From parameters to data
-7. Using prior information
-8. A very basic Bayesian model with R code
-9. Understanding the different parts of a Bayesian model
-10. Lots of probability distributions
-11. Choosing a likelihood and a prior
-12. An example: linear regression
-13. Simulating from the prior and the likelihood
-14. Posterior computation in JAGS
-15. Posterior computation in Stan
-16. Stan vs JAGS
-17. Calculating the posterior vs sampling from it
-18. Things you can do with posterior samples
-19. Summary so far: for and against Bayes
-20. How to create Bayesian models: a general recipe (start with the data, fit it into a framework, LR, GLM, TS, then look at the parameters, and think of what priors are suitable)
-21. Checking assumptions (e.g. residuals)
-22. The danger of vague priors
-23. Replication in Science and the horror of p-values
-24. Example 1: 8 Schools
-25. Example 2: ??? - something hierarchical but simple LR
-26. Example 3: ??? - something hierarchical and also non-linear
-27. General tips: build one model for all the data, use informative priors, check your model
+1. Learning outcomes
+1. Who was Bayes?
+1. Why Bayes?
+1. Bayes' theorem in maths and English
+1. A very simple linear regression example
+1. From parameters to data
+1. Using prior information
+1. A very basic Bayesian model with R code
+1. Understanding the different parts of a Bayesian model
+1. Lots of probability distributions
+1. Choosing a likelihood and a prior
+1. An example: linear regression
+1. Simulating from the prior and the likelihood
+1. Posterior computation in JAGS
+1. Posterior computation in Stan
+1. Stan vs JAGS
+1. Calculating the posterior vs sampling from it
+1. Things you can do with posterior samples
+1. Summary so far: for and against Bayes
+1. How to create Bayesian models: a general recipe (start with the data, fit it into a framework, LR, GLM, TS, then look at the parameters, and think of what priors are suitable)
+1. Checking assumptions (e.g. residuals)
+1. The danger of vague priors
+1. Replication in Science and the horror of p-values
+1. Example 1: 8 Schools
+1. Example 2: Earnings data - https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/Ch.6/earnings2.data.R A linear hierarchical model with Gaussian errors
+1. Example 3: Swiss Willow Tit data - http://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/wtmatrix.csv. A logistic regression model with non-linear covariates
+1. General tips: build one model for all the data, use informative priors, check your model
 
-Code: 
-`???.R`
 
 ------
 
@@ -61,318 +65,302 @@ Learning outcomes:
 - Be able to pick a link function for a given data set
 - Know how to check model assumptions for a GLM
 
-Slides:
-
-1. Title
-2. Revision: linear models
-3. From LM to GLM
-4. The data generating process for a standard LM
-5. The data generating process for a logistic regression
-6. Other types of GLM
-7. Example ?? 
-8. Fitting linear regression models in JAGS
-9. Fitting linear regression models in Stan
-10. Checking convergence - later?
-11. Other model checks
-12. Link functions
-13. Directed Acyclic Graphs
-14. What are JAGS and Stan doing in the background?
-15. Markov chain Monte Carlo
-16. The Metropolis Algorithm
-17. How many iterations?
-17. Interpreting the output
-18. Example 1: 
-19. Example 2: 
-
 Code: 
-`???.R`
 
+````
+???.R
+```
+
+Slides:
+
+1. Title
+1. Learning outcomes
+1. Revision: linear models
+1. From LM to GLM
+1. The data generating process for a standard LM
+1. The data generating process for a logistic regression
+1. Other types of GLM
+1. Example: earnings data
+1. Fitting linear regression models in JAGS
+1. Fitting linear regression models in Stan
+1. Checking convergence - later?
+1. Link functions
+1. Directed Acyclic Graphs
+1. What are JAGS and Stan doing in the background?
+1. Markov chain Monte Carlo
+1. The Metropolis Algorithm
+1. How many iterations?
+1. Interpreting the output
+1. Example: Swiss Willow tit data
+1. Interactions
+1. Checking model assumptions
+1. Posterior predictive distributions
+1. Other types of Binomial models
+1. Poisson models
+1. Offsets
+1. Binomial modelling as latent data
+1. Further examples of GLM-type data
 
 ------
 
-# Module 3: The JAGS software with simple examples (AP)
-Tuesday 10th May 12:00-12:45
+# Practical 1: Using R, JAGS and Stan for fitting GLMs
+
+------
+
+# Class 3: Simple hierarchical regression models
 
 Learning outcomes:
 
-- Understand the code and the output from a JAGS model
-- Be able to write and run JAGS models for linear and logistic regression
-- Be able to change the prior distributions in a JAGS model
-- Be comfortable with plotting and manipulating the output from JAGS
+- Be able to build a model by thinking about the data generating process
+- Be able to choose prior distributions for regression models
+- Understand how to fit a hierarchical regression model in JAGS/Stan
+- Be able to check the output from a regression model
+- Be comfortable with plotting and manipulating the output from models
 
-Relevant JAGS files:
+Code:
+
 ```
-jags_linear_regression.R
-jags_logistic_regression.R
+???
 ```
 
 Slides:
 
 1. Title
-2. What is JAGS?
-3. Why JAGS?
-4. The general framework for running jags
-5. Step 1: model code
-6. Step 2: setting up the data
-7. Step 3: running jags
-8. Setting the number of iterations, the size of the burn-in and the amount of thinning
-9. Exploring the posterior distribution and checking convergence
-10. Example 1. linear regression
-11. Ex. model code
-12. Ex. running the model
-13. Getting the posterior simulations
-14. Creating plots
-15. Example 2. logistic regression
-16. Model code. The likelihood and the link function
-17. Running the model
-18. Exploring the posterior
-19. Checking the assumptions
-20. Summary and conclusions
+1. Learning outcomes
+1. Title
+1. Learning outcomes
+1. Thinking about models as methods for generating data
+1. A more complicated DAG
+1. Example: earnings data
+1. Choosing a prior distribution for a regression model
+1. Priors for standard deviation parameters
+1. Setting up hierarchical prior distributions
+1. Transformations to get a better fit
+1. Causation vs explanation as goals
+1. Fitting hierarchical regression models in JAGS
+1. Fitting hierarchical regression models in Stan
+1. Summarising the output from a regression model
+1. Creating posterior predictive distributions
+1. Model comparison: an introduction
+1. Cross validation
+1. Model information criteria
+1. Bayes Factors
+1. Continuous model expansion (for later)
+1. Graphical model checks
+1. Useful plots
+1. Accessing output from JAGS
+1. Accessing output from Stan
 
 ------
 
-# Practical 1: Revision of R and introduction to JAGS (DM)
-Tuesday 10th May 14:00-15:30
-
-------
-
-# Module 4: AR(1) models and Random walks (DM)
-Wednesday 11th May 9:15-10:00
-
-------
-
-# Module 5: MA and ARIMA models (AP)
-Wednesday 11th May 10:45-11:30
+# Class 4: Hierarchical generalised linear models
 
 Learning outcomes:
 
-- Recognise and understand the basic theory behind MA(1) and MA(q) models
-- Recognise the basic ARMA(p,q) formulation
-- Understand what an ARIMA(p,d,q) model is
-- How to fit all of the above in JAGS
+- Understand the modelling implications of moving from linear to hierarchical generalised linear models (HGLMs)
+- Know some of the different versions of Hierarchical GLMs
+- Be able to fit HGLMS in JAGS and Stan
+- Be able to expand and summarise fitted models
 
-Relevant JAGS file:
+Code:
+
 ```
-jags_moving_average.R
-jags_ARMA.R
-jags_ARIMA.R
+???
 ```
 
 Slides:
 
 1. Title
-2. Learning outcomes
-3. Reminder: AR models
-4. Intro to Moving Average Models
-5. Moving average models in the ACF/PACF
-6. Example 1: MA(1)
-7. Simulating from the MA(1) process
-8. JAGS code
-9. Extending to MA(q)
-10. JAGS code
-11. Combining AR and MA into ARMA
-12. Combining ARMA with the random walk to produce ARIMA
-13. Example: the ARIMA(1,0,1) model
-14. Example: the ARIMA(1,1,1) model
-15. General format: the ARIMA(p,d,q) model
-16. Priors for ARIMA models
-17. Example: hadcrut data
-18. Predicting the future
-19. Summary
+1. Learning outcomes
+1. From LMs to HGLMs
+1. Type 1: Logistic-Binomial HGLMs
+1. Prior distributions for Binomial HGLMs
+1. logit vs probit
+1. Example
+1. Fitting models in JAGS
+1. Fitting models in Stan
+1. Type 2: Poisson HGLMs
+1. Prior distributions for Poisson HGLMs
+1. Offsets
+1. Example
+1. Fitting models in JAGS
+1. Fitting models in Stan
+1. Type 3: t-distributed HGLMs
+1. Prior distributions on the degrees of freedom
+1. Example
+1. Fitting models in JAGS
+1. Fitting models in Stan
+1. Type 4: Ordinal data HGLMs
+1. Example
+1. Fitting models in JAGS
+1. Fitting models in Stan
+1. Summarising model output
+
 
 ------
 
-# Module 6: ARIMAX, model choice, and forecasting (AP)
-Wednesday 11th May 12:00-12:45
+# Practical 2: Practical: Fitting hierarchical models
+
+------
+
+
+# Class 5: Multivariate and multi-layer hierarchical models
 
 Learning outcomes:
 
-- Be able to add on components to ARIMA models
-- Understand the issues with fitting ARIMAX and other extensions to ARIMA models
-- Understand how to create forecasts with JAGS via the NA method
-- Know how to perform model choice with DIC
-- Know how to perform model choice with cross-validation
-- Know the basics of forecast calibration and scoring rules
+- Understand how to add in multiple layers to a hierarchical model
+- Know how to summarise models using Analysis of Variance
+- Be able to fit multivariate models in JAGS/Stan
+- Be able to work with missing data in JAGS/Stan
 
-Relevant JAGS file:
+Code:
+
 ```
-jags_ARIMAX.R
+???
 ```
 
 Slides:
 
 1. Title
-2. Learning outcomes
-3. The great advantage of Bayes: bolting together models
-4. Mixing up GLMs with time series models: some basic ideas
-5. The ARIMAX framework
-6. JAGS code for an ARIMAX model
-7. Example: ARIMAX applied to the hadcrut data
-8. JAGS and the NA trick
-9. The NA trick for producing fitted values
-10. The NA trick for producing forecasts
-11. Bayesian model choice
-12. The Deviance Information Criterion
-13. The components of DIC 
-14. Example: choosing the order of an ARIMAX model 
-15. Using cross-validation to choose between models
-16. Example: Estimating AR performance
-17. Measuring the quality of a forecast; scoring rules
-18. Summary
+1. Learning outcomes
+1. What is a multi-layer model?
+1. How many layers should I add?
+1. Varying slopes
+1. Varying intercepts
+1. Hierarchical models vs random effect models
+1. Writing the same model in different ways
+1. Example: multi-layer earnings data
+1. Summarising multi-layer models
+1. Bayesian ANOVA for multi-layer models
+1. Adding and removing predictors
+1. Over-dispersed models
+1. Over-dispersion as a random effect
+1. Example
+1. Fitting models in JAGS
+1. Fitting models in Stan
+1. Multivariate models
+1. The multivariate normal distribution
+1. Priors on the mean
+1. Covariance matrices and what they mean
+1. Restricting the values of a covariance matrix
+1. Using the Wishart distribution
+1. Fitting multivariate models in JAGS
+1. Fitting multivariate models in Stan
+1. Example 
+1. Missing data
+1. Different types of missing data
+1. The simple way of dealing with missing data in JAGS/Stan
+1. More complex varieties of missing data
+1. An example model for multivariate imputation
+
+
 
 ------
 
-# Practical 2: Fitting ARIMA models in JAGS (DM)
-Wednesday 11th May 14:00-15:30
+# Practical 3: Advanced examples of hierarchical models
 
 ------
 
-# Module 7: Models with changing variance and frequency models (AP)
-Thursday 12th May 9:15-10:00
+# Class 6: Partial pooling, zero-inflation, and multinomial models
+
+Learning outcomes:
+
+- Be able to describe the advantages of partial pooling
+- Be able to fit some basic zero inflation and hurdle models
+- Be able to understand and fit some multinomial modelling examples
+
+Code:
+
+```
+???.R
+```
+
+Slides:
+
+1. Title
+1. Learning outcomes
+1. A false dichotomy: fixed vs random effects
+1. The extremes of varying vs fixed parameters
+1. The advantages of borrowing strength
+1. Incorporating group level predictors in multi-layer models
+1. Zero-inflation and hurdle models
+1. The zero-inflated Poisson distribution
+1. The zero-inflated negative binomial distribution
+1. Fitting models with new probability distributions in JAGS
+1. The ones and zeros tricks
+1. Fitting models with new probability distributions in Stan
+1. Example
+1. Hurdle models
+1. Fitting Hurdle models in Stan
+1. Summarising the output of a zero-inflated model
+1. The multinomial distribution
+1. Example of multinomial data
+1. A special case: the multinomial(1,...) distribution for classification
+1. Prior distributions on probability vectors
+1. Transformations vs simplex distributions
+1. The Dirichlet distribution
+1. The softmax transformation
+1. Adding in covariates to multinomial models
+1. Fitting a multinomial model in Stan
+1. Example
+1. Interpreting the output
+
+------
+
+# Class 7: Variable selection and non-parametrics
 
 Learning outcomes: 
 
-- Understand how to fit ARCH, GARCH and SVM models in JAGS
-- Know how to check assumptions for these methods
-- Understand the basis of seasonal models
-- Know the difference between time and frequency domain models and be able to implement a Fourier model
+- Be able to specify complex prior distributions
+- Understand the difference between shrinkage and variable selection
+- Be able to fit shrinkage and selection models in JAGS/Stan
+- Be able to fit some non-parametric Bayesian models
 
-Relevant JAGS file:
+Code:
+
 ```
-jags_ARCH.R
-jags_GARCH.R
-jags_SVM.R
-jags_Fourier.R
+???.R
 ```
 
 Slides:
 
 1. Title
-2. Learning outcomes
-3. General principles of models for changing variance
-4. Extension 1: ARCH 
-5. JAGS code for ARCH models
-6. Example model run
-10. Example forecasts for ARCH models
-11. From ARCH to GARCH
-12. Example of using the GARCH model
-13. Using DIC to compare ARCH and GARCH
-14. Stochastic Volatility Modelling
-15. JAGS code for SVMs
-16. Example of SVMs and comparison of DIC
-17. Time series in the frequency domain
-18. Methods for estimating seasonal models
-19. Estimating frequencies via a Fourier model
-20. JAGS code for a Fourier model
-21. Example: the Lynx data
-22. Individual vs joint frequency models
-23. Plotting the periodogram
-24. Bayesian vs traditional frequency analysis
-25. Summary
+1. Learning outcomes
+1. Really clever prior distributions
+1. Ordering of parameters
+1. Truncation and censoring
+1. Shrinkage and variable selection
+1. Lasso and Bayesian variable selection
+1. The spike and slab approach
+1. Ridge regression
+1. The Horseshoe prior
+1. Shrinkage as continuous model expansion
+1. Be careful with transformations and the intercept
+1. Big data vs Fat data
+1. Example
+1. A ridiculous word: non-parametric
+1. Non-linear models 
+1. Regression with basis functions
+1. B-splines
+1. P-splines
+1. Prior distributions to induce smoothness
+1. Example
+1. Using the multivariate normal distribution to induce smoothness
+1. Restricted prior distributions on covariance matrices
+1. Gaussian processes
+1. Example
+1. Predictive distributions
+1. Finite mixture models
+1. Specifying means and variances
+1. Finding the number of mixture components
+1. Dirichlet Processes
+1. Example
 
-------
-
-# Module 8: Gaussian processes for time series (DM)
-Thursday 12th May 10:45-11:30
-
-------
-
-# Practical 3: Fitting Gaussian processes in JAGS (DM)
-Thursday 12th May 12:00-12:45 and 14:00-15:00
-
-------
-
-# Module 9: Models for continuous time series (AP)
-Friday 13th May 9:15-10:00
-
-Learning outcomes: 
-
-- Understand the differences between continuous and discrete time series
-- Understand the basics of Brownian motion
-- Extend the AR model to the Ornstein Uhlenbeck process
-- Ito formulation vs Euler-Maruyama methods
-- Forecasting and interpolation for continuous time models
-- Fit different types of change point models
-
-Relevant JAGS file:
-```
-jags_autoregressive.R (revision)
-jags_BM.R
-jags_OU.R
-jags_changepoint.R
-```
-
-Slides:
-
-1. Title
-2. Learning outcomes
-3. Discrete time vs continuous time
-4. Some models for continuous time we have already met
-5. Brownian motion
-6. JAGS code for simple Brownian Motion
-7. Example: ice core data
-8. Revision of the AR(1) process
-9. The Ornstein Uhlenbeck process
-10. JAGS code for the OU process
-11. Example: ice core data
-12. Comparing between BM and OU
-13. Ito vs Euler-Marayuma forms
-14. Forecasting and interpolation for the BM and OU processes
-15. Introduction to change point models
-16. Dscontinuous change point models
-17. JAGS code
-18. Continuous change point models
-19. JAGS code 
-20. Example: change points of global temperature
-21. Plotting the change point
-22. Summary
-
-
-------
-
-# Module 10: Extensions: state space models, and multivariate time series (AP)
-Friday 13th May 10:45-11:30
-
-Learning outcomes: 
-
-- Learn the basics of parameter and state estimation for simple state space models
-- Create and fit some basic multivariate time series models
-- Understand the state of the art in time series models, including latent factor models, dynamic parameter models,
-
-Relevant JAGS file:
-```
-jags_statespace.R
-jags_multivariate_AR.R (not written yet)
-jags_multivariate_statespace.R (not written yet)
-```
-
-Slides:
-
-1. Title
-2. Learning outcomes
-3. Introduction to state space models
-4. JAGS code for a linear state space model
-5. Priors for state space models
-6. Example: palaeoclimate reconstruction
-7. Palaeoclimate reconstruction results
-8. Introduction to multivariate models
-9. The Vector AR model
-10. JAGS code for the VAR model
-11. Example
-12. Multivariate state-space models
-13. Example: Palaeoclimate reconstruction
-14. Mixing up Gaussian processes and state space models
-15. Co-integrated models
-16. Other types of multivariate model
-17. Multivariate Gaussian processes
-18. Dynamic linear models
-19. Latent factor time series models
-20. Summary
 
 
 
 ------
 
-# Practical 4: Bring your own data (AP and DM)
-Friday 13th May 12:00-13:30
+# Practical 4: Bring your own data
+
 

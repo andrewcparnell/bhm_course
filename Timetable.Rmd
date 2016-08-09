@@ -25,7 +25,7 @@ Time  | Class
 ------------- | ----------------------------------------------------
 9:00-10:30 | [Simple hierarchical regression models](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_4_ar1_random_walks/module_4_ar1_random_walks.html)
 10:30-11:00 | Coffee break
-11:00-12:45 | [Hierarchical models for non-Gaussian data](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_5_ma_and_arima/module_5_ma_and_arima.html)
+11:00-12:45 | [Hierarchical generalised linear models](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_5_ma_and_arima/module_5_ma_and_arima.html)
 12:45-14:00 | Lunch 
 14:00-15:30 | [Practical: Fitting hierarchical models](https://rawgit.com/andrewcparnell/tsme_course/master/practicals/practical_2_jags_arima.html)
 15:30-16:00 | Coffee break
@@ -48,7 +48,7 @@ Time  | Class
 ------------- | ----------------------------------------------------
 9:00-10:30 | [Partial pooling, zero-inflation, and missing data](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_7_garch_svms_seasonal/module_7_garch_svms_seasonal.html)
 10:30-11:00 | Coffee break
-11:00-12:45 | [Shrinkage and variable selection](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_10_state_space_multivariate/module_10_state_space_multivariate.html)
+11:00-12:45 | [Variable selection and non-parametrics](https://rawgit.com/andrewcparnell/tsme_course/master/slides/mod_10_state_space_multivariate/module_10_state_space_multivariate.html)
 12:45-14:00 | Lunch
 14:00-17:30 | Bring your own data
 

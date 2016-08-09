@@ -1,0 +1,168 @@
+---
+title: 'Class 1: An introduction to Bayesian Hierarchical Modelling'
+author: "Andrew Parnell \\newline \\texttt{andrew.parnell@ucd.ie} \\newline \\vspace{1cm} \\newline \\includegraphics[width=1cm]{UCDlogo.pdf}"
+output:
+  beamer_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'pdf')
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
+```
+
+## Learning outcomes
+
+- Understand the terms prior, likelihood and posterior
+- Know what a posterior probability distribution is, and why we take samples from it
+- Know how to formulate of a linear regression model in a Bayesian format
+- Be able to suggest appropriate prior distributions for different situations
+
+## How this course works
+
+- This course lives on GitHub, which means anyone can see the slides, code, etc, and make comments on it
+- The timetable html document provides links to all the pdf slides and practicals
+- The slides and the practicals are all written in `Rmarkdown` format, which means you can load them up in Rstudio and see how everything was created
+- Let me know if you spot mistakes, as these can be easily updated on the GitHub page
+
+## Course format and other details
+
+- Lectures will take place in the morning, practical classes in the afternoon
+- We will finish earlier on Thursday for a mini-trip
+- Please ask lots of questions
+
+## Who was Bayes?
+
+*An essay towards solving a problem on the doctrine of chances* (1763)
+
+$$P(A|B) = \frac{P(B|A) P(A)}{P(B)}$$
+
+\begin{center}
+\includegraphics[width=4cm]{Thomas_Bayes.pdf}
+\end{center}
+
+## What is Bayesian statistics?
+
+- Bayesian statistics is based on an interpretation of Bayes' theorem
+- All quantities are divided up into _data_ (i.e. things which have been observed) and _parameters_ (i.e. things which haven't been observed)
+- We use Bayes' interpretation of the theorem to get the _posterior probability distribution_, the probability of the unobserved given the observed
+- Used now in almost all areas of statistical application (finance, medicine, environmetrics, gambling, etc, etc)
+
+## Why Bayes?
+
+The Bayesian approach has numerous advantages:
+
+- It's easier to build complex models and to analyse the parameters you want directly
+- We automatically obtain the best parameter estimates and their uncertainty from the posterior samples
+- It allows us to get away from (terrible) null hypothesis testing and $p$-values
+
+## Bayes theorem in english
+
+Bayes' theorem can be written in words as:
+
+$$\mbox{posterior is proportional to likelihood times prior}$$
+... or ...
+$$\mbox{posterior} \propto \mbox{likelihood} \times \mbox{prior}$$
+  
+Each of the three terms _posterior_, _likelihood_, and _prior_ are _probability distributions_ (pdfs).
+
+In a Bayesian model, every item of interest is either data (which we will write as $x$) or parameters (which we will write as $\theta$). Often the parameters are divided up into those of interest, and other _nuisance parameters_
+
+## Bayes theorem in maths
+
+Bayes' equation is usually written mathematically as:
+$$p(\theta|x) \propto p(x|\theta) \times p(\theta)$$
+or, more fully:
+$$p(\theta|x) = \frac{p(x|\theta) \times p(\theta)}{p(x)}$$
+
+- The _posterior_ is the probability of the parameters given the data
+- The _likelihood_ is the probability of observing the data given the parameters (unknowns)
+- The _prior_ represents external knowledge about the parameters
+
+## A very simple linear regression example
+
+Suppose you had some data that looked like this:
+```{r, echo=FALSE}
+load('../data/earnings.rda') # Called dat
+dat$height_cm = dat$height * 2.54
+with(dat, plot(height_cm, log(earnings)))
+```
+
+## What you are used to doing
+
+\tiny
+```{r}
+model = lm(log(earnings) ~ height_cm, data = dat)
+summary(model)
+```
+\normalsize
+
+## What you will now get instead
+
+
+
+
+## From parameters to data
+
+
+## Using prior information
+
+
+## A very basic Bayesian model with R code
+
+
+## Understanding the different parts of a Bayesian model
+
+
+## Lots of probability distributions
+
+
+## Choosing a likelihood and a prior
+
+
+## An example: linear regression
+
+
+## Simulating from the prior and the likelihood
+
+
+## Posterior computation in JAGS
+
+
+## Posterior computation in Stan
+
+
+## Stan vs JAGS
+
+
+## Calculating the posterior vs sampling from it
+
+
+## Things you can do with posterior samples
+
+
+## Summary so far: for and against Bayes
+
+
+## How to create Bayesian models: a general recipe (start with the data, fit it into a framework, LR, GLM, TS, then look at the parameters, and think of what priors are suitable)
+
+
+## Checking assumptions (e.g. residuals)
+
+
+## The danger of vague priors
+
+
+## Replication in Science and the horror of p-values
+
+
+## Example 1: 8 Schools
+
+
+## Example 2: Earnings data - https://raw.githubusercontent.com/stan-dev/example-models/master/ARM/Ch.6/earnings2.data.R A linear hierarchical model with Gaussian errors
+
+
+## Example 3: Swiss Willow Tit data - http://www.mbr-pwrc.usgs.gov/pubanalysis/roylebook/wtmatrix.csv. A logistic regression model with non-linear covariates
+
+
+## General tips: build one model for all the data, use informative priors, check your model
+
