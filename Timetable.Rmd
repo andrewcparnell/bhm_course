@@ -36,7 +36,8 @@ Time  | Class
 ------------- | ----------------------------------------------------
 9:00-10:30 | [Multivariate and multi-layer hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_1_intro.pdf)
 10:30-11:00 | Coffee break
-11:00-12:45 | [Practical: Advanced examples of hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_1_intro.pdf)12:45-14:00 | Lunch 
+11:00-12:45 | [Practical: Advanced examples of hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_1_intro.pdf)
+12:45-14:00 | Lunch 
 14:00-15:30 | [Practical (continued)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_1_intro.pdf)
 15:30- | Class trip
 
