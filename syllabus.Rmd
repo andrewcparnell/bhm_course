@@ -17,11 +17,6 @@ Learning outcomes:
 - Know how to formulate of a linear regression model in a Bayesian format
 - Be able to suggest appropriate prior distributions for different situations
 
-Code: 
-```
-???.R
-```
-
 Slides:
 
 1. Title
@@ -64,12 +59,6 @@ Learning outcomes:
 - Understand the code for a GLM in JAGS/Stan
 - Be able to pick a link function for a given data set
 - Know how to check model assumptions for a GLM
-
-Code: 
-
-````
-???.R
-```
 
 Slides:
 
@@ -117,16 +106,9 @@ Learning outcomes:
 - Be able to check the output from a regression model
 - Be comfortable with plotting and manipulating the output from models
 
-Code:
-
-```
-???
-```
 
 Slides:
 
-1. Title
-1. Learning outcomes
 1. Title
 1. Learning outcomes
 1. Thinking about models as methods for generating data
@@ -150,6 +132,7 @@ Slides:
 1. Useful plots
 1. Accessing output from JAGS
 1. Accessing output from Stan
+1. Summary
 
 ------
 
@@ -161,12 +144,6 @@ Learning outcomes:
 - Know some of the different versions of Hierarchical GLMs
 - Be able to fit HGLMS in JAGS and Stan
 - Be able to expand and summarise fitted models
-
-Code:
-
-```
-???
-```
 
 Slides:
 
@@ -195,6 +172,7 @@ Slides:
 1. Fitting models in JAGS
 1. Fitting models in Stan
 1. Summarising model output
+1. Summary
 
 
 ------
@@ -225,8 +203,7 @@ Slides:
 1. Learning outcomes
 1. What is a multi-layer model?
 1. How many layers should I add?
-1. Varying slopes
-1. Varying intercepts
+1. Always put a hierarchical prior on a categorical covariate
 1. Hierarchical models vs random effect models
 1. Writing the same model in different ways
 1. Example: multi-layer earnings data
@@ -252,6 +229,7 @@ Slides:
 1. The simple way of dealing with missing data in JAGS/Stan
 1. More complex varieties of missing data
 1. An example model for multivariate imputation
+1. Summary
 
 
 
@@ -304,6 +282,7 @@ Slides:
 1. Fitting a multinomial model in Stan
 1. Example
 1. Interpreting the output
+1. Summary
 
 ------
 
@@ -355,6 +334,7 @@ Slides:
 1. Finding the number of mixture components
 1. Dirichlet Processes
 1. Example
+1. Summary
 
 
 
