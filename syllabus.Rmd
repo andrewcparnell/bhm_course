@@ -191,12 +191,6 @@ Learning outcomes:
 - Be able to fit multivariate models in JAGS/Stan
 - Be able to work with missing data in JAGS/Stan
 
-Code:
-
-```
-???
-```
-
 Slides:
 
 1. Title
@@ -231,8 +225,6 @@ Slides:
 1. An example model for multivariate imputation
 1. Summary
 
-
-
 ------
 
 # Practical 3: Advanced examples of hierarchical models
@@ -246,12 +238,6 @@ Learning outcomes:
 - Be able to describe the advantages of partial pooling
 - Be able to fit some basic zero inflation and hurdle models
 - Be able to understand and fit some multinomial modelling examples
-
-Code:
-
-```
-???.R
-```
 
 Slides:
 

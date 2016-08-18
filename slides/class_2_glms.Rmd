@@ -139,9 +139,9 @@ y = rbinom(N, size = 1, prob = p)
 
 ## Example: earnings data
 
-- Going back to the earnings data, suppose we want to fit a model to predict log earnings based on sex and whether respondent is Hispanic or not
+- Going back to the earnings data, suppose we want to fit a model to predict log earnings based on sex and whether respondent is white (`eth==3`) or not
 - The model is:
-$$\log(\mbox{earnings}) \sim N(\alpha + \beta_1 \mbox{height} + \beta_2 \mbox{hispanic}, \sigma^2)$$
+$$\log(\mbox{earnings}) \sim N(\alpha + \beta_1 \mbox{height} + \beta_2 \mbox{white}, \sigma^2)$$
 - We want to get the posterior distribution of $\alpha, \beta_1, \beta_2$ and $\sigma$ given the data
 - What prior distributions could we set on these parameters?
 
@@ -166,9 +166,9 @@ model{
 }
 '
 jags_run = jags(data = list(N = nrow(dat), 
-                            y = log(dat$earnings),
+                            y = log(dat$earn),
                             x1 = dat$height_cm,
-                            x2 = dat$hispanic - 1),
+                            x2 = as.integer(dat$eth ==3)),
                 parameters.to.save = c('alpha',
                                        'beta1',
                                        'beta2',
@@ -194,14 +194,17 @@ head(post)
 
 ## Plots of output
 
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 alpha_mean = mean(post[,'alpha'])
 beta1_mean = mean(post[,'beta1'])
 beta2_mean = mean(post[,'beta2'])
-plot(dat$height_cm, log(dat$earnings))
-lines(dat$height_cm, alpha_mean + beta1_mean * dat$height_cm)
-lines(dat$height_cm, alpha_mean + beta1_mean * dat$height_cm, col = 'red')
-lines(dat$height_cm, alpha_mean + beta1_mean * dat$height_cm + beta2_mean, col = 'blue')
+plot(dat$height_cm, log(dat$earn))
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm)
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm, col = 'red')
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm + beta2_mean, col = 'blue')
 ```
 
 ## Plots
@@ -210,12 +213,54 @@ lines(dat$height_cm, alpha_mean + beta1_mean * dat$height_cm + beta2_mean, col =
 alpha_mean = mean(post[,'alpha'])
 beta1_mean = mean(post[,'beta1'])
 beta2_mean = mean(post[,'beta2'])
-plot(dat$height_cm, log(dat$earnings))
-lines(dat$height_cm, alpha_mean + beta1_mean * dat$height_cm)
-lines(dat$height_cm, alpha_mean + beta1_mean * dat$height_cm, col = 'red')
-lines(dat$height_cm, alpha_mean + beta1_mean * dat$height_cm + beta2_mean, col = 'blue')
+plot(dat$height_cm, log(dat$earn))
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm)
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm, col = 'red')
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm + beta2_mean, col = 'blue')
 ```
 
+## Stan code
+
+```{r}
+stan_code = '
+data {
+  int<lower=0> N;
+  vector[N] y;
+  vector[N] x1;
+  vector[N] x2;
+}
+parameters {
+  real alpha;
+  real beta1;
+  real beta2;
+  real<lower=0> sigma;
+}
+model {
+  y ~ normal(alpha + x1 * beta1  + x2 * beta2, sigma);
+}
+'
+```
+
+## Running the Stan version
+
+```{r, fig.height = 5, message=FALSE, results='hide'}
+library(rstan)
+stan_run = stan(data = list(N = nrow(dat), 
+                            K = 2,
+                            y = log(dat$earn),
+                            x1 = dat$height_cm, 
+                            x2 = as.integer(dat$eth ==3)),
+                model_code = stan_code)
+```
+
+## Stan output
+
+```{r, message=FALSE}
+plot(stan_run)
+```
 
 ## To standardise or not?
 
@@ -293,9 +338,9 @@ hist(post[,'beta2'], breaks = 30)
 y_sim = rnorm(nrow(dat), 
               post[1,'alpha'] + 
                 post[1,'beta1'] * dat$height_cm + 
-                post[1,'beta2'] * (dat$hispanic-1), 
+                post[1,'beta2'] * as.integer(dat$eth ==3), 
               sd = post[1, 'sigma'])
-plot(log(dat$earnings), y_sim)
+plot(log(dat$earn), y_sim)
 ```
 If the model is good, these should form a straight line!
 
@@ -305,9 +350,9 @@ If the model is good, these should form a straight line!
 y_sim = rnorm(nrow(dat), 
               post[1,'alpha'] + 
                 post[1,'beta1'] * dat$height_cm + 
-                post[1,'beta2'] * (dat$hispanic-1), 
+                post[1,'beta2'] * as.integer(dat$eth ==3), 
               sd = post[1, 'sigma'])
-plot(log(dat$earnings), y_sim)
+plot(log(dat$earn), y_sim)
 ```
 
 
@@ -336,15 +381,15 @@ model{
 
 ```{r, include = FALSE, results = 'hide', message=FALSE}
 jags_run = jags(data = list(N = nrow(dat), 
-                            y = log(dat$earnings),
+                            y = log(dat$earn),
                             x1 = dat$height_cm,
-                            x2 = dat$hispanic - 1),
+                            x2 = as.integer(dat$eth==3)),
                 parameters.to.save = c('y_sim'),
                 model.file = textConnection(jags_code))
 pars = jags_run$BUGSoutput$sims.list$y_sim
 ```
 ```{r}
-plot(log(dat$earnings), apply(pars,2,'mean'))
+plot(log(dat$earn), apply(pars,2,'mean'))
 ```
 
 ## Example: Swiss Willow tit data

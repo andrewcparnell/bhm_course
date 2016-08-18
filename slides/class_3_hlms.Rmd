@@ -79,7 +79,7 @@ model{
 ```
 ```{r, echo = FALSE, messages=FALSE}
 jags_run = jags(data = list(N = nrow(dat), 
-                            y = log(dat$earnings),
+                            y = log(dat$earn),
                             x = dat$height_cm),
                 parameters.to.save = c('alpha',
                                        'beta',
@@ -111,23 +111,23 @@ par(mfrow=c(1,1))
 pred = pars$y_sim
 y_sim_summary = apply(pred, 2, 'quantile', 
                       probs = c(0.05, 0.5, 0.95))
-plot(y_sim_summary[2,], log(dat$earnings), 
+plot(y_sim_summary[2,], log(dat$earn), 
      xlab = 'Posterior Predicted y value')
 abline(a=0, b=1, col = 'red')
 ```
 
 ## From standard to hierarchical linear models
 
-- Suppose now we want to see if there was a race effect on the relationship between height and earnings
+- Suppose now we want to see if there was a ethnicity effect on the relationship between height and earnings
 - Some possible choices:
 
-    - Divide the data up into different races and fit the model separately
-    - Add race in as a covariate, this will lead to a _varying intercepts_ model
-    - Add race in as an interaction, this will lead to a _varying slopes_ model
+    - Divide the data up into different ethnicities and fit the model separately
+    - Add ethnicity in as a covariate, this will lead to a _varying intercepts_ model
+    - Add ethnicity in as an interaction, this will lead to a _varying slopes_ model
     
 - An example of the varying slopes model is:
 
-$$y_i \sim N(\alpha + \beta_{\mbox{race}_i} (x_i - \bar{x}), \sigma^2) $$
+$$y_i \sim N(\alpha + \beta_{\mbox{ethnicity}_i} (x_i - \bar{x}), \sigma^2) $$
 
 ## Writing a varying intercepts slope model in JAGS/Stan
 
@@ -135,23 +135,23 @@ $$y_i \sim N(\alpha + \beta_{\mbox{race}_i} (x_i - \bar{x}), \sigma^2) $$
 - One way is to simply include it as an extra covariate:
 ```
 log_earn[i] ~ dnorm(alpha + beta1 * height[i] + 
-                      beta2 * race_1[i] 
-                        + beta3 * race_2[i] + ...,
+                      beta2 * ethnicity_1[i] 
+                        + beta3 * ethnicity_2[i] + ...,
                           sigma^-2)
 ```
 
 - A neater way is to include it as part of the definition of the slope:
 ```
-log_earn[i] ~ dnorm(alpha + beta[race[i]] * height[i], 
+log_earn[i] ~ dnorm(alpha + beta[ethnicity[i]] * height[i], 
                       sigma^-2)
 ```
 
-- This means that instead of there being a single `beta` value there are multiple different values, according to when `race[i]` is value 1, 2, 3, or 4
+- This means that instead of there being a single `beta` value there are multiple different values, according to when `ethnicity[i]` is value 1, 2, 3, or 4
 
 - We can easily extend to varying intercepts and slopes:
 ```
-log_earn[i] ~ dnorm(alpha[race[i]] + 
-                      beta[race[i]] * height[i],
+log_earn[i] ~ dnorm(alpha[ethnicity[i]] + 
+                      beta[ethnicity[i]] * height[i],
                         sigma^-2)
 ```
 
@@ -159,15 +159,15 @@ log_earn[i] ~ dnorm(alpha[race[i]] +
 
 - Let's think about our different choices for prior distributions on these varying parameters
 
-- Remember we now have four values `alpha[1]`,  `alpha[2]`, ... and `beta[1]`, `beta[2]`, ... i.e. intercepts and slopes depending on race
+- Remember we now have four values `alpha[1]`,  `alpha[2]`, ... and `beta[1]`, `beta[2]`, ... i.e. intercepts and slopes depending on ethnicity
 
 - One choice is to give totally independent prior distributions, e.g. $\alpha_1 \sim N(11, 2^2), \alpha_2 \sim N(11, 2^2),..., \beta_1 \sim N(0, 0.1^2), \beta_2 \sim N(0, 0.1^2)$,... 
 
 - However, the above can fall down when there are very small numbers in some of the groups
 
-- A better choice is to put a prior distribution on the alpha and beta values that _ties them together_ and add some extra parameters. For example, $\alpha_{\mbox{race}_i} \sim N(\mu_\alpha, \sigma_\alpha^2)$, and $\beta_{\mbox{race}_i} \sim N(\mu_\beta, \sigma_\beta^2)$
+- A better choice is to put a prior distribution on the alpha and beta values that _ties them together_ and add some extra parameters. For example, $\alpha_{\mbox{ethnicity}_i} \sim N(\mu_\alpha, \sigma_\alpha^2)$, and $\beta_{\mbox{ethnicity}_i} \sim N(\mu_\beta, \sigma_\beta^2)$
 
-- Under this model we can _borrow strength_ between the different races, and put extra prior distributions on the new parameters $\mu_\alpha, \mu_\beta, \sigma_\alpha, \sigma_\beta$
+- Under this model we can _borrow strength_ between the different ethnicities, and put extra prior distributions on the new parameters $\mu_\alpha, \mu_\beta, \sigma_\alpha, \sigma_\beta$
 
 ## Our first hierarchical model!
 
@@ -177,12 +177,12 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dnorm(alpha[race[i]] + 
-                  beta[race[i]]*(x[i] - mean(x)), 
+    y[i] ~ dnorm(alpha[eth[i]] + 
+                  beta[eth[i]]*(x[i] - mean(x)), 
                     sigma^-2)
   }
   # Priors
-  for(j in 1:N_race) {
+  for(j in 1:N_eth) {
     alpha[j] ~ dnorm(mu_alpha, sigma_alpha^-2)
     beta[j] ~ dnorm(mu_beta, sigma_beta^-2)
   }
@@ -197,9 +197,9 @@ model{
 
 ## About the hierarhical model
 
-- The parameters $\mu_\alpha$ and $\mu_\beta$ have useful interpretations: they are the overall mean intercept and the overall mean slope for all observations removing the effect of race
+- The parameters $\mu_\alpha$ and $\mu_\beta$ have useful interpretations: they are the overall mean intercept and the overall mean slope for all observations removing the effect of ethnicity
 
-- The parameters $\sigma_\alpha$, and $\sigma_\beta$ have useful interpretations too: they are the variability in the intercept and slope between race
+- The parameters $\sigma_\alpha$, and $\sigma_\beta$ have useful interpretations too: they are the variability in the intercept and slope between ethnicity
 
 - You may have met this type of model in other modelling courses when it is occasionally called _random effects_ modelling. More on this later
 
@@ -210,9 +210,9 @@ model{
 \small
 ```{r, message=FALSE, results='hide'}
 jags_run = jags(data = list(N = nrow(dat), 
-                            y = log(dat$earnings),
-                            race = dat$race,
-                            N_race = length(unique(dat$race)),
+                            y = log(dat$earn),
+                            eth = dat$eth,
+                            N_eth = length(unique(dat$eth)),
                             x = dat$height_cm),
                 parameters.to.save = c('alpha',
                                        'beta',
@@ -229,10 +229,10 @@ jags_run = jags(data = list(N = nrow(dat),
 ```{r, echo = FALSE}
 pars = jags_run$BUGSoutput$mean
 par(mfrow=c(2,2))
-race_names = c('Whites','Blacks','Hispanics','Others')
+eth_names = c('Blacks','Hispanics','Whites','Others')
 for(i in 1:4) {
-  curr_dat = subset(dat, dat$race == i)
-  plot(curr_dat$height_cm, log(curr_dat$earnings), main = race_names[i], ylab = 'log(earnings)', xlab = 'Height (cm)')
+  curr_dat = subset(dat, dat$eth == i)
+  plot(curr_dat$height_cm, log(curr_dat$earn), main = eth_names[i], ylab = 'log(earnings)', xlab = 'Height (cm)')
   lines(dat$height_cm, pars$alpha[i] + pars$beta[i]*(dat$height_cm - mean (dat$height_cm)), col = i)  
 }
 par(mfrow=c(1,1))
@@ -244,7 +244,7 @@ par(mfrow=c(1,1))
 par(mfrow=c(2,2))
 pars = jags_run$BUGSoutput$sims.list
 for(i in 1:4) {
-  hist(pars$beta[,i], breaks = 30, main = race_names[i], xlim = range(pars$beta), xlab = 'Slope value')  
+  hist(pars$beta[,i], breaks = 30, main = eth_names[i], xlim = range(pars$beta), xlab = 'Slope value')  
 }
 par(mfrow=c(1,1))
 ```
@@ -257,14 +257,14 @@ par(mfrow=c(1,1))
 
 - The normal distribution is by far the most common probability distribution, but there are others which can also be useful, some of which we will come to later in the course
 
-- Because the parameters in the higher levels of the hierarchy have fewer values (e.g. only 4 slopes and intercepts) if there are explanatory variables that work on the level of race, we can include them at this level, rather than at the level of the observations. Again, more on this later.
+- Because the parameters in the higher levels of the hierarchy have fewer values (e.g. only 4 slopes and intercepts) if there are explanatory variables that work on the level of ethnicity, we can include them at this level, rather than at the level of the observations. Again, more on this later.
 
 ## A note on priors for standard deviations
 
 - We set our prior distributions on the standard deviations parameters as Uniform
 - However, not all standard deviation parameters are created equal!
 - The standard deviation of the residuals, here $\sigma$, is estimated from $N$ observations so is quite well defined
-- By contrast the standard deviations of alpha and beta, $\sigma_\alpha$ and $\sigma_\beta$ are estimated based on just the four different race groups
+- By contrast the standard deviations of alpha and beta, $\sigma_\alpha$ and $\sigma_\beta$ are estimated based on just the four different ethnicity groups
 - We therefore need to be a bit more careful with prior distributions for these parameters. The usual recommendation is to use a half-$t$-distribution on these parameters rather than a uniform
 
 ## Side note: causation vs prediction as goals
@@ -282,12 +282,12 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dnorm(alpha[race[i]] + 
-                  beta[race[i]]*(x[i] - mean(x)), 
+    y[i] ~ dnorm(alpha[eth[i]] + 
+                  beta[eth[i]]*(x[i] - mean(x)), 
                     sigma^-2)
   }
   # Priors
-  for(j in 1:N_race) {
+  for(j in 1:N_eth) {
     alpha[j] ~ dnorm(11, 10^-2)
     beta[j] ~ dnorm(0, 0.1^-2)
   }
@@ -300,21 +300,21 @@ model{
 
 ```{r, echo = FALSE, message=FALSE, results = 'hide'}
 jags_run = jags(data = list(N = nrow(dat), 
-                            y = log(dat$earnings),
-                            race = dat$race,
-                            N_race = length(unique(dat$race)),
+                            y = log(dat$earn),
+                            eth = dat$eth,
+                            N_eth = length(unique(dat$eth)),
                             x = dat$height_cm),
                 parameters.to.save = c('alpha',
                                        'beta',
                                        'sigma'),
                 model.file = textConnection(jags_code))
-race_names = c('Whites','Blacks','Hispanics','Others')
+eth_names = c('Blacks','Hispanics','Whites','Others')
 ```
 ```{r, echo = FALSE}
 par(mfrow=c(2,2))
 pars = jags_run$BUGSoutput$sims.list
 for(i in 1:4) {
-  hist(pars$beta[,i], breaks = 30, main = race_names[i], xlim = range(pars$beta), xlab = 'Slope value')  
+  hist(pars$beta[,i], breaks = 30, main = eth_names[i], xlim = range(pars$beta), xlab = 'Slope value')  
 }
 par(mfrow=c(1,1))
 ```

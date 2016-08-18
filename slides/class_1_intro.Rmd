@@ -91,14 +91,14 @@ $$p(\theta|x) = \frac{p(x|\theta) \times p(\theta)}{p(x)}$$
 Suppose you had some data that looked like this:
 ```{r, echo=FALSE}
 dat = read.csv('../data/earnings.csv') # Called dat
-with(dat, plot(height_cm, log(earnings)))
+with(dat, plot(height_cm, log(earn)))
 ```
 
 ## What you are used to doing
 
 \tiny
 ```{r}
-model = lm(log(earnings) ~ height_cm, data = dat)
+model = lm(log(earn) ~ height_cm, data = dat)
 summary(model)
 ```
 \normalsize
@@ -124,7 +124,7 @@ parameters {
 }
 '
 stan_run = stan(data = list(N=nrow(dat), 
-                            y = log(dat$earnings),
+                            y = log(dat$earn),
                             x = dat$height_cm),
                 model_code = stan_code)
 ```
@@ -162,7 +162,7 @@ parameters {
 }
 '
 stan_run_2 = stan(data = list(N=nrow(dat), 
-                            y = log(dat$earnings),
+                            y = log(dat$earn),
                             x = dat$height_cm),
                 model_code = stan_code_2)
 ```
@@ -328,7 +328,7 @@ model {
 To run the Stan model:
 ```{r, eval = FALSE}
 stan_run = stan(data = list(N = nrow(dat), 
-                            y = log(dat$earnings),
+                            y = log(dat$earn),
                             x = dat$height_cm),
                 model_code = stan_code)
 print(stan_run)
@@ -361,7 +361,7 @@ Note the `^-2` everywhere - JAGS uses precision rather than standard deviation i
 ```{r, results = 'hide', messages=FALSE}
 library(R2jags)
 jags_run = jags(data = list(N = nrow(dat), 
-                            y = log(dat$earnings),
+                            y = log(dat$earn),
                             x = dat$height_cm),
                 parameters.to.save = c('intercept',
                                        'slope',
