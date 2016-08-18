@@ -128,9 +128,6 @@ stan_run = stan(data = list(N=nrow(dat),
                             x = dat$height_cm),
                 model_code = stan_code)
 ```
-
-## Results
-
 \tiny
 ```{r}
 print(stan_run)
@@ -358,8 +355,11 @@ Note the `^-2` everywhere - JAGS uses precision rather than standard deviation i
 
 ## Running the JAGS mdoel
 
-```{r, results = 'hide', messages=FALSE}
+```{r, include = FALSE}
 library(R2jags)
+```
+
+```{r, results = 'hide', message=FALSE}
 jags_run = jags(data = list(N = nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),
