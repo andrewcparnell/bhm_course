@@ -10,7 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
-knitr::opts_knit$set(global.par = TRUE)
+#knitr::opts_knit$set(global.par = TRUE)
 setwd("~/GitHub/bhm_course/slides")
 set.seed(123)
 ```
@@ -38,7 +38,7 @@ $$y_i \sim N(\alpha_{\mbox{eth}_i} + \beta_{\mbox{eth}_i} x_i, \sigma^2)$$
 where:
 $$\alpha_j \sim N(\mu_\alpha, \sigma_\alpha^2) \mbox{ and } \beta_j \sim N(\mu_\beta, \sigma_\beta^2)$$
 - In traditional parlance this is a random effects model
-- When we fit our model we are learning about the values of the slopes and intercepts, and also the values of their meands and standard deviations
+- When we fit our model we are learning about the values of the slopes and intercepts, and also the values of their means and standard deviations
 
 ## The extremes of varying vs fixed parameters
 
@@ -67,15 +67,16 @@ The response variable here is the count `imm` of immature whiteflies, and the ex
 ## Look at those zeros!
 
 ```{r}
-barplot(table(wf$imm), main = 'Number of immature whiteflies')
+barplot(table(wf$imm), 
+        main = 'Number of immature whiteflies')
 ```
 
 ## A first model
 
 - These are count data so a Poisson distribution is a good start
-- Let's consider a basic Poisson distribution model for $Y_{i}$, $i= 1, \ldots, N$ observaitons:
+- Let's consider a basic Poisson distribution model for $Y_{i}$, $i= 1, \ldots, N$ observations:
 $$Y_i \sim Po(\lambda_i)$$
-$$\log(\lambda_i) = \beta_{\mbox{trt}}$$
+$$\log(\lambda_i) = \beta_{\mbox{trt}_i}$$
 - We'll only consider the treatment effect but we could run much more complicated models with e.g. other covariates and interactions
 
 ## Fitting the model in Stan
@@ -120,7 +121,7 @@ stan_run = stan(data = list(N = nrow(wf),
 
 ## Results
 
-```{r}
+```{r, fig.height=5}
 plot(stan_run)
 ```
 
@@ -128,19 +129,20 @@ Some clear treatment effects - treatment 5 in particular
 
 ## Did the model actually fit well?
 
-```{r}
+```{r, fig.height=4}
 pars = extract(stan_run, pars = 'beta_trt')$beta_trt
 beta_means = apply(pars,2,'mean')
 y_sim_mean = exp(beta_means[wf$trt])
 y_sim = rpois(nrow(wf), y_sim_mean)
 hist(wf$imm, breaks = seq(0,max(wf$imm)))
-hist(y_sim, breaks = seq(0,max(wf$imm)), add = TRUE, col = 'gray')
+hist(y_sim, breaks = seq(0,max(wf$imm)), 
+     add = TRUE, col = 'gray')
 ```
 
 ## What about the zeros?
 
 - One way of broadening the distribution is through over-dispersion which we have already met:
-$$\log(\lambda_i) \sim N(\beta_{\mbox{trt}}, \sigma^2) $$
+$$\log(\lambda_i) \sim N(\beta_{\mbox{trt}_i}, \sigma^2) $$
 
 - However this doesn't really solve the problem of excess zeros
 
@@ -202,11 +204,11 @@ stan_run = stan(data = list(N = nrow(wf),
 
 ## Results
 
-```{r}
+```{r, fig.height=5}
 plot(stan_run)
 ```
 
-## Did it work any better?
+## Did it work any better? - code
 
 ```{r}
 beta_means = apply(extract(stan_run, pars = 'beta_trt')$beta_trt,2,'mean')
@@ -218,8 +220,13 @@ rZIP = function(mean, q_0) {
   return(pois)
 }
 y_sim = rZIP(y_sim_mean, q_0_mean)
+```
+
+## Did it work any better? - picture
+```{r, fig.height=5}
 hist(wf$imm, breaks = seq(0,max(wf$imm)))
-hist(y_sim, breaks = seq(0,max(wf$imm)), add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
+hist(y_sim, breaks = seq(0,max(wf$imm)), 
+     add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
 ```
 
 ## Some more notes on Zero-inflated Poisson
@@ -280,11 +287,12 @@ stan_run = stan(data = list(N = nrow(wf),
 
 ## Results
 
-```{r}
+\tiny
+```{r, fig.height = 5}
 plot(stan_run)
 ```
 
-## Did it work any better?
+## Did it work any better? - code
 
 ```{r}
 beta_means = apply(extract(stan_run, pars = 'beta_trt')$beta_trt,2,'mean')
@@ -296,8 +304,14 @@ rZIP = function(mean, q_0) {
   return(pois)
 }
 y_sim = rZIP(y_sim_mean, q_0_mean)
+```
+
+## Did it work any better? - picture
+
+```{r, fig.height=5}
 hist(wf$imm, breaks = seq(0,max(wf$imm)))
-hist(y_sim, breaks = seq(0,max(wf$imm)), add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
+hist(y_sim, breaks = seq(0,max(wf$imm)), 
+     add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
 ```
 
 
@@ -309,7 +323,7 @@ hist(y_sim, breaks = seq(0,max(wf$imm)), add = TRUE, col = rgb(0.75,0.75,0.75,0.
     1. For classification, when you have an observation falling into a single one of $K$ possible categories
     1. For multinomial regression, where you have a set of counts which sum to a known value $N$
     
-- We will just consider the multinomial regression case, whereby we have an observation $y_i = \left[ y_{i1}, \ldots, y_{iK} \right]$ where the sum $\sum_{k=1}^K y_{ik} = N_i$ is fixed
+- We will just consider the multinomial regression case, whereby we have observations $y_i = \left[ y_{i1}, \ldots, y_{iK} \right]$ where the sum $\sum_{k=1}^K y_{ik} = N_i$ is fixed
 
 - The classification version is a simplification of the regression version
 
@@ -326,7 +340,7 @@ These data are pollen counts of 7 varieties of pollen from modern samples with t
 
 - The two covariates represent the length of the growing season (GDD5) and harshness of the winter (MTCO)
 - The task is to find which climate regimes each pollen variety favours
-```{r}
+```{r, fig.height = 5, echo = FALSE}
 N = rowSums(pollen[,3:ncol(pollen)])
 par(mfrow=c(1,2))
 plot(pollen$GDD5, pollen$Pinus.D)
@@ -343,7 +357,7 @@ $$y_i \sim Mult(N_i, p_i)$$
 
 - The key parameters here are the probability vectors $p_i$. It's these we want to use a link function on to include the covariates
 
-- We need to be careful as each must sum to one: $\sum_{k=1}^K p_{ik}$. Any link function must satisfy this constraint
+- We need to be careful as each must sum to one: $\sum_{k=1}^K p_{ik} = 1$. Any link function must satisfy this constraint
 
 ## Prior distributions on probability vectors
 
@@ -354,21 +368,22 @@ $$p_{ik} = \frac{ \exp(\theta_{ik})}{ \sum_{j=1}^K \exp(\theta_{ij})}$$
 - The next layer of our model sets, e.g.:
 $$\theta_{ik} = \alpha_k + \beta_k \mbox{GDD5} + \gamma_k \mbox{MTCO}$$
 
-## Fitting the model in Stan
+## Stan code part 1
 
+\tiny
 ```{r}
 stan_code = '
 data {
-  int<lower=0> K; // Number of categories
-  int<lower=0> n; // Number of observations
+  int<lower=1> n;
+  int<lower=1> K;
   int<lower=0> y[n,K];
-  real GDD5[n];
-  real MTCO[n]; 
+  real x1[n];
+  real x2[n];
 }
 parameters {
-  real alpha[K];
-  real beta[K];
-  real gamma[K];
+  vector[K] alpha; 
+  vector[K] beta;
+  vector[K] gamma;
   real alpha_mean;
   real beta_mean;
   real gamma_mean;
@@ -377,70 +392,71 @@ parameters {
   real<lower=0> sigma_gamma;
 }
 transformed parameters {
-  matrix[n,K] theta;
-  vector[K] theta_store;
-
-  for (i in 1:n) {
-    for(k in 1:K) {
-      theta_store[k] = alpha[k] + beta[k] * GDD5[i] + gamma[k] * MTCO[i];
-      theta[i,k] = exp(theta_store[k])/log_sum_exp(theta_store);    
-    }
-      
+  vector[K] theta[n];
+  simplex[K] p[n]; 
+  
+  for(i in 1:n){
+    theta[i] =  alpha + beta*x1[i] + gamma*x2[i];
+  }
+  for(i in 1:n){
+    p[i] = softmax(theta[i]);
   }
 }
+...
+'
+```
+
+## Stan code part 2
+
+\tiny
+```{r}
+stan_code = '
+...
 model {
-  for (i in 1:n) {
-    y[i] ~ multinomial(to_vector(theta[i]));
-  }
   for(k in 1:K) {
-    alpha[k] ~ normal(alpha_mean, sigma_alpha);
-    beta[k] ~ normal(beta_mean, sigma_beta);
-    gamma[k] ~ normal(gamma_mean, sigma_gamma);
+    alpha[k] ~ normal(alpha_mean,sigma_alpha);
+    beta[k] ~ normal(beta_mean,sigma_beta);
+    gamma[k] ~ normal(gamma_mean,sigma_gamma);
   }
   alpha_mean ~ normal(0, 10);
-  sigma_alpha ~ cauchy(0, 5);
   beta_mean ~ normal(0, 10);
-  sigma_beta ~ cauchy(0, 5);
   gamma_mean ~ normal(0, 10);
+  sigma_alpha ~ cauchy(0, 5);
+  sigma_beta ~ cauchy(0, 5);
   sigma_gamma ~ cauchy(0, 5);
+
+  for(i in 1:n)
+    y[i] ~ multinomial(p[i]);
 }
 '
 ```
 
-## Running the model
 
-```{r, message=FALSE, results='hide'}
-pollen2 = pollen[sample(1:nrow(pollen), 200),]
-stan_inits = function() {
-  return(list(
-    alpha = rnorm(7,0,0.1),
-    beta = rnorm(7,0,0.1),
-    gamma = rnorm(7,0,0.1)))
-}
-stan_run = stan(data = list(K = 7,
-                            n = nrow(pollen2), 
-                            y = pollen2[,3:ncol(pollen2)],
-                            GDD5 = scale(pollen2$GDD5)[,1],
-                            MTCO  = scale(pollen2$MTCO)[,1]),
-                init = stan_inits,
-                model_code = stan_code)
+```{r, eval=FALSE}
+# pollen2 = pollen[sample(1:nrow(pollen), 200),]
+# stan_run = stan(data = list(K = 3,
+#                             n = nrow(pollen2), 
+#                             y = pollen2[,3:5],
+#                             x1 = scale(pollen2$GDD5)[,1],
+#                             x2  = scale(pollen2$MTCO)[,1]),
+#                 model_code = stan_code)
 ```
 
-## Results
+## Notes about this model
 
-```{r}
-plot(stan_run)
-```
+- This model is not going to fit very well, since it is unlikely that a linear relationship between the covariates and the pollen counts will match the data
+- It might be better to use e.g. a spline model (not covered in this course, but we can talk about it)
+- Similarly we might need some complex interactions between the covariates as they are strongly linked
+- We have constrained the parameters here so that the slopes and intercepts borrow strength across species. Does this make sense? What else could we do?
 
+## Some final notes about multinomial models
 
-## Transformations vs simplex distributions
-
-## The Dirichlet distribution
-
-## Fitting a multinomial model in Stan
-
-## Example
-
-## Interpreting the output
+- These models can be a pain to deal with as there are tricky constraints on the $\theta$ parameters to make them all sum to 1. 
+- The `softmax` function is one choice but there are lots of others (logistic ratios, the Dirichlet distribution, ...)
+- Whilst the classification version of this model just has binary $y_i$ (with just a single 1 in it) most packages (including JAGS and Stan) have a special distribution (e.g. `dcat` in JAGS) for this situation
 
 ## Summary
+
+- We have seen how partial pooling is a balance between a model of complete independence and complete dependence between groups
+- We have fitted some zero inflated and hurdle Poisson models
+- We have seen some (poorly fitting) multinomial regression models

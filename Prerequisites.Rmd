@@ -22,7 +22,7 @@ Install the following using the corresponding links
 
 Now install the following packages by going into Rstudio (or R) and typing:
 ```{r,eval=FALSE}
-install.packages(c('rjags','rstan'))
+install.packages(c('rjags','rstan','ExtDist'))
 ```
 
 Note: this might take a while as these are pretty big and complicated packages.

@@ -281,12 +281,6 @@ Learning outcomes:
 - Be able to fit shrinkage and selection models in JAGS/Stan
 - Be able to fit some non-parametric Bayesian models
 
-Code:
-
-```
-???.R
-```
-
 Slides:
 
 1. Title
