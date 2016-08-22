@@ -18,7 +18,7 @@ setwd("~/GitHub/bhm_course/slides")
 
 - Understand the terms prior, likelihood and posterior
 - Know what a posterior probability distribution is, and why we take samples from it
-- Know how to formulate of a linear regression model in a Bayesian format
+- Know how to formulate a linear regression model in a Bayesian format
 - Be able to suggest appropriate prior distributions for different situations
 
 ## How this course works
@@ -267,7 +267,7 @@ log_earn_sim = rnorm(n = nrow(dat),
 
 ... but this would lead to crazily variable simulated data and we would have a very inefficient algorithm
 
-- The computer software we will use, avoids this random simulation, and instead focusses on the values of the parameters which score highly on the likelihood and the prior
+- The computer software we will use avoids this random simulation and instead focusses on the values of the parameters which score highly on the likelihood and the prior
 
 ## Practical differences between frequentist statistics and Bayes
 
@@ -279,14 +279,14 @@ log_earn_sim = rnorm(n = nrow(dat),
 ## More generally choosing a likelihood and a prior
 
 - The key to choosing a likelihood is to pick a probability distribution which matches your data, e.g. if it's a continuous measurement and is unbounded then a normal distribution. If it's count data bounded above and below then a Binomial might be appropriate
-- The key to choosing a prior distribution is to put something in you believe represents the reasonable range of values, or comes from a related study in the literature
+- The key to choosing a prior distribution is to choose values which you believe represent the reasonable range that the parameter can take, or come from a related study in the literature
 - Again, use an _informative prior_ if possible
 
-Note: the shape of the distribution is usually completely unimportant when choosing the likelihood!
+Note: the shape of the distribution of the response variable is usually completely unimportant when choosing the likelihood!
 
 ## Stan vs JAGS
 
-We will be using two different software tools to calculate posterior distributions which represent the state of the art for user-friendly, research quality Bayesian statistics.
+We will be using two different software tools to calculate posterior distributions. These represent the state of the art for user-friendly, research quality Bayesian statistics.
 
 - Stan positives: very flexible, uses sensible distribution names, everything is declared, lots of documentation support, written by people at the top of the field
 - Stan negatives: cannot have discrete parameters, some odd declaration choices, slower to run code, code tends to be longer
@@ -425,7 +425,7 @@ Some of this we will cover in later classes, but e.g. traditional residual analy
 
 - Suppose you use the prior distribution `intercept ~ normal(0, 100)` in Stan because you had very little information about the intercept. Is this a reasonable thing to do? Do you honestly believe that the intercept might be as small as -200 or as big as 200?
 - If you fit a model and the parameters do not match your views about the data, there must be some information you have not encoded in the prior, go back and change it!
-- In more complex, you need the prior to constrain some of the parameters so that the model will fit. These are known as _regularisation_ priors
+- In more complex models, you need the prior to constrain some of the parameters so that the model will fit. These are known as _regularisation_ priors
 - Use an _informative prior_ when you can
 
 ## Replication in Science and the horror of p-values
@@ -455,7 +455,7 @@ print(schools)
 
 ## Example 2: Earnings data
 
-1192 observations on earnings (in USD) and various measurements about education, height, etc
+1192 observations on earnings (in USD) and various measurements about ethnicity, age, height, etc
 
 \tiny
 ```{r, echo = FALSE}
@@ -464,12 +464,12 @@ head(dat)
 \normalsize
 
 - Does height affect earnings?
-- Are there different rates of change for different groups (e.g. men vs women)?
+- Are there different rates of change for different groups (e.g. age/ethnic groups)?
 
 
 ## Example 3: Swiss Willow Tit data
 
-3 replicate measurements on whether Swiss Willow Tits were found with a covariates on forest cover and elevation
+3 replicate measurements on whether Swiss Willow Tits were found with covariates on forest cover and elevation
 \tiny
 ```{r, echo=FALSE}
 swt = read.csv('../data/swt.csv')

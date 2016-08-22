@@ -95,7 +95,7 @@ y = rpois(N, lambda)
 y
 ```
 
-- The rate ($\lambda$) of the Poisson distribution has to be positive, so taking the log of it changes it range to $(-\infty,\infty)$ as before. The inverse-link ($\exp$) turns the unrestricted ranges into something that must be positive
+- The rate ($\lambda$) of the Poisson distribution has to be positive, so taking the log of it changes its range to $(-\infty,\infty)$ as before. The inverse-link ($\exp$) turns the unrestricted ranges into something that must be positive
 
 ## From LM to GLM
 
@@ -103,12 +103,12 @@ y
 $$y \sim Distribution(f(\theta, x))$$
 where $Distribution$ is some probability distribution, $\theta$ are some parameters, and $f$ is a link function that transforms the parameters into a range so that we can incorporate $x$ in an unrestricted way
 
-- The above allows us to simulate from the model, as given some parameters $\theta$ and some covariates $x$ we can use the probability distribution to get simulated data
+- The above allows us to simulate from the model, given some parameters $\theta$ and some covariates $x$ we can use the probability distribution to get simulated data
 - It also allows us to calculate the _likelihood_ as we can get a score for how likely it is to see the data we have observed given some values of the parameters
 
 ## Multiple covariates
 
-- We can extent LMs and GLMs to have multiple covariates if we want, e.g.
+- We can extend LMs and GLMs to have multiple covariates if we want, e.g.
 ```{r, eval=FALSE}
 y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x2, sd = 1)
 p = inv.logit(-2 + 0.4 * x1 - 0.3 * x2)
@@ -178,7 +178,7 @@ jags_run = jags(data = list(N = nrow(dat),
 
 ## Output
 
-\small
+\tiny
 ```{r}
 print(jags_run)
 ```
@@ -186,7 +186,7 @@ print(jags_run)
 ## What do the results actually mean?
 
 - We now have access to the posterior distribution of the parameters:
-- We can plot, for example the fitted mean
+
 ```{r}
 post = jags_run$BUGSoutput$sims.matrix
 head(post)
@@ -313,13 +313,13 @@ A good trace plot will show no patterns or runs, and will look like it has a sta
 ## What else can I do with the output
 
 - We could create _credible intervals_ (Bayesian confidence intervals):
-\small
+\tiny
 ```{r}
 apply(post,2, quantile, probs = c(0.025, 0.975))
 ```
 
 - Or histograms 
-```{r, fig.height = 2}
+```{r, fig.height = 3}
 hist(post[,'beta2'], breaks = 30)
 ```
 
@@ -341,6 +341,7 @@ y_sim = rnorm(nrow(dat),
                 post[1,'beta2'] * as.integer(dat$eth ==3), 
               sd = post[1, 'sigma'])
 plot(log(dat$earn), y_sim)
+abline(a = 0, b = 1, col = 'red')
 ```
 If the model is good, these should form a straight line!
 
@@ -353,6 +354,7 @@ y_sim = rnorm(nrow(dat),
                 post[1,'beta2'] * as.integer(dat$eth ==3), 
               sd = post[1, 'sigma'])
 plot(log(dat$earn), y_sim)
+abline(a = 0, b = 1, col = 'red')
 ```
 
 
@@ -365,8 +367,10 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dnorm(alpha + beta1*x1[i] + beta2*x2[i], sigma^-2)
-    y_sim[i] ~ dnorm(alpha + beta1*x1[i] + beta2*x2[i], sigma^-2)
+    y[i] ~ dnorm(alpha + beta1*x1[i] + beta2*x2[i], 
+                  sigma^-2)
+    y_sim[i] ~ dnorm(alpha + beta1*x1[i] + beta2*x2[i], 
+                      sigma^-2)
   }
   # Priors
   alpha ~ dnorm(0, 20^-2)
@@ -388,8 +392,9 @@ jags_run = jags(data = list(N = nrow(dat),
                 model.file = textConnection(jags_code))
 pars = jags_run$BUGSoutput$sims.list$y_sim
 ```
-```{r}
+```{r, include = FALSE}
 plot(log(dat$earn), apply(pars,2,'mean'))
+abline(a=0, b = 1, col = 'red')
 ```
 
 ## Example: Swiss Willow tit data
@@ -460,7 +465,7 @@ points(swt$forest,
 
 ## Checking model assumptions
 
-- Just like the linear regression example, we can create posterior preditive distributions for the binary data from the binomial distribution
+- Just like the linear regression example, we can create posterior predictive distributions for the binary data from the binomial distribution
 - However, it isn't as easy to plot as the regression situation as all the true values are 0 and 1. 
 - Instead people often use _classification metrics_ which we do not cover in this course (but can discuss if required)
 
