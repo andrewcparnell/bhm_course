@@ -77,7 +77,7 @@ Here's a standard workflow. We're going to fit a simple linear regression using 
 
 First load in the data:
 ```{r}
-dat = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/earsnings.csv')
+dat = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/earnings.csv')
 ```
 
 Now load in the package:
