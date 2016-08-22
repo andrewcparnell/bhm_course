@@ -90,7 +90,7 @@ $$p(\theta|x) = \frac{p(x|\theta) \times p(\theta)}{p(x)}$$
 
 Suppose you had some data that looked like this:
 ```{r, echo=FALSE}
-dat = read.csv('../data/earnings.csv') # Called dat
+dat = read.csv('../data/earnings.csv')
 with(dat, plot(height_cm, log(earn)))
 ```
 
@@ -119,7 +119,8 @@ parameters {
   real intercept;
   real slope;
   real<lower=0> residual_sd;
-} model {
+} 
+model {
   y ~ normal(intercept + slope * x, residual_sd);
 }
 '

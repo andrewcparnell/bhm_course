@@ -288,8 +288,8 @@ plot(stan_run)
 - There are three key parts of the algorithm that affect how good the posterior samples are:
 
     1. The starting values you chose. If you chose bad starting values, you might need to discard the first few thousand iterations. This is known as the _burn-in_ period
-    2. The way you choose your new parameter values. If they are too close to the previous values the MCMC might move too slowly so you might need to _thin_ the samples out by taking e.g. every 5th or 10th iteration
-    3. The total number of iterations you choose. Ideally you would take millions but this will make the run time slower
+    1. The way you choose your new parameter values. If they are too close to the previous values the MCMC might move too slowly so you might need to _thin_ the samples out by taking e.g. every 5th or 10th iteration
+    1. The total number of iterations you choose. Ideally you would take millions but this will make the run time slower
     
 JAGS and Stan have good default choices for these but for complex models you often need to intervene
 
@@ -304,7 +304,7 @@ A good trace plot will show no patterns or runs, and will look like it has a sta
 
 ## How many chains?
 
-- Beyond, increasing the number of iterations, thinning, and removing a burn-in period, JAGS and Stan automatically run _multiple chains_
+- Beyond increasing the number of iterations, thinning, and removing a burn-in period, JAGS and Stan automatically run _multiple chains_
 - This means that they start the algorithm from 3 or 4 different sets of starting values and see if each _chain_ converges to the same posterior distribution
 - If the MCMC algorithm has converged then each chain should have the same mean and variance.
 - Both JAGS and Stan report the `Rhat` value, which is close to 1 when all the chains match

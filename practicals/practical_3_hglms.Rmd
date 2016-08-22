@@ -1,0 +1,86 @@
+---
+title: "Practical 3 - ???"
+author: "Andrew Parnell"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+rm(list=ls()) # Clear the workspace
+knitr::opts_chunk$set(echo = TRUE)
+library(R2jags)
+library(rstan)
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01, las=1)
+```
+
+## Introduction
+
+In practical 3 we are going to:
+
+  - Get some more fancy posterior predictives for harder models
+  - Do some cross validation
+  - Create some plots of the posterior predicted values with uncertainty
+  - Fit some hierarchical GLMs
+  - Create some prior and posterior predictive pseudo-data
+
+We will mostly be focussing on JAGS for this practical to avoid making it too long. However, I would strongly encourage you to try translating some of this code into Stan as it will be very good practice.
+
+## Fitting hierarchical regression models
+
+Let's start with the hierarchical regression model we met in Class 3 for the `earnings` data:
+
+```{r}
+dat = read.csv('../data/earnings.csv')
+jags_code = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dnorm(alpha[eth[i]] + 
+                  beta[eth[i]]*(x[i] - mean(x)), 
+                    sigma^-2)
+  }
+  # Priors
+  for(j in 1:N_eth) {
+    alpha[j] ~ dnorm(mu_alpha, sigma_alpha^-2)
+    beta[j] ~ dnorm(mu_beta, sigma_beta^-2)
+  }
+  mu_alpha ~ dnorm(11, 2^-2)
+  mu_beta ~ dnorm(0, 0.1^-2)
+  sigma ~ dunif(0, 5)
+  sigma_alpha ~ dunif(0, 2)
+  sigma_beta ~ dunif(0, 2)
+}
+'
+```
+
+Some notes/reminders about this code:
+
+  - We have four different values that `eth[i]` can take, either 1, 2, 3, or 4. This means that there are four different intercept values `alpha` and four different slope values `beta`
+  - The explanatory variable `x` here is mean centered. You can either do this in the code as we have done here, or do it by providing JAGS with already mean-centered data
+  - The prior distributions on `alpha` and `beta` are the clever bits here. They allow us to borrow strength across the different groups. 
+  - The hyper-priors here starting with the text `mu_alpha ~ ` etc were developed from the prior predictive distribution
+  
+We can run it with:
+```{r, message = FALSE, results = 'hide'}
+jags_run = jags(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            eth = dat$eth,
+                            N_eth = length(unique(dat$eth)),
+                            x = dat$height_cm),
+                parameters.to.save = c('alpha',
+                                       'beta',
+                                       'sigma',
+                                       'mu_alpha',
+                                       'mu_beta',
+                                       'sigma_alpha',
+                                       'sigma_beta'),
+                model.file = textConnection(jags_code))
+```  
+
+***
+**Exercise 1**  
+
+1. Run the above model and use the `print` and `plot` commands on the output. Try to interpret the output as we did in class
+1. Re-run the model but this time without mean centering the data. How does your interpretation change?
+1. Go back to the mean centered model but start changing the prior distributions on `sigma_alpha` and `sigma_beta`. What happens if you force these values to be very small (e.g. `sigma_alpha ~ dunif(0, 0.0001)`) or very large (e.g. `sigma_alpha ~ dunif(9999, 10000)`)?
+
+***
