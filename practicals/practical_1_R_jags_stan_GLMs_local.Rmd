@@ -77,9 +77,7 @@ Here's a standard workflow. We're going to fit a simple linear regression using 
 
 First load in the data:
 ```{r}
-setwd("~/GitHub/bhm_course/practicals")
-dat = read.csv('../data/earnings.csv')
-#dat = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/earsnings.csv')
+dat = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/earsnings.csv')
 ```
 
 Now load in the package:
@@ -297,7 +295,7 @@ Recall that for a generalised linear model (GLM) we don't have a normally distri
 Here is some JAGS code to fit a Binomial-logit model to the Swiss willow tit data of Class 2:
 
 ```{r, message = FALSE, results = 'hide'}
-swt = read.csv('../data/swt.csv')
+swt = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/swt.csv')
 jags_code = '
 model{
   # Likelihood

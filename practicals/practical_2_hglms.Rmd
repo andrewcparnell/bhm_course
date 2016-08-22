@@ -1,7 +1,7 @@
 ---
 title: "Practical 2 - Fitting hierarchical GLMs"
 author: "Andrew Parnell"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -28,7 +28,7 @@ We will mostly be focussing on JAGS for this practical to avoid making it too lo
 Let's start with the hierarchical regression model we met in Class 3 for the `earnings` data:
 
 ```{r}
-dat = read.csv('../data/earnings.csv')
+dat = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/earnings.csv')
 jags_code = '
 model{
   # Likelihood
@@ -238,7 +238,7 @@ Let's now fit this model. This time we're going to include an extra line which a
 First load in the data and create the sum of `rep.1`, `rep.2`, and `rep.3` ignoring the missing values, as discussed in Class 4:
 
 ```{r}
-swt = read.csv('../data/swt.csv')
+swt = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/swt.csv')
 sum_fun = function(x) {
   s = ifelse(is.na(x[1]),0,x[1]) + ifelse(is.na(x[2]),0,x[2]) + ifelse(is.na(x[3]),0,x[3])
   N = ifelse(is.na(x[1]),0,1) + ifelse(is.na(x[2]),0,1) + ifelse(is.na(x[3]),0,1)
