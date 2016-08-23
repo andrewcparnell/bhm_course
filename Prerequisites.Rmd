@@ -18,11 +18,14 @@ Install the following using the corresponding links
 
 -	JAGS: http://sourceforge.net/projects/mcmc-jags/files/
 
+- If you're using Windows you also need to install the correct version of [Rtools](https://cran.r-project.org/bin/windows/Rtools/) to match your R version
+
 ### Step 2
 
-Now install the following packages by going into Rstudio (or R) and typing:
+Now install the following packages by going into Rstudio (or R) by typing:
 ```{r,eval=FALSE}
-install.packages(c('rjags','rstan','ExtDist','boot'))
+install.packages(c('rjags','ExtDist','boot'))
+install.packages('rstan', dependencies = TRUE)
 ```
 
 Note: this might take a while as these are pretty big and complicated packages.

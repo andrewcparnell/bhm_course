@@ -215,11 +215,10 @@ beta1_mean = mean(post[,'beta1'])
 beta2_mean = mean(post[,'beta2'])
 plot(dat$height_cm, log(dat$earn))
 lines(dat$height_cm, alpha_mean + 
-        beta1_mean * dat$height_cm)
-lines(dat$height_cm, alpha_mean + 
         beta1_mean * dat$height_cm, col = 'red')
 lines(dat$height_cm, alpha_mean + 
-        beta1_mean * dat$height_cm + beta2_mean, col = 'blue')
+        beta1_mean * dat$height_cm + beta2_mean, 
+      col = 'blue')
 ```
 
 ## Stan code
@@ -249,7 +248,6 @@ model {
 ```{r, fig.height = 5, message=FALSE, results='hide'}
 library(rstan)
 stan_run = stan(data = list(N = nrow(dat), 
-                            K = 2,
                             y = log(dat$earn),
                             x1 = dat$height_cm, 
                             x2 = as.integer(dat$eth ==3)),
