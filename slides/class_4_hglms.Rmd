@@ -32,7 +32,7 @@ setwd("~/GitHub/bhm_course/slides")
 
 - In class 2, we met the Binomial-logit model for binary data:
 $$y_i \sim Bin(1, p_i), logit(p_i) = \alpha + \beta x_i$$
-Here $logit(p_i)$ is the link function, and equal to $\log \left( \frac{p_i}{1-p_i} \right)$ and transforms the bounded probabilities into an unbounded space
+Here $logit(p_i)$ is the link function equal to $\log \left( \frac{p_i}{1-p_i} \right)$ and transforms the bounded probabilities into an unbounded space
 
 - If we have non-binary data we just change the likelihood:
 $$y_i \sim Bin(N_i, p_i), logit(p_i) = \alpha + \beta x_i$$

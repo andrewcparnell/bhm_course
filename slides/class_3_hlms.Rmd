@@ -43,7 +43,7 @@ x = sort(runif(N, 150, 190))
 
 ## Simulating psuedo-data continued
 
-- Before seeing the data I have no idea about whether height affects earnings, so I'd certainly be willing to consider a value of 0 for the slope. If there was a strong positive effect then people of about 190cm would be earning about 12 (on the log scale) and people of about 150cm would be earning the least. This gives a slope of about 0.05, but the opposite might also be true. To stay conservative let's a suggest a prior on the slop of $N(0, 0.1^2)
+- Before seeing the data I have no idea about whether height affects earnings, so I'd certainly be willing to consider a value of 0 for the slope. If there was a strong positive effect then people of about 190cm would be earning about 12 (on the log scale) and people of about 150cm would be earning the least. This gives a slope of about 0.05, but the opposite might also be true. To stay conservative let's a suggest a prior on the slop of $N(0, 0.1^2)$
 - For the intercept we can guess that it is unlikely to be beyond the range (10, 12) so let's use $N(11, 2^2)$.
 - The residual standard deviation is unlikely to be much bigger than the range of salaries so let's use $U(0, 5)$
 
@@ -67,8 +67,10 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dnorm(alpha + beta*(x[i] - mean(x)), sigma^-2)
-    y_sim[i] ~ dnorm(alpha + beta*(x[i] - mean(x)), sigma^-2)
+    y[i] ~ dnorm(alpha + beta*(x[i] - mean(x)),
+                  sigma^-2)
+    y_sim[i] ~ dnorm(alpha + beta*(x[i] - mean(x)), 
+                      sigma^-2)
   }
   # Priors
   alpha ~ dnorm(11, 2^-2)
@@ -77,7 +79,7 @@ model{
 }
 '
 ```
-```{r, echo = FALSE, messages=FALSE}
+```{r, messages=FALSE, include = FALSE}
 jags_run = jags(data = list(N = nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),
@@ -111,19 +113,20 @@ par(mfrow=c(1,1))
 pred = pars$y_sim
 y_sim_summary = apply(pred, 2, 'quantile', 
                       probs = c(0.05, 0.5, 0.95))
-plot(y_sim_summary[2,], log(dat$earn), 
-     xlab = 'Posterior Predicted y value')
+plot(log(dat$earn), y_sim_summary[2,], 
+     xlab = 'True y value',
+     ylab = 'Posterior Predicted y value')
 abline(a=0, b=1, col = 'red')
 ```
 
 ## From standard to hierarchical linear models
 
-- Suppose now we want to see if there was a ethnicity effect on the relationship between height and earnings
+- Suppose now we want to see if there was an ethnicity effect on the relationship between height and earnings
 - Some possible choices:
 
     - Divide the data up into different ethnicities and fit the model separately
     - Add ethnicity in as a covariate, this will lead to a _varying intercepts_ model
-    - Add ethnicity in as an interaction, this will lead to a _varying slopes_ model
+    - Add ethnicity in as an interaction with height, this will lead to a _varying slopes_ model
     
 - An example of the varying slopes model is:
 
