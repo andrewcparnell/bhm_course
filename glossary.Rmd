@@ -8,7 +8,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-A glossary of terms for the course _Introduction to Bayesian Hierarchical Modelling'
+A glossary of terms for the course _Introduction to Bayesian Hierarchical Modelling_
 
 - __Posterior distribution__: A probability distribution of the parameters given the data. This is usually represented as a matrix where the rows represent each sample and the columns represent each parameter.
 - __Likelihood__: The probability of observing the data given some parameter values. For a given set of parameters, the likelihood can be represented as a single numerical value
