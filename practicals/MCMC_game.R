@@ -38,7 +38,7 @@ points(1,sigma, col = 'red')
 legend('topleft', pch = 1, legend = c('alpha','sigma'), col = c('blue','red'), bty = 'n')
 
 for(i in 1:iter) {
-  alpha_new = rnorm(1, alpha, 1)
+  alpha_new = rnorm(1, 0, 1)
   sigma_new = runif(1, 0, 5)
   
   post_score_new = sum(dnorm(y, mean = alpha_new, sd = sigma_new, log = TRUE)) + dnorm(alpha, 0, 2, log=TRUE) + dunif(sigma, 0, 5, log=TRUE)
