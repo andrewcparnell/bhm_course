@@ -5,7 +5,7 @@ date: "August 2016"
 output: html_document
 ---
 
-Module pre-requisites can be found [here](https://rawgit.com/andrewcparnell/bhm_course/master/Prerequisites.html). All the raw files and code can be found [here](https://github.com/andrewcparnell/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). A pre-course questionnaire is available [here](https://docs.google.com/forms/d/e/1FAIpQLSd5esC5BX-CSgZel7tH-Y9bJASXqRl-RyGwGsxQfaRUfECu1g/viewform). All links below are in pdf format for you to annotate.
+Module pre-requisites can be found [here](https://rawgit.com/andrewcparnell/bhm_course/master/Prerequisites.html). All the raw files and code can be found [here](https://github.com/andrewcparnell/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). A pre-course questionnaire is available [here](https://docs.google.com/forms/d/e/1FAIpQLSd5esC5BX-CSgZel7tH-Y9bJASXqRl-RyGwGsxQfaRUfECu1g/viewform). All links below are in pdf format for you to annotate. A glossary of technical terms is [here](https://rawgit.com/andrewcparnell/bhm_course/master/glossary.html).
 
 ## Day 1: Basic concepts
 
