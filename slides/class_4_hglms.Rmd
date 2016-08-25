@@ -31,11 +31,11 @@ setwd("~/GitHub/bhm_course/slides")
 ## Example 1: binomial-logit
 
 - In class 2, we met the Binomial-logit model for binary data:
-$$y_i \sim Bin(1, p_i), logit(p_i) = \alpha + \beta x_i$$
+$$y_i \sim Bin(1, p_i), logit(p_i) = \alpha + \beta (x_i - \bar{x})$$
 Here $logit(p_i)$ is the link function equal to $\log \left( \frac{p_i}{1-p_i} \right)$ and transforms the bounded probabilities into an unbounded space
 
 - If we have non-binary data we just change the likelihood:
-$$y_i \sim Bin(N_i, p_i), logit(p_i) = \alpha + \beta x_i$$
+$$y_i \sim Bin(N_i, p_i), logit(p_i) = \alpha + \beta (x_i - \bar{x})$$
 
 - In a hierarchical version of this model, we vary the _latent parameters_ $\alpha$ and $\beta$ and give them prior distributions
 
@@ -51,7 +51,7 @@ head(swt)
 
 \small
 - Suppose we want to fit a model on the sum $y_i =$ `rep.1 + rep.2 + rep.3`:
-$$y_i \sim Bin(N_i, p_i), logit(p_i) = \alpha_{\mbox{altitude}_i} + \beta_{\mbox{altitude}_i} x_i$$
+$$y_i \sim Bin(N_i, p_i), logit(p_i) = \alpha_{\mbox{altitude}_i} + \beta_{\mbox{altitude}_i} (x_i- \bar{x})$$
 where $x_i$ is the percentage of forest cover
 
 - What prior distributions should we use for $\alpha$ and $\beta$?
@@ -71,7 +71,7 @@ model{
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dbin(p[i], N_exp[i])
-    logit(p[i]) <- alpha[alt[i]] + beta[alt[i]]*x[i]
+    logit(p[i]) <- alpha[alt[i]] + beta[alt[i]]* (x[i] - mean(x))
   }
   # Priors
   for(j in 1:N_alt) {
@@ -114,7 +114,7 @@ jags_run = jags(data = list(N = nrow(swt),
 ```{r, echo = FALSE}
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$sims.list
-for(i in 1:3) {
+for(i in c(2,3,1)) {
   hist(pars$alpha[,i], breaks = 30, main = paste('Altitude type:',levels(swt$alt)[i]), xlim = range(pars$alpha), xlab = 'Intercept value')  
 }
 par(mfrow=c(1,1))
@@ -125,7 +125,7 @@ par(mfrow=c(1,1))
 ```{r, echo = FALSE}
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$sims.list
-for(i in 1:3) {
+for(i in c(2,3,1)) {
   hist(pars$beta[,i], breaks = 30, 
        main = paste('Altitude type:',levels(swt$alt)[i]), 
        xlim = range(pars$beta), xlab = 'Slope value')  
@@ -139,7 +139,7 @@ par(mfrow=c(1,1))
 library(boot)
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$mean
-for(i in 1:3) {
+for(i in c(2,3,1)) {
   plot(swt$forest, y/N, main = paste('Altitude type:',levels(swt$alt)[i]), xlab = '% forest cover', ylab = 'Estimated proporton')
   points(swt$forest, inv.logit(pars$alpha[i] + pars$beta[i] * swt$forest), col = i+1)
 }
@@ -151,7 +151,7 @@ par(mfrow=c(1,1))
 - For a Poisson distribution there is no upper bound on the number of counts
 
 - We just change the likelihood (to Poisson) and the link function (to $\log$):
-$$y_i \sim Po(\lambda_i), \log(\lambda_i) = \alpha + \beta x_i$$
+$$y_i \sim Po(\lambda_i), \log(\lambda_i) = \alpha + \beta (x_i - \bar{x}))$$
 
 - We can now add our hierarchical layers into $\alpha$ and $\beta$, or...
 
@@ -162,7 +162,7 @@ $$y_i \sim Po(\lambda_i), \log(\lambda_i) = \alpha + \beta x_i$$
 ## An over-dispersed model
 
 - The over-dispersed model looks like:
-$$y_i \sim Po(\lambda_i), \log(\lambda_i) \sim N(\alpha + \beta x_i, \sigma^2)$$
+$$y_i \sim Po(\lambda_i), \log(\lambda_i) \sim N(\alpha + \beta (x_i - \bar{x}), \sigma^2)$$
 where $\sigma$ is the over-dispersion parameter
 
 - We now need to estimate prior distributions for $\alpha$, $\beta$, and $\sigma$
@@ -177,7 +177,7 @@ model{
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dpois(exp(log_lambda[i]))
-    log_lambda[i] ~ dnorm(alpha + beta * x[i], sigma^-2)
+    log_lambda[i] ~ dnorm(alpha + beta * (x[i] - mean(x)), sigma^-2)
   }
   alpha ~ dnorm(0, 5^-2)
   beta ~ dnorm(0, 0.1^-2)
@@ -260,7 +260,7 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dt(alpha + beta * x[i], sigma, df[i] + 1)
+    y[i] ~ dt(alpha + beta * (x[i] - mean(x)), sigma, df[i] + 1)
     df[i] ~ dbin(p, 10)
   }
   p ~ dunif(0, 1)
@@ -285,7 +285,7 @@ jags_run = jags(data = list(N = N,
 dfs = jags_run$BUGSoutput$median$df
 pars = jags_run$BUGSoutput$mean
 plot(x, y, col = as.factor(dfs))
-lines(x, pars$alpha + pars$beta*x, col = 'red')
+lines(x, pars$alpha + pars$beta*(x - mean(x)), col = 'red')
 ```
 
 ## Prior distributions on the degrees of freedom
@@ -319,7 +319,7 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    z[i] ~ dnorm(alpha + beta * x[i], sigma^-2)
+    z[i] ~ dnorm(alpha + beta * (x[i] - mean(x)), sigma^-2)
     y[i] ~ dinterval(z[i], cuts)
   }
   alpha ~ dnorm(0, 100^-2)  
@@ -339,7 +339,7 @@ sigma = 0.51
 set.seed(123)
 x = runif(N, 0, 10)
 cuts = c(-0.5, 0.5)
-z = rnorm(N, alpha + beta * x, sigma)
+z = rnorm(N, alpha + beta * (x - mean(x)), sigma)
 y = findInterval(z, cuts)
 ```
 
