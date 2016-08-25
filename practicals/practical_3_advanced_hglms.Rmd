@@ -103,17 +103,61 @@ stan_run = stan(data = list(N = nrow(prostate),
 
 ## Extracting the WAIC from a Stan model run
 
-If you have a recent version of Stan (hopefully you installed it in the last few days), then you can create the WAIC value (a superior version of the DIC) quite simple with:
+If you have a recent version of Stan (hopefully you installed it in the last few days), then you can create the WAIC value (a superior version of the DIC) but it's a bit fiddly at resent. You first need to re-run your model, adding in a `generated quantities` block which outputs the log likelihood. 
+
+```{r, results='hide', message=FALSE}
+stan_code = '
+data {
+  int<lower=0> N;
+  vector[N] lpsa;
+  vector[N] lcavol;
+  vector[N] lweight;
+  vector[N] gleason;
+}
+parameters {
+  real alpha;
+  real beta_1;
+  real beta_2;
+  real beta_3;
+  real<lower=0> sigma;
+}
+model {
+  lpsa ~ normal(alpha + beta_1 * lcavol + beta_2 * lweight + beta_3 * gleason, sigma);
+  alpha ~ normal(0, 10);
+  beta_1 ~ normal(0, 10);
+  beta_2 ~ normal(0, 10);
+  beta_3 ~ normal(0, 10);
+  sigma ~ cauchy(0, 10);
+} 
+generated quantities {
+  vector[N] log_lik;
+  for(i in 1:N) {
+    log_lik[i] =  normal_log(lpsa[i], alpha + beta_1 * lcavol[i] + beta_2 * lweight[i] + beta_3 * gleason[i], sigma);
+  }
+}
+'
+library(rstan)
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+stan_run = stan(data = list(N = nrow(prostate), 
+                            lpsa = prostate$lpsa,
+                            lcavol = prostate$lcavol,
+                            lweight = prostate$lweight,
+                            gleason = prostate$gleason),
+                model_code = stan_code)
+```
+
+We can now use the `loo` package to get the WAIC (with uncertainty!)
 
 ```{r, message=FALSE}
 library(loo)
-log_lik = extract_log_lik(stan_run, parameter_name = 'lp__')
+log_lik = extract_log_lik(stan_run, parameter_name = 'log_lik')
 waic(log_lik)
 ```
 
-The `loo` package should be installed as part of `rstan` but if you find it's not there you can always run `install.packages('loo')`. The `extract_log_lik` line here gets the log likelihood scores for each iteration from the `stan_run` object. The `waic` command computers the WAIC and the effective number of parameters (`p_waic`0.
+The `loo` package should be installed as part of `rstan` but if you find it's not there you can always run `install.packages('loo')`. The `extract_log_lik` line here gets the log likelihood scores for each iteration from the `stan_run` object. The `waic` command computers the WAIC and the effective number of parameters (`p_waic`).
 
-This package is currently quite new and still seems to spit out some odd warnings but generally the results seem fast and useful. Besides the WAIC you can also get an estimate of the leave-one-out (LOO) cross validation error:
+This package is currently quite new and still seems to spit out some odd warnings but generally the results seem fast and useful, and it gives you uncertainty on the value! Besides the WAIC you can also get an estimate of the leave-one-out (LOO) cross validation error:
 
 ```{r, message=FALSE}
 loo(log_lik)
@@ -167,7 +211,7 @@ stan_run = stan(data = list(N = nrow(prostate),
 ***
 **Exercise 3**  
 
-1. Draw a DAG for the above model and calculate its WAIC value 
+1. Draw a DAG for the above model and try to calculate its WAIC value (ask if you get stuck with the `generated quantities` value)
 1. Improve the model with the priors you developed in the previous exercise
 1. Think of two or three different ways to expand this model. 
 1. Draw out some DAGs for each version
@@ -178,7 +222,7 @@ stan_run = stan(data = list(N = nrow(prostate),
 
 ## Creating posterior predictive distributions in Stan
 
-In Practical 2 we met the `generated quantities` block which allows us to include a sampling statement to generate posterior predictive distributions. We can do this again here:
+We can use another `generated quantities` block to include a sampling statement to generate posterior predictive distributions. We can do this with:
 
 ```{r, results='hide', message=FALSE}
 stan_code = '

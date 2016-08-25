@@ -416,16 +416,16 @@ for(i in 1:5) {
   curr_data = subset(dat, folds != i)
   curr_pred = subset(dat, folds == i)
   jags_run = jags(data = list(N = nrow(curr_data), 
-                            y = log(curr_data$earnings),
+                            y = log(curr_data$earn),
                             x = curr_data$height_cm,
                             N_pred = nrow(curr_pred),
                             x_pred = curr_pred$height_cm),
                 parameters.to.save = 'y_pred',
                 model.file = textConnection(jags_code))
   out_pred = jags_run$BUGSoutput$mean$y_pred
-  rmsep[folds ==i] = (log(curr_pred$earnings) - out_pred)^2
+  rmsep[folds ==i] = (log(curr_pred$earn) - out_pred)^2
 }
-mean(rmsep)
+sqrt(mean(rmsep))
 ```
 
 ## Pros and cons of CV
