@@ -136,13 +136,41 @@ for(i in 1:4) {
 This code is pretty complicated so have a good careful read through and please ask questions if some lines don't make sense. Notice that I am creating an `x_grid` here to produce a neat set of 100 `x` values to create the lines but am then adding back on the mean of the height to match the plots.
 
 ***
-**Exercise 2**  
+**Exercise 2a**  
 
 1. Experiment with the code which produces the 20 posterior samples. Try changing the number of simulations. Why do you think we wouldn't plot 3000 posterior lines? 
 1. Try changing the colours of the posterior sample lines in the above. One possible solution to the above problem is to make them slightly transparent. You can do this by setting the alpha value of the `rgb` function, e.g. `col = rgb(1,0,0,alpha=0.02)`. See if you can create a really nice plot
 1. For the model which creates confidence intervals. See if you can add in the 25th and 75th percentile lines in addition to the above.
 
 ***
+
+## Checking residual assumptions
+
+We should also check the residuals of these models. Again we can do this directly from the JAGS output. Let's start by creating the residuals for the mean values of the parameters:
+```{r}
+par_means = jags_run$BUGSoutput$mean
+fits = par_means$alpha[dat$eth] + par_means$beta[dat$eth] * (dat$height_cm - mean(dat$height_cm))
+res = log(dat$earn) - fits 
+```
+
+Now let's create a histogram and a qq-plot of the mean residuals:
+```{r}
+par(mfrow=c(1,2))
+hist(res, breaks = 30)
+qqnorm(res)
+qqline(res)
+```
+
+These look perhaps a little bit skewed at the low end. 
+
+***
+**Exercise 2b**  
+
+1. Another common plot is that of the residuals vs the fitted values. Creat a nice plot of this too. Interpret the plot.
+1. Go back and re-fit the model to the raw earnings data (rather than log earnings - make sure to check your priors). Do they residual plots improve?
+
+***
+
 
 ## Fitting Hierarchical GLMs
 

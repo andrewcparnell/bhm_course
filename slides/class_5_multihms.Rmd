@@ -252,9 +252,9 @@ pD = round(jags_run$BUGSoutput$pD,2)
 
 ## Improving the model
 
-\tiny
 - Now suppose we fit a model with a random intercept for ethnicity
-```{r, include = FALSE}
+\tiny
+```{r}
 jags_code = '
 model{
   # Likelihood
@@ -273,14 +273,19 @@ model{
   sigma ~ dt(0,10,1)T(0,)
 }
 '
+```
+
+## Improving the model 2
+
+```{r}
 jags_run = jags(data = list(N = nrow(dat), 
                             N_eth = length(unique(dat$eth)),
                             log_earn = log(dat$earn),
                             height = dat$height_cm,
                             eth = dat$eth),
-                parameters.to.save = c('alpha',
+                parameters.to.save = c('alpha_eth',
                                        'beta_height',
-                                       'beta_eth',
+                                       'mu_eth',
                                        'sigma'),
                 model.file = textConnection(jags_code))
 ```
@@ -292,8 +297,8 @@ print(jags_run)
 
 ```{r, include = FALSE}
 jags_summ = jags_run$BUGSoutput$summary
-low = signif(exp(jags_summ['alpha','2.5%']),2)
-high = signif(exp(jags_summ['alpha','97.5%']),2)
+low = signif(exp(jags_summ['mu_eth','2.5%']),2)
+high = signif(exp(jags_summ['mu_eth','97.5%']),2)
 DIC = round(jags_run$BUGSoutput$DIC,2)
 pD = round(jags_run$BUGSoutput$pD,2)
 ```
@@ -306,7 +311,7 @@ pD = round(jags_run$BUGSoutput$pD,2)
 ## Now an interaction model
 
 \tiny
-```{r, include = FALSE}
+```{r}
 jags_code = '
 model{
   # Likelihood
@@ -327,14 +332,20 @@ model{
   sigma ~ dt(0,10,1)T(0,)
 }
 '
+```
+
+## Interaction model results
+
+```{r, include = FALSE}
 jags_run = jags(data = list(N = nrow(dat), 
                             N_eth = length(unique(dat$eth)),
                             log_earn = log(dat$earn),
                             height = dat$height_cm,
                             eth = dat$eth),
-                parameters.to.save = c('alpha',
+                parameters.to.save = c('alpha_eth',
                                        'beta_height',
                                        'beta_eth',
+                                       'mu_eth',
                                        'mu_beta_height',
                                        'sigma_height',
                                        'sigma'),
@@ -348,8 +359,8 @@ print(jags_run)
 
 ```{r, include = FALSE}
 jags_summ = jags_run$BUGSoutput$summary
-low = signif(exp(jags_summ['alpha','2.5%']),2)
-high = signif(exp(jags_summ['alpha','97.5%']),2)
+low = signif(exp(jags_summ['mu_eth','2.5%']),2)
+high = signif(exp(jags_summ['mu_eth','97.5%']),2)
 DIC = round(jags_run$BUGSoutput$DIC,2)
 pD = round(jags_run$BUGSoutput$pD,2)
 ```
@@ -365,22 +376,20 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    log_earn[i] ~ dnorm(alpha + 
-                    beta_eth[eth[i]] + 
+    log_earn[i] ~ dnorm(alpha_eth[eth[i]] + 
                     beta_height[eth[i]]*(height[i] - mean(height)), 
                     sigma^-2)
-    log_earn_pred[i] ~ dnorm(alpha + 
-                    beta_eth[eth[i]] + 
+    log_earn_pred[i] ~ dnorm(alpha_eth[eth[i]] + 
                     beta_height[eth[i]]*(height[i] - mean(height)), 
                     sigma^-2)
   }
   # Priors
   for(j in 1:N_eth) {
-    beta_eth[j] ~ dnorm(0, sigma_eth^-2)
+    alpha_eth[j] ~ dnorm(mu_eth, sigma_eth^-2)
     beta_height[j] ~ dnorm(mu_beta_height, sigma_height^-2)
   }
   mu_beta_height ~ dnorm(0, 20^-2)
-  alpha ~ dnorm(0, 20^-2)
+  mu_eth ~ dnorm(0, 20^-2)
   sigma_eth ~ dt(0,10,1)T(0,)
   sigma_height ~ dt(0,10,1)T(0,)
   sigma ~ dt(0,10,1)T(0,)
