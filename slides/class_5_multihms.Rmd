@@ -259,17 +259,16 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    log_earn[i] ~ dnorm(alpha + 
-                    beta_eth[eth[i]] + 
+    log_earn[i] ~ dnorm(alpha_eth[eth[i]] + 
                     beta_height*(height[i] - mean(height)), 
                     sigma^-2)
   }
   # Priors
   for(j in 1:N_eth) {
-    beta_eth[j] ~ dnorm(0, sigma_eth^-2)
+    alpha_eth[j] ~ dnorm(mu_eth, sigma_eth^-2)
   }
   beta_height ~ dnorm(0, 20^-2)
-  alpha ~ dnorm(0, 20^-2)
+  mu_eth ~ dnorm(0, 20^-2)
   sigma_eth ~ dt(0,10,1)T(0,)
   sigma ~ dt(0,10,1)T(0,)
 }
@@ -312,18 +311,17 @@ jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    log_earn[i] ~ dnorm(alpha + 
-                    beta_eth[eth[i]] + 
+    log_earn[i] ~ dnorm(alpha_eth[eth[i]] + 
                     beta_height[eth[i]]*(height[i] - mean(height)), 
                     sigma^-2)
   }
   # Priors
   for(j in 1:N_eth) {
-    beta_eth[j] ~ dnorm(0, sigma_eth^-2)
+    alpha_eth[j] ~ dnorm(mu_eth, sigma_eth^-2)
     beta_height[j] ~ dnorm(mu_beta_height, sigma_height^-2)
   }
   mu_beta_height ~ dnorm(0, 20^-2)
-  alpha ~ dnorm(0, 20^-2)
+  mu_eth ~ dnorm(0, 20^-2)
   sigma_eth ~ dt(0,10,1)T(0,)
   sigma_height ~ dt(0,10,1)T(0,)
   sigma ~ dt(0,10,1)T(0,)
@@ -616,7 +614,7 @@ par(mfrow=c(1,1))
 
 ## The simple way of dealing with missing data in JAGS
 
-- In JAGS it is absolutely trivial to to deal with missingness in the response variable. You simple fill in the missing values with `NA`
+- In JAGS it is absolutely trivial to to deal with missingness in the response variable. You simply fill in the missing values with `NA`
 - JAGS then treats them as parameters to be estimated. You can 'watch' them in the normal way or just ignore them. You thus have the option of getting a posterior distribution of the missing data points
 - Suppose we shoved in some NA values into our data
 ```{r}
@@ -624,7 +622,7 @@ dat2 = dat
 dat2$earn[c(177, 763, 771)] = NA
 ```
 
-## Running the model with missing ness
+## Running the model with missingness
 
 \tiny
 ```{r, include = FALSE}

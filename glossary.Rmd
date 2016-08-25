@@ -26,4 +26,9 @@ A glossary of terms for the course _Introduction to Bayesian Hierarchical Modell
 - __Hyper-parameter__: A lower level parameter (i.e. further removed from the data) that depends on no other parameters in a hierarchical model
 - __Rhat__: A measure of how well a parameter has converged to the posterior distribution. Values less than 1.1 are usually considered acceptable. Will only work when for runs with multiple different starting values (multiple chains)
 - __Convergence monitoring__: The means by which a set of parameters is considered to have converged to the true posterior distribution. The convergence is controlled (in JAGS and Stan) by the number of iterations required, the total burn-in period (the number of iterations removed at the start), and the amount of thinning (the number of successive iterations removed). For models which haven't converged, it is common to increase one or more of these values.
+__Mixed effects models__:
+__Marginal distribution__:
+__Conditional distributions__:
+__Conditional independence__:
+__Latent parmameters__:
 
