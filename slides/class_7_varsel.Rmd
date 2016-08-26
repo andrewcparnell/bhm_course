@@ -110,6 +110,7 @@ model {
   y ~ normal(alpha + X * beta, sigma);
   for(j in 1:p) 
     beta[j] ~ normal(0, sigma_b);
+  alpha ~ normal(0, 10);
   sigma_b ~ cauchy(0, 10);
   sigma ~ cauchy(0, 10);
 }
@@ -166,6 +167,7 @@ model {
   y ~ normal(alpha + X * beta, sigma);
   for(j in 1:p) 
     beta[j] ~ double_exponential(0, sigma_b);
+  alpha ~ normal(0, 10);
   sigma_b ~ cauchy(0, 10);
   sigma ~ cauchy(0, 10);
 }
@@ -407,7 +409,7 @@ parameters {
 }
 model {
   y ~ normal(B * beta, sigma);
-  beta ~ normal(0, 10);
+  beta[1] ~ normal(0, 10);
   for(j in 2:p) 
     beta[j] ~ normal(beta[j-1], sigma_b);
   sigma_b ~ cauchy(0, 10);
