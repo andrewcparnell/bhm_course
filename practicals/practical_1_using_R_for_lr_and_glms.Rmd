@@ -2,8 +2,8 @@
 title: 'Day 1: Self-guided practical - Using R for linear regression and GLMs'
 author: "Andrew Parnell"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -25,7 +25,7 @@ Welcome to the first user-guided practical on linear regression and GLMs. In thi
 - Fit a Binomial GLM model
 - Fit a Poisson GLM and compare it to a negative binomial one
 
-There are four sections. You should work your way through the questions and put your hand up if you get stuck. The answer script is also available in the practicals folder but I urge you not to look at it unless as a last resort!
+There are four sections. You should work your way through the questions and put your hand up if you get stuck. There is no answer script so if you're really stumped I can provide you with some sample code.
 
 ***
 
@@ -40,7 +40,7 @@ The `airquality` data set is included with R. You can find a description of the 
 
 Tasks:
 
-1. First create some plots of the variables and make sure you understand the relationship between them. Hint: A good start can be found in the `help(airquality)` file (see the example at the bottom of that page), though that plot isn't very helpful for visualisation of the month and day variables, nor for visualising the shape of individual variables (e.g. using `hist`)
+1. First create some plots of the variables and make sure you understand the relationship between them. Hint: A good start can be found in the `help(airquality)` file (see the example at the bottom of that page).
 
 1. Fit a linear regression model using `lm` with `Ozone` as the response and all the other variables as covariates. Use the `summary` method to interpret your findings. (Note that R here is automatically removing rows with missing variables)
 
@@ -50,7 +50,7 @@ Tasks:
  
 1. Identify the one strange observation and see if you can work out what happened that day
  
-1. You can get the AIC of this model with e.g. `AIC(my_model)`. Try some more models and see if you can get a better fit. Some ideas might include: interactions between terms (e.g. include `+ Wind*Temp`), quadratic functions (e.g. include `+ I(Wind^2)`), and changing month and day to be factor rather than numerical variables. 
+1. You can get the AIC of this model with e.g. `AIC(my_model)`. Recall that lower AIC means a better model. Try some more models and see if you can get a lower AIC value. Some ideas might include: interactions between terms (e.g. include `+ Wind*Temp`), quadratic functions (e.g. include `+ I(Wind^2)`), and changing month and day to be factor rather than numerical variables. 
 
 ## Task set 2: logistic regression
 

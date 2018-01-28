@@ -224,7 +224,7 @@ qnorm(0.9)
 - These are based on testing a null hypothesis that a particular parameter value is (usually) 0
 - (Can anyone remember the proper definition of a $p$-value?)
 - I don't find these very useful but we will see them in lots of the default R output
-- None of the package we will use in this course (`forecast`, JAGS, and Stan) create $p$-values
+- None of the package we will use in this course (e.g. JAGS and Stan) create $p$-values
 
 ## Summary 
 

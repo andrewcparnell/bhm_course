@@ -133,7 +133,7 @@ $(document).ready(function () {
 <li>Fit a Binomial GLM model</li>
 <li>Fit a Poisson GLM and compare it to a negative binomial one</li>
 </ul>
-<p>There are four sections. You should work your way through the questions and put your hand up if you get stuck. The answer script is also available in the practicals folder but I urge you not to look at it unless as a last resort!</p>
+<p>There are four sections. You should work your way through the questions and put your hand up if you get stuck. There is no answer script so if you’re really stumped I can provide you with some sample code.</p>
 <hr />
 <p>You can run the code from these practicals is by loading up the <code>.Rmd</code> (Rmarkdown) file in the same directory in Rstudio. Feel free to add in your own answers, or edit the text to give yourself extra notes. You can also run the code directly by highlighting the relevant code and clicking <code>Run</code>. Much of this material overlaps with the class slides so sometimes if you get stuck you might get a clue by looking at the <code>.Rmd</code> file in the <code>slides</code> folder.</p>
 <p>One final small note: if you are copying R commands from the pdf or html files into your R script or console window sometimes the inverted commas can copy across incorrectly. If you get a weird message saying <code>Error: unexpected input</code> you usually just need to delete/replace the inverted commas.</p>
@@ -143,12 +143,12 @@ $(document).ready(function () {
 <p>The <code>airquality</code> data set is included with R. You can find a description of the data at <code>help(airquality)</code> and can get at it simply by typing <code>airquality</code> at the R command prompt. Let’s suppose we’re interested in predicting the variable <code>Ozone</code> from the other variables</p>
 <p>Tasks:</p>
 <ol style="list-style-type: decimal">
-<li><p>First create some plots of the variables and make sure you understand the relationship between them. Hint: A good start can be found in the <code>help(airquality)</code> file (see the example at the bottom of that page), though that plot isn’t very helpful for visualisation of the month and day variables, nor for visualising the shape of individual variables (e.g. using <code>hist</code>)</p></li>
+<li><p>First create some plots of the variables and make sure you understand the relationship between them. Hint: A good start can be found in the <code>help(airquality)</code> file (see the example at the bottom of that page).</p></li>
 <li><p>Fit a linear regression model using <code>lm</code> with <code>Ozone</code> as the response and all the other variables as covariates. Use the <code>summary</code> method to interpret your findings. (Note that R here is automatically removing rows with missing variables)</p></li>
 <li><p>Have a look at the residuals of the model (e.g. histograms and QQ-plots). Does the model fit well?</p></li>
 <li><p>Try another model but this time using the log of Ozone instead. Does it fit better?</p></li>
 <li><p>Identify the one strange observation and see if you can work out what happened that day</p></li>
-<li><p>You can get the AIC of this model with e.g. <code>AIC(my_model)</code>. Try some more models and see if you can get a better fit. Some ideas might include: interactions between terms (e.g. include <code>+ Wind*Temp</code>), quadratic functions (e.g. include <code>+ I(Wind^2)</code>), and changing month and day to be factor rather than numerical variables.</p></li>
+<li><p>You can get the AIC of this model with e.g. <code>AIC(my_model)</code>. Recall that lower AIC means a better model. Try some more models and see if you can get a lower AIC value. Some ideas might include: interactions between terms (e.g. include <code>+ Wind*Temp</code>), quadratic functions (e.g. include <code>+ I(Wind^2)</code>), and changing month and day to be factor rather than numerical variables.</p></li>
 </ol>
 </div>
 <div id="task-set-2-logistic-regression" class="section level2">

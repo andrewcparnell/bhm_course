@@ -229,7 +229,7 @@ repeat {
 # Plots -------------------------------------------------------------------
 ############################################################################################################
 # 5.1 Use the prostate data
-prostate = read.table('http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/prostate.data', header = TRUE)
+prostate = read.table('https://web.stanford.edu/~hastie/ElemStatLearn/datasets/prostate.data', header = TRUE)
 
 # Look at the top of the data:
 head(prostate)
@@ -388,14 +388,14 @@ plot(model_3)
 # read/write.csv, read.table, load, save, scan, saving plots with e.g. pdf
 ############################################################################################################
 # 7.1 Most useful function is probably read.csv
-prostate = read.csv('http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/prostate.csv')
+prostate = read.csv('https://github.com/andrewcparnell/bhm_course/blob/master/data/prostate.csv')
 
 # More general version is read.table
-prostate = read.table('http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/prostate.data')
+prostate = read.table('https://web.stanford.edu/~hastie/ElemStatLearn/datasets/prostate.data')
 # Useful options: header, sep, stringsAsFactors, skip, nrows
 
 # Load in the first 50 rows but skip the first 10
-prostate2 = read.table('http://statweb.stanford.edu/~tibs/ElemStatLearn/datasets/prostate.data',
+prostate2 = read.table('https://web.stanford.edu/~hastie/ElemStatLearn/datasets/prostate.data',
                        nrows = 50,
                        skip = 10)
 str(prostate2)
@@ -406,6 +406,10 @@ save(prostate, file = 'path/to/my_prostate_file.rda')
 
 # 7.3 Load it back in
 load('path/to/my_prostate_file.rda')
+
+# New: recommended way of saving objects
+saveRDS(prostate, file = 'my_prostate_file.rds')
+prostate = readRDS(file = 'my_prostate_file.rds')
 
 # 7.4 To save plots, use e.g. the pdf or jpeg function, and follow with dev.off()
 pdf(file = 'my_plot.pdf', width = 8, height = 6)
