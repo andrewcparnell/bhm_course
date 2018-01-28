@@ -20,7 +20,7 @@ Participants should have :
 
 ## Register
 
-To register for the course visit: [prstatistics.com](http://prstatistics.com/course/introduction-to-bayesian-hierarchical-modelling-using-r-ibhm/)
+To register for the course visit: [prstatistics.com](http://prstatistics.com)
 
 ## Start the course
 
