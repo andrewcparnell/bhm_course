@@ -1,0 +1,20 @@
+Bayesian Hierarchical Models - data sets
+
+earnings.csv are the average yearly earnings of a set of individuals. The variables are earnings ($), age group (1 = 18-34, 2 = 35-49, and 3 = 50-64), ethnic group (1 = Blacks, 2 = Hispanics', 3 = Whites , 4 = Others), height (inches), height in cm, x (height in inches again), and a centred version of height in inches. Comes from Gelman and Hill.
+
+fcr.csv is a data set to estimate feed conversion rates in a set of pigs. The variables are: food weight (in kg), weight gain (in kg) and sex
+
+geese_isotopes.csv contains a bivariate time series in irregular time of geese stable isotope values (d15N and d13C) together with some extra covariates: adult (yes=1 or no=0), male (yes = 1), day, month, year, and Julian day (day through year). Comes from the R package SIAR.
+
+horseshoe.csv contains data from a study (Brockman, Ethology, 1996) on nesting horseshoe crabs. The response variable is satell: the number of satellites (other males residing nearby). The covariates are the female crabs colour (color; 1 = light medium, 2 = medium, 3 = dark medium, 4 = dark), spine condition (1 = both good, 2 = one worn or broken, 3 = both worn or broken), widch (cm), and weight (kg) 
+
+pollen.csv is a set of modern pollen counts and their associated climates. The variables are: GDD5 (Growing degree days about 5C), MTCO (Mean temperature of the coldest mont), pollen counts of spices (Abies - Graminaea). 
+
+prostate.csv is a data set on men with prostate cancer. The response variable is the column, lpsa, the log of the prostate specific antigen. The other columns contain explanatory variables. From Hastie et al, Elements of statistical learning.
+
+schools.csv is a very basic example data set containing the performance score and the standard deviation for 8 different schools.
+
+swt.csv contains measurements on whether Swiss Willow Tits were found on three separate visits. The covariates include forest cover and elevation, as well as the amount of effort used that day to find the birds. From Royle and Dorazio
+
+whitefly.csv contains the output of a designed experiment to look at the effect of insecticide on poinsettia plants by measuring the number of whitefly that die at various doses. Six variations of treatments (try) are available - the application of the insecticide via subirrigation following 0, 1, 2, and 4 days respectively without water, a hand watered treatment, and a a control treatment in which no pesticide is applied. The treatments are applied in a randomised complete block design with repeated measures over 12 consecutive weeks. The experimental unit is a trio of poinsettia plants, and 18 such units (54 plants) are randomised to the six treatments in three complete blocks. Clip on cages are attached to each plant, and the response variable is the number of whitefly surviving after two days of exposure to each treatment, with 640 observations available in total (8 data points are lost). From Hall 2000
+

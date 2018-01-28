@@ -1,0 +1,522 @@
+---
+title: 'Class 4: Bayesian Linear and generalised linear models (GLMs)'
+author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
+  \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+output:
+  beamer_presentation:
+    includes:
+      in_header: header.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev = 'pdf')
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
+```
+
+## Learning outcomes
+
+- Understand the basic formulation of a GLM in a Bayesian context
+- Understand the code for a GLM in JAGS/Stan
+- Be able to pick a link function for a given data set
+- Know how to check model assumptions for a GLM
+
+## Revision: linear models
+
+- The simplest version of a linear regression model has:
+
+    - A _response variable_ ($y$) which is what we are trying to predict/understand
+    - An _explanatory variable_ or _covariate_ ($x$) which is what we are trying to predict the response variable from
+    - Some _residual uncertainty_ ($\epsilon$) which is the leftover uncertainty that is not accounted for by the explanatory variable
+  
+- Our goal is to predict the response variable from the explanatory variable, _or_ to try and discover if the explanatory variable _causes_ some kind of change in the response 
+
+## The linear models in maths
+
+- We write the linear model as:
+$$y_i = \alpha + \beta x_i + \epsilon_i$$
+where $\alpha$ is the intercept, $\beta$ the slope, and $i=1, \ldots, N$ represents each of the $N$ observations
+
+- Usually we make the additional assumption that $\epsilon_i \sim N(0, \sigma^2)$ where $\sigma^2$ is the residual standard deviation
+
+- Under this assumption it is common to write $y_i|x_i, \alpha, \beta, \sigma \sim N(\alpha + \beta x_i, \sigma^2)$. 
+
+## The data generating process for a standard LM
+
+If we believe that a linear model is appropriate for our data, there are several ways we could generate data from the model. Here is one way:
+```{r}
+N = 10
+x = 1:N
+y = rnorm(N, mean = -2 + 0.4 * x, sd = 1)
+```
+
+Here is another:
+```{r}
+eps = rnorm(N, mean = 0, sd = 1)
+y = -2 + 0.4 * x + eps
+```
+
+## The data generating process for a logistic regression
+
+\scriptsize
+- What if the response variable was binary? Clearly the previous code will not produce binary values
+- Instead we could simulate from the binomial distribution:
+```{r, warning=FALSE}
+y = rbinom(N, size = 1, prob = -2 + 0.4 * x)
+```
+... but this will produce `NA`s as the `prob` argument needs to be between 0 and 1. We need to transform the values involving the covariate
+
+- A popular way is to use the inverse logit function. Look!
+```{r}
+-2 + 0.4 * x
+exp(-2 + 0.4 * x)/(1 + exp(-2 + 0.4 * x))
+```
+- In fact you can take any number $a$ from $-\infty$ to $\infty$ and create $\exp(a)/(1+\exp(a))$ and it will always lie between 0 and 1
+
+## Generating binomial data
+
+- Thus a way to generate binary data which allows for covariates is:
+```{r}
+library(boot)
+p = inv.logit(-2 + 0.4 * x)
+y = rbinom(N, size = 1, prob = p)
+y
+```
+
+- The logit function itself is $\log \left( \frac{p}{1-p} \right)$ and will turn the probabilities form the range (0,1) to the range $(-\infty,\infty)$
+- Using this type of model is known as _logistic-Binomial_ regression and the logit is known as the _link function_
+
+## Generating other types of data
+
+- Once we have discovered link functions, we can use them to generate other types of data, e.g. Poisson data via the log link:
+```{r}
+lambda = exp(-2 + 0.4 * x)
+y = rpois(N, lambda)
+y
+```
+
+- The rate ($\lambda$) of the Poisson distribution has to be positive, so taking the log of it changes its range to $(-\infty,\infty)$ as before. The inverse-link ($\exp$) turns the unrestricted ranges into something that must be positive
+
+## From LM to GLM
+
+- In general, a _generalised linear model_ (GLM) can be written out as:
+$$y \sim Distribution(f(\theta, x))$$
+where $Distribution$ is some probability distribution, $\theta$ are some parameters, and $f$ is a link function that transforms the parameters into a range so that we can incorporate $x$ in an unrestricted way
+
+- The above allows us to simulate from the model, given some parameters $\theta$ and some covariates $x$ we can use the probability distribution to get simulated data
+- It also allows us to calculate the _likelihood_ as we can get a score for how likely it is to see the data we have observed given some values of the parameters
+
+## Multiple covariates
+
+- We can extend LMs and GLMs to have multiple covariates if we want, e.g.
+```{r, eval=FALSE}
+y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x2, sd = 1)
+p = inv.logit(-2 + 0.4 * x1 - 0.3 * x2)
+y = rbinom(N, size = 1, prob = p)
+```
+
+- Alternatively we can incorporate multiplicative interactions...
+```{r, eval=FALSE}
+y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x2 + 
+            0.05 * x1 * x2, sd = 1)
+```
+
+- ... or non-linear effects
+```{r, eval=FALSE}
+p = inv.logit(-2 + 0.4 * x1 - 0.3 * x2 - 0.02 * x1^2)
+y = rbinom(N, size = 1, prob = p)
+```
+
+## Directed Acyclic Graphs
+
+- Once we have decided on a model, it is often a good idea to draw a picture of it to make it clear how it works
+- In Bayesian statistics, this is commonly done using a Directed Acyclic Graph or DAG which tells us how to simulate from the model. Circles indicate parameters, squares data, and the dotted lines indicate loops
+- Here is a DAG for the logistic regression model with two covariates:
+
+\begin{center}
+\includegraphics[width=4cm]{DAG.pdf}
+\end{center}
+
+## Example: earnings data
+
+- Going back to the earnings data, suppose we want to fit a model to predict log earnings based on sex and whether respondent is white (`eth==3`) or not
+- The model is:
+$$\log(\mbox{earnings}) \sim N(\alpha + \beta_1 \mbox{height} + \beta_2 \mbox{white}, \sigma^2)$$
+- We want to get the posterior distribution of $\alpha, \beta_1, \beta_2$ and $\sigma$ given the data
+- What prior distributions could we set on these parameters?
+
+## Fitting linear regression models in JAGS
+
+Model code:
+\tiny
+```{r, message=FALSE, results='hide'}
+library(R2jags)
+dat = read.csv('../data/earnings.csv') # Called dat
+jags_code = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dnorm(alpha + beta1*x1[i] + beta2*x2[i], sigma^-2)
+  }
+  # Priors
+  alpha ~ dnorm(0, 20^-2)
+  beta1 ~ dnorm(0, 1^-2)
+  beta2 ~ dnorm(0, 10^-2)
+  sigma ~ dunif(0, 10)
+}
+'
+jags_run = jags(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x1 = dat$height_cm,
+                            x2 = as.integer(dat$eth ==3)),
+                parameters.to.save = c('alpha',
+                                       'beta1',
+                                       'beta2',
+                                       'sigma'),
+                model.file = textConnection(jags_code))
+```
+
+## Output
+
+\tiny
+```{r}
+print(jags_run)
+```
+
+## What do the results actually mean?
+
+- We now have access to the posterior distribution of the parameters:
+
+```{r}
+post = jags_run$BUGSoutput$sims.matrix
+head(post)
+```
+
+## Plots of output
+
+```{r, eval=FALSE}
+alpha_mean = mean(post[,'alpha'])
+beta1_mean = mean(post[,'beta1'])
+beta2_mean = mean(post[,'beta2'])
+plot(dat$height_cm, log(dat$earn))
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm)
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm, col = 'red')
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm + beta2_mean, 
+      col = 'blue')
+```
+
+## Plots
+
+```{r, echo = FALSE}
+alpha_mean = mean(post[,'alpha'])
+beta1_mean = mean(post[,'beta1'])
+beta2_mean = mean(post[,'beta2'])
+plot(dat$height_cm, log(dat$earn))
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm, col = 'red')
+lines(dat$height_cm, alpha_mean + 
+        beta1_mean * dat$height_cm + beta2_mean, 
+      col = 'blue')
+```
+
+## Stan code
+
+```{r}
+stan_code = '
+data {
+  int<lower=0> N;
+  vector[N] y;
+  vector[N] x1;
+  vector[N] x2;
+}
+parameters {
+  real alpha;
+  real beta1;
+  real beta2;
+  real<lower=0> sigma;
+}
+model {
+  y ~ normal(alpha + x1 * beta1  + x2 * beta2, sigma);
+}
+'
+```
+
+## Running the Stan version
+
+```{r, fig.height = 5, message=FALSE, results='hide'}
+library(rstan)
+stan_run = stan(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x1 = dat$height_cm, 
+                            x2 = as.integer(dat$eth==3)),
+                model_code = stan_code)
+```
+
+## Stan output
+
+```{r, message=FALSE}
+plot(stan_run)
+```
+
+## To standardise or not?
+
+- Most regression models work better if the covariates are standardised (subtract the mean and divide by the standard deviation) before you run the model
+- Stan seems to struggle with regression models where the data are not standardised
+- The advantage of standardising is that you get more numerically stable results (this is true of `R`'s `lm` function too), and that you can directly compare between the different slopes
+- The disadvantage is that the slope values are no longer in the original units (e.g. cm)
+
+## What are JAGS and Stan doing in the background?
+
+- JAGS and Stan run a stochastic algorithm called Markov chain Monte Carlo to create the samples from the posterior distribution
+- This involves:
+
+    1. Guessing at _initial values_ of the parameters. Scoring these against the likelihood and the prior to see how well they match the data
+    1. Then iterating:
+        1. Guessing _new parameter values_ which may or may not be similar to the previous values
+        1. Seeing whether the new values match the data and the prior by calculating _new scores_
+        1. If the scores for the new parameters are higher, keep them. If they are lower, keep them with some probability depending on how close the scores are, otherwise discard them and keep the old values
+        
+- What you end up with is a set of parameter values for however many iterations you chose. 
+
+## How many iterations?
+
+- Ideally you want a set of posterior parameter samples that are independent across iterations and is of sufficient size that you can get decent estimates of uncertainty
+- There are three key parts of the algorithm that affect how good the posterior samples are:
+
+    1. The starting values you chose. If you chose bad starting values, you might need to discard the first few thousand iterations. This is known as the _burn-in_ period
+    1. The way you choose your new parameter values. If they are too close to the previous values the MCMC might move too slowly so you might need to _thin_ the samples out by taking e.g. every 5th or 10th iteration
+    1. The total number of iterations you choose. Ideally you would take millions but this will make the run time slower
+    
+JAGS and Stan have good default choices for these but for complex models you often need to intervene
+
+## Plotting the iterations
+
+You can plot the iterations for all the parameters with `traceplot`, or for just one with  e.g. 
+```{r, fig.width = 8, fig.height = 3.5}
+plot(post[,'alpha'], type = 'l')
+```
+
+A good trace plot will show no patterns or runs, and will look like it has a stationary mean and variance
+
+## How many chains?
+
+- Beyond increasing the number of iterations, thinning, and removing a burn-in period, JAGS and Stan automatically run _multiple chains_
+- This means that they start the algorithm from 3 or 4 different sets of starting values and see if each _chain_ converges to the same posterior distribution
+- If the MCMC algorithm has converged then each chain should have the same mean and variance.
+- Both JAGS and Stan report the `Rhat` value, which is close to 1 when all the chains match
+- It's about the simplest and quickest way to check convergence. If you get `Rhat` values above 1.1, run your MCMC for more iterations
+
+## What else can I do with the output
+
+- We could create _credible intervals_ (Bayesian confidence intervals):
+
+\tiny
+```{r}
+apply(post,2, quantile, probs = c(0.025, 0.975))
+```
+
+\normalsize
+- Or histograms 
+
+\tiny
+```{r, fig.height = 3}
+hist(post[,'beta2'], breaks = 30)
+```
+
+## Checking model fit
+
+- How do we know if this model fits the data well or not?
+- One way is to simulate from the posterior distribution of the parameters, and subsequently simulate from the likelihood to see if the these data match the real data we observed
+- This is known as a _posterior predictive check_ 
+
+## Posterior predictive: the long way
+
+ - The long way of doing this is in R after running the model
+ - For each value sampled from the posterior, compute:
+
+```{r, eval = FALSE}
+y_sim = rnorm(nrow(dat), 
+              post[1,'alpha'] + 
+                post[1,'beta1'] * dat$height_cm + 
+                post[1,'beta2'] * as.integer(dat$eth ==3), 
+              sd = post[1, 'sigma'])
+plot(log(dat$earn), y_sim)
+abline(a = 0, b = 1, col = 'red')
+```
+If the model is good, these should form a straight line!
+
+## Posterior predictive plot for one iteration
+
+```{r, echo = FALSE}
+y_sim = rnorm(nrow(dat), 
+              post[1,'alpha'] + 
+                post[1,'beta1'] * dat$height_cm + 
+                post[1,'beta2'] * as.integer(dat$eth ==3), 
+              sd = post[1, 'sigma'])
+plot(log(dat$earn), y_sim)
+abline(a = 0, b = 1, col = 'red')
+```
+
+
+## Easier posterior predictive distributions
+
+- The easier way is to put an extra line in the JAGS code:
+\small
+```{r}
+jags_code = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dnorm(alpha + beta1*x1[i] + beta2*x2[i], 
+                  sigma^-2)
+    y_sim[i] ~ dnorm(alpha + beta1*x1[i] + beta2*x2[i], 
+                      sigma^-2)
+  }
+  # Priors
+  alpha ~ dnorm(0, 20^-2)
+  beta1 ~ dnorm(0, 1^-2)
+  beta2 ~ dnorm(0, 10^-2)
+  sigma ~ dunif(0, 10)
+}
+'
+```
+
+## Posterior predictive outputs
+
+```{r, include = FALSE, results = 'hide', message=FALSE}
+jags_run = jags(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x1 = dat$height_cm,
+                            x2 = as.integer(dat$eth==3)),
+                parameters.to.save = c('y_sim'),
+                model.file = textConnection(jags_code))
+pars = jags_run$BUGSoutput$sims.list$y_sim
+```
+```{r, echo = FALSE}
+plot(log(dat$earn), apply(pars,2,'mean'))
+abline(a=0, b = 1, col = 'red')
+```
+
+## Example: Swiss Willow tit data
+
+Recall the Willow tit data:
+\tiny
+```{r}
+swt = read.csv('../data/swt.csv')
+head(swt)
+```
+\normalsize
+
+## Fitting a Binomial-logistic model
+
+- Suppose we want to fit a Binomial-logistic model to the first binary replicate with forest cover as a covariate
+
+- The model is:
+$$y_i \sim Bin(1, p_i), logit(p_i) = \alpha + \beta x_i$$
+
+- Note that there is no residual standard deviation parameter here. This is because the variance of the binomial distribution depends only on the number of counts (here 1) and the probability, i.e. $Var(y_i) = p_i (1 - p_i)$
+
+## Fitting the model in JAGS
+
+\tiny
+```{r, message = FALSE, results = 'hide'}
+jags_code = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dbin(p[i], 1)
+    logit(p[i]) <- alpha + beta*x[i]
+  }
+  # Priors
+  alpha ~ dnorm(0, 20^-2)
+  beta ~ dnorm(0, 20^-2)
+}
+'
+jags_run = jags(data = list(N = nrow(swt), 
+                            y = swt$rep.1,
+                            x = swt$forest),
+                parameters.to.save = c('alpha',
+                                       'beta'),
+                model.file = textConnection(jags_code))
+```
+\normalsize
+
+## Looking at the output
+
+```{r, echo = FALSE}
+pars = jags_run$BUGSoutput$sims.matrix
+par(mfrow=c(1,2))
+hist(pars[,'alpha'], breaks = 30)
+hist(pars[,'beta'], breaks = 30)
+par(mfrow=c(1,1))
+```
+
+## Plotting the fits
+
+- It's not as easy to plot a fitted line in a Binomial regression model, but we can plot the probabilities:
+\small
+```{r, fig.height = 4}
+plot(swt$forest, swt$rep.1)
+points(swt$forest, 
+      inv.logit(mean(pars[,'alpha']) + 
+                  mean(pars[,'beta'])*swt$forest ),
+      col = 'red')
+```
+
+## Checking model assumptions
+
+- Just like the linear regression example, we can create posterior predictive distributions for the binary data from the binomial distribution
+- However, it isn't as easy to plot as the regression situation as all the true values are 0 and 1. 
+- Instead people often use _classification metrics_ which we do not cover in this course (but can discuss if required)
+
+## Binomial modelling as latent data
+
+- The most common way of using binomial or binary data is using the logit link function
+- An alternative way of fitting binomial data is via a cut-off normal distribution:
+$$y_i = \left\{ \begin{array}{ll} 1 & \mbox{if}\; z_i \ge0 \\ 0 & \mbox{if}\; z_i<0 \end{array} \right.$$
+with
+$$z_i \sim N(\alpha + \beta x_i, 1)$$
+- This is known as probit regression, with $z_i$ a _latent parameter_
+
+## Poisson models
+
+- Here's some JAGS code for a Poisson model:
+```{r}
+jags_code = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dpois(lambda[i])
+    log(lambda[i]) <- alpha + beta*x[i]
+  }
+  # Priors
+  alpha ~ dnorm(0, 20^-2)
+  beta ~ dnorm(0, 20^-2)
+}
+'
+```
+
+## Offsets
+
+- For Poisson data it's quite common for the counts to be dependent on the amount of effort required to collect the data
+- If there is a variable that quantifies this amount of effort it should be included in the model, as it will be directly linked to the size of the counts
+- These variables are often called an _offset_, and are included in the model likelihood via 
+```
+y[i] ~ dpois(offset * lambda[i])
+```
+
+## Further examples of GLM-type data
+
+- Later in the course we will talk about different types of models for count data
+- The Poisson is a bit restrictive, in that the variance and the mean of the counts should be the same, which is rarely satisfied by data
+- We'll extend to over-dispersed and zero-inflated data
+- We'll also discuss multivariate models using e.g. the multinomial distribution 
+
+## Summary
+
+- GLMs are very easy to fit in JAGS/Stan once you get the hang of link functions
+- It takes a bit of care to get the posterior distribution out of the model and to decide what you want to do with that
+- There are lots of different types of GLM so pick the one that matches your data best
+- Don't forget to check model assumptions via e.g. a posterior predictive check. We'll cover more checks later in the course
