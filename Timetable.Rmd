@@ -49,7 +49,7 @@ Time  | Class
 ------------- | ----------------------------------------------------
 9:00-10:30 | [Multivariate and multi-layer hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_7_multihms.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_7_multihms_handout.pdf)
 10:30-11:00 | Coffee break
-11:00-12:30 | [Partial pooling, zero-inflation, and missing data](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_8_pp_zi_multinom.pdf) [(handout)](ttps://rawgit.com/andrewcparnell/bhm_course/master/slides/class_8_pp_zi_multinom_handout.pdf)
+11:00-12:30 | [Partial pooling, zero-inflation, and missing data](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_8_pp_zi_multinom.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_8_pp_zi_multinom_handout.pdf)
 12:30-13:30 | Lunch
 13:30-14:30 | Guided practical: Advanced examples of hierarchical models [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_4_adv_hms.R)
 14:30-15:00 | Coffee break
