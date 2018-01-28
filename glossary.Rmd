@@ -26,10 +26,10 @@ A glossary of terms for the course _Introduction to Bayesian Hierarchical Modell
 - __Hyper-parameter__: A lower level parameter (i.e. further removed from the data) that depends on no other parameters in a hierarchical model
 - __Rhat__: A measure of how well a parameter has converged to the posterior distribution. Values less than 1.1 are usually considered acceptable. Will only work when for runs with multiple different starting values (multiple chains)
 - __Convergence monitoring__: The means by which a set of parameters is considered to have converged to the true posterior distribution. The convergence is controlled (in JAGS and Stan) by the number of iterations required, the total burn-in period (the number of iterations removed at the start), and the amount of thinning (the number of successive iterations removed). For models which haven't converged, it is common to increase one or more of these values.
-__Mixed effects models__: A Frequentist model containing both _fixed effects_ (parameters which do not bottow strength across groups), and _random effects_ (parameters which do borrow strength across groups). In a hierarchical models the aim is always to use the random effects approach.
-__Marginal distribution__: A probability distribution which does not depend on further (usually unknown) parameter values. 
-__Conditional distributions__: A probability distribution that depends on further parameters and/or data.
-__Conditional independence__: A situation that occurs when two parameters are not linked directly in a DAG. 
-__Latent parmameters__: A parameter which is hidden in the data and can be estimated by using a statistical model (such as a hierarchical model)
+- __Mixed effects models__: A Frequentist model containing both _fixed effects_ (parameters which do not bottow strength across groups), and _random effects_ (parameters which do borrow strength across groups). In a hierarchical models the aim is always to use the random effects approach.
+- __Marginal distribution__: A probability distribution which does not depend on further (usually unknown) parameter values. 
+- __Conditional distributions__: A probability distribution that depends on further parameters and/or data.
+- __Conditional independence__: A situation that occurs when two parameters are not linked directly in a DAG. 
+- __Latent parmameters__: A parameter which is hidden in the data and can be estimated by using a statistical model (such as a hierarchical model)
 
 
