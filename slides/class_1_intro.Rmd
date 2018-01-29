@@ -1,7 +1,9 @@
 ---
 title: 'Class 1: An introduction to Bayesian Hierarchical Modelling'
-author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
+author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie}   \newline \vspace{1cm}
   \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+  \newline \vspace{2cm}
+  https://goo.gl/6LpnWY
 output:
   beamer_presentation:
     includes:
@@ -76,7 +78,7 @@ legend('topleft', legend = c('Males', 'Females'),
 
 ## Example 2: 8 Schools
 
-We have 8 schools in a region, with a relative performance score (column `score`) compared to the national average and a standard error (`sigma`) based on 3 repeated visits
+We have 8 schools in a region, with a relative performance score (column `score`) compared to the national average and a standard deviation (`sigma`) based on 3 repeated visits
 
 \tiny
 ```{r, echo = FALSE}
