@@ -1,4 +1,4 @@
-############################################################################################################
+ ############################################################################################################
 # Section 0:
 # First a reminder about RStudio, and getting help with ? and ??, = vs <-, and comments, and setting the working directory
 ############################################################################################################
@@ -46,7 +46,8 @@ x[[2]][1:2]
 x$q[3:4]
 
 # 1.6 Factors
-x = factor(rep(1:3, length = 12), labels = c('low', 'medium', 'high'))
+x = factor(rep(1:3, length = 12),
+           labels = c('low', 'medium', 'high'))
 str(x)
 x + 2 # Gives a warning
 
@@ -119,7 +120,7 @@ pow = function(x, p = 2) {
 pow(2)
 
 # 2.8 Most functions are automatically vectorised
-pow(1:3)
+pow(1:10)
 
 # .. but you need to be a little bit careful
 pow(x = 1:3, p = 1:3) # Works ok
@@ -236,6 +237,7 @@ head(prostate)
 
 # 5.2 A basic scatter plot
 plot(prostate$age, prostate$lcavol)
+with(prostate, plot(age, lcavol))
 
 # Change the axis labels and add a title
 plot(prostate$age, prostate$lcavol,
@@ -255,7 +257,7 @@ plot(prostate[,var_1], prostate[,var_2],
 plot(prostate[,var_1], prostate[,var_2],
      pch = 19)
 plot(prostate[,var_1], prostate[,var_2],
-     type = 'l') # Yuck
+     type = 'b') # Yuck
 ?pch # Look at different point types
 
 # Changing colours
@@ -278,7 +280,7 @@ points(prostate[,var_1], prostate[,var_2], col='red')
 lines(prostate[,var_1], prostate[,var_2], col='green')
 
 # Add a legend
-legend('topleft', legend = c('points', 'lines'),
+legend('topleft', legend = c('males', 'females'),
        pch = c(1, -1),
        lty = c(-1, 1),
        col = c('red', 'green'))
@@ -291,7 +293,9 @@ hist(prostate$lweight, breaks = 30)
 hist(prostate$lweight, breaks = seq(2,5, by = 0.2))
 
 # Better x axis
-hist(prostate$lweight, breaks = seq(2,5, by = 0.2), xaxt = 'n')
+hist(prostate$lweight,
+     breaks = seq(2,5, by = 0.2),
+     xaxt = 'n')
 axis(side = 1, at = seq(2, 5, by = 0.2))
 
 # 5.5 Bar charts (called bar plots)
@@ -364,11 +368,28 @@ points(mtcars$disp, model_2$fitted.values, col='red')
 # R's default plots:
 plot(model_2)
 
+# Adding in extra covariates
+model_3 <- glm(vs ~ disp + mpg,
+               family=binomial,
+               data=mtcars)
+summary(model_3)
+
+# Add in interactions
+model_4a <- glm(vs ~ disp + mpg + disp:mpg,
+                family=binomial,
+                data=mtcars)
+model_4b <- glm(vs ~ disp*mpg,
+                family=binomial,
+                data=mtcars)
+summary(model_4a)
+
 # 6.3 A Poisson glm:
 ?quakes
 head(quakes)
 
-model_3 = glm(stations ~ mag, family=poisson, data=quakes)
+model_3 = glm(stations ~ mag,
+              family = poisson,
+              data=quakes)
 summary(model_3)
 
 # Prediction for number of stations reporting an earthquake of mag 4:
@@ -388,7 +409,8 @@ plot(model_3)
 # read/write.csv, read.table, load, save, scan, saving plots with e.g. pdf
 ############################################################################################################
 # 7.1 Most useful function is probably read.csv
-prostate = read.csv('https://github.com/andrewcparnell/bhm_course/blob/master/data/prostate.csv')
+prostate = read.csv('https://raw.githubusercontent.com/andrewcparnell/bhm_course/master/data/prostate.csv
+')
 
 # More general version is read.table
 prostate = read.table('https://web.stanford.edu/~hastie/ElemStatLearn/datasets/prostate.data')
@@ -435,8 +457,8 @@ install.packages(c('bla', 'bla2'))
 
 # 8.3 apply
 x = matrix(runif(20), ncol = 2, nrow = 10)
-apply(x, 1, 'sum') # rows
-apply(x, 2, 'sum') # columns
+apply(x, 1, sum) # rows
+apply(x, 2, sum) # columns
 
 # Lots of different versions for e.g. lists/dataframe (lapply), tapply (ragged arrays), sapply (simple version of lapply)
 lapply(prostate, 'prod')
@@ -451,7 +473,13 @@ tail(prostate, 2)
 
 # 8.5 aggregate
 aggregate(prostate$lpsa, by = list(prostate$gleason), 'mean')
-aggregate(prostate$lpsa, by = list(prostate$gleason, prostate$age), 'length')
+aggregate(prostate$lpsa,
+          by = list(prostate$gleason, prostate$age),
+          'length')
+
+aggregate(prostate$lpsa,
+          by = list(prostate$gleason),
+          function(x) return(c(mean(x),sd(x))))
 
 # 8.6 Find all the locations where it matches
 good = 6
@@ -491,4 +519,5 @@ cat(result)
 # 8.13 order
 plot(prostate$age, prostate$lcavol, type = 'l') # Messy
 ord = order(prostate$age)
-plot(prostate$age[ord], prostate$lcavol[ord], type = 'l')
+plot(prostate$age[ord], prostate$lcavol[ord],
+     type = 'l')
