@@ -206,7 +206,7 @@ It's a good idea to compare and contrast the code between JAGS and Stan. The key
 6. Stan uses `=` to assign variables, JAGS uses `<-`
 
 Finally we run the model with:
-```{r}
+```{r, results = 'hide', message=FALSE}
 stan_run = stan(data = list(N = nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),
@@ -338,7 +338,7 @@ At this point if you're feeling really brave, you could try and code the above m
 
 If you're not so confident (or you've finished and want to check), here is the code for a Stan Binomial logit model.
 
-```{r}
+```{r, message=FALSE}
 stan_code = '
 data {
   int<lower=0> N;

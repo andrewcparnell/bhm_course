@@ -178,6 +178,16 @@ sum(dnorm(x, mean = 0, sd = 1, log = TRUE))
 - Another way is to use mathematics - we can often maximise the likelihood using calculus. (We are not going to do this)
 - R has a number of very efficient built-in optimisation routines (e.g. `nlminb`) which will find the best values for us
 
+## Maximising the likelihood for linear regression
+
+- In linear regression we can also maximise the likelihood
+- Suppose we have our data in two variables, called `y` (response) and `x` (explanatory)
+- We have 3 parameters now: an intercept, a slope, and a residual standard deviation
+- Code to calculate the log likelihood would be:
+```{r, eval = FALSE}
+sum(dnorm(y, mean = 3 + 2*x, sd = 1, log = TRUE))
+```
+
 
 ## Checking the model 
 
