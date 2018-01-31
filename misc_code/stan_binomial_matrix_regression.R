@@ -55,9 +55,9 @@ y = rbinom(N,1,p)
 plot(x_1,y)
 plot(x_2,y) # Clearly when x is high y tends to be 0
 
-# Jags code ---------------------------------------------------------------
+# Stan code ---------------------------------------------------------------
 
-# Jags code to fit the model to the simulated data
+# Stan code to fit the model to the simulated data
 model_code = '
 data {
   int<lower=0> N; // Number of observations
