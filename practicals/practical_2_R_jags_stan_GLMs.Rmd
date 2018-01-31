@@ -91,6 +91,17 @@ model{
 
 Run the code by calling `jags`:
 ```{r, message=FALSE, results='hide'}
+jags_model = jags.model(file = textConnection(jags_code),
+                        data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x = dat$height_cm))
+jags_run = jags.samples(jags_model,
+                        variable.names = c('intercept',
+                                       'slope',
+                                       'residual_sd'),
+                        n.iter = 2000)
+
+
 jags_run = jags(data = list(N = nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),

@@ -176,7 +176,8 @@ model{
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dpois(exp(log_lambda[i]))
-    log_lambda[i] ~ dnorm(alpha + beta * (x[i] - mean(x)), sigma^-2)
+    log_lambda[i] ~ dnorm(alpha + beta * (x[i] - mean(x)), 
+        sigma^-2)
   }
   alpha ~ dnorm(0, 5^-2)
   beta ~ dnorm(0, 0.1^-2)

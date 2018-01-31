@@ -340,6 +340,7 @@ Note the `^-2` everywhere - JAGS uses precision rather than standard deviation i
 
 ```{r, include = FALSE}
 library(R2jags)
+#library(rjags)
 ```
 
 ```{r, results = 'hide', message=FALSE}

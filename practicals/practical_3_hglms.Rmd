@@ -4,6 +4,7 @@ author: "Andrew Parnell"
 output:
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -82,7 +83,7 @@ jags_run = jags(data = list(N = nrow(dat),
 
 1. Run the above model and use the `print` and `plot` commands on the output. Try to interpret the output as we did in class
 1. Re-run the model but this time without mean centering the data. How does your interpretation change?
-1. Go back to the mean centered model but start changing the prior distributions on `sigma_alpha` and `sigma_beta`. What happens if you force these values to be very small (e.g. `sigma_alpha ~ dunif(0, 0.0001)`) or very large (e.g. `sigma_alpha ~ dunif(9999, 10000)`)?
+1. Go back to the mean centered model but start changing the prior distributions on `sigma_alpha` and `sigma_beta`. What happens if you force these values to be very small (e.g. `sigma_alpha ~ dunif(0, 0.01)`)?
 
 ***
 
@@ -94,8 +95,14 @@ par(mfrow=c(2,2))
 eth_names = c('Blacks','Hispanics','Whites','Others')
 for(i in 1:4) {
   curr_dat = subset(dat, dat$eth == i)
-  plot(curr_dat$height_cm, log(curr_dat$earn), main = eth_names[i], ylab = 'log(earnings)', xlab = 'Height (cm)')
-  lines(dat$height_cm, pars$alpha[i] + pars$beta[i]*(dat$height_cm - mean (dat$height_cm)), col = i)  
+  plot(curr_dat$height_cm, 
+       log(curr_dat$earn), 
+       main = eth_names[i], 
+       ylab = 'log(earnings)', 
+       xlab = 'Height (cm)')
+  lines(dat$height_cm, 
+        pars$alpha[i] + pars$beta[i]*(dat$height_cm - mean(dat$height_cm)), 
+        col = i)  
 }
 ```
 
@@ -106,9 +113,14 @@ pars = jags_run$BUGSoutput$sims.list
 par(mfrow=c(2,2))
 for(i in 1:4) {
   curr_dat = subset(dat, dat$eth == i)
-  plot(curr_dat$height_cm, log(curr_dat$earn), main = eth_names[i], ylab = 'log(earnings)', xlab = 'Height (cm)')
+  plot(curr_dat$height_cm, log(curr_dat$earn), 
+       main = eth_names[i], ylab = 'log(earnings)', 
+       xlab = 'Height (cm)')
   for(j in 1:20) {
-    lines(dat$height_cm, pars$alpha[j,i] + pars$beta[j,i]*(dat$height_cm - mean (dat$height_cm)), col = i)  
+    lines(dat$height_cm, 
+          pars$alpha[j,i] + 
+            pars$beta[j,i]*(dat$height_cm - mean (dat$height_cm)), 
+          col = i)  
   }
 }
 ```

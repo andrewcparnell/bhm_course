@@ -24,11 +24,13 @@ Install the following using the corresponding links
 
 Now install the following packages by going into Rstudio (or R) by typing:
 ```{r,eval=FALSE}
-install.packages(c('rjags','rmutil','boot'))
+install.packages(c('rjags','R2jags','rmutil','boot'))
 install.packages('rstan', dependencies = TRUE)
 ```
 
 Note: this might take a while as these are pretty big and complicated packages.
+
+Once you have installed these I would recommend checking the [rstan installation guide](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) to check everything is working
 
 ### Troubleshooting
 
