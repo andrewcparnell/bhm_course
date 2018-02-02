@@ -147,7 +147,7 @@ $$\log(\lambda_i) \sim N(\beta_{\mbox{trt}_i}, \sigma^2) $$
 
 - Instead there are a specific class of models called _zero-inflation_ models which use a specific probability distribution. The zero-inflated Poisson (ZIP) with ZI parameter $q_0$ is written as:
 
-$$p(y|\lambda) = \left\{ \begin{array}{ll} q_0 + (1-q_0) \times Poisson(0, \lambda) & \mbox{if } y=0 \\ (1-q_0) \times Poisson(y, \lambda) & \mbox{if } y=0 \end{array} \right.$$
+$$p(y|\lambda) = \left\{ \begin{array}{ll} q_0 + (1-q_0) \times Poisson(0, \lambda) & \mbox{if } y=0 \\ (1-q_0) \times Poisson(y, \lambda) & \mbox{if } y\ne 0 \end{array} \right.$$
 
 ## Fitting models with custom probability distributions
 
@@ -373,7 +373,7 @@ $$y_i \sim Mult(N_i, p_i)$$
 $$p_{ik} = \frac{ \exp(\theta_{ik})}{ \sum_{j=1}^K \exp(\theta_{ij})}$$
 - This is a generalisation of the logit function
 - The next layer of our model sets, e.g.:
-$$\theta_{ik} = \alpha_k + \beta_k \mbox{GDD5} + \gamma_k \mbox{MTCO}$$
+$$\theta_{ik} = \alpha_k + \beta_k \mbox{GDD5}_i + \gamma_k \mbox{MTCO}_i$$
 
 ## Stan code part 1
 

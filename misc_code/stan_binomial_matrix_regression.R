@@ -78,7 +78,7 @@ stan_run = stan(data = list(N = N,
                             K = 3,
                             y = y,
                             x = cbind(1, x_1, x_2)),
-                model_code= model_code)
+                model_code = model_code)
 
 # Simulated results -------------------------------------------------------
 
