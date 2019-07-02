@@ -24,4 +24,4 @@ To register for the course visit: [prstatistics.com](http://prstatistics.com)
 
 ## Start the course
 
-You can start browsing the course by visiting the [timetable](https://rawgit.com/andrewcparnell/bhm_course/master/Timetable.html)
+You can start browsing the course by visiting the [timetable](https://andrewcparnell.github.io/bhm_course/index.html)
