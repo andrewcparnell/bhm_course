@@ -1,9 +1,9 @@
 ---
 title: 'Class 1: An introduction to Bayesian Hierarchical Modelling'
-author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie}   \newline \vspace{1cm}
-  \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
   \newline \vspace{2cm}
-  https://goo.gl/6LpnWY
+  https://andrewcparnell.github.io/bhm_course
 output:
   beamer_presentation:
     includes:

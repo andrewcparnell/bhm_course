@@ -1,66 +1,65 @@
 ---
 title: "Introduction to Bayesian hierarchical modelling using R: course timetable"
 author: "Andrew Parnell"
-date: "January 2018"
+date: "July 2019"
 output: html_document
 ---
 
-Module pre-requisites can be found [here](https://rawgit.com/andrewcparnell/bhm_course/master/Prerequisites.html). All the raw files and code can be found [here](https://github.com/andrewcparnell/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). All links below are in pdf format for you to annotate. A glossary of technical terms is [here](https://rawgit.com/andrewcparnell/bhm_course/master/glossary.html).
+Module pre-requisites can be found [here](https://andrewcparnell.github.io/bhm_course/Prerequisites.html). All the raw files and code can be found [here](https://github.com/andrewcparnell/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). All links below are in pdf format for you to annotate. A glossary of technical terms is [here](https://andrewcparnell.github.io/bhm_course/glossary.html).
 
 ## Day 1: Basic concepts
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:30 | [Introduction to Bayesian hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_1_intro.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_1_intro_handout.pdf)
-10:30-11:00 | Coffee break
-11:00-12:30 | [Likelihood and inference](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_2_inference.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_2_inference_handout.pdf)
-12:30-13:45 | Lunch
-13:45-14:30 | Guided practical: Loading data in R and running simple analysis [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_1_R_basics.R)
-14:30-15:00 | Coffee break
-15:00-17:00 | Self-guided practical [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_1_using_R_for_lr_and_glms.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_1_using_R_for_lr_and_glms.pdf)
+9:30-10:30 | [Introduction to Bayesian hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_1_intro.pdf)
+10:30-10:45 | Coffee break
+10:45-11:45 | [Likelihood and inference](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_2_inference.pdf)
+11:45-12:00 | Coffee Break 
+12:00-12:45 | Guided practical: Loading data in R and running simple analysis [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_1_R_basics.R)
+12:45-14:00 | Lunch
+14:00-17:00 | Self-guided practical (including coffee breaks) [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_1_using_R_for_lr_and_glms.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_1_using_R_for_lr_and_glms.pdf)
 
 ## Day 2: Bayesian Statistical modelling
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:30 | [Introduction to Bayesian Statistics](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_3_intro_bayes.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_3_intro_bayes_handout.pdf)
-10:30-11:00 | Coffee break
-11:00-12:30 | [Bayesian linear and generalised linear models (GLMs)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_4_bglms.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_4_bglms_handout.pdf)
-12:30-14:00 | Lunch
-14:00-14:30 | Guided practical: Using R, Jags and Stan for fitting GLMs [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_2_R_jags_stan.R)
-14:30-15:00 | Coffee break
-15:00-17:00 | Self-guided practical [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_2_R_jags_stan_GLMs.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_2_R_jags_stan_GLMs.pdf)
+9:30-10:30 | [Introduction to Bayesian Statistics](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_3_intro_bayes.pdf) 
+10:30-10:45 | Coffee break
+10:45-11:45 | [Bayesian linear and generalised linear models (GLMs)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_4_bglms.pdf) 
+11:45-12:00 | Coffee break
+12:00-12:45 | Guided practical: Using R, Jags and Stan for fitting GLMs [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_2_R_jags_stan.R)
+12:45-14:00 | Lunch
+14:00-17:00 | Self-guided practical [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_2_R_jags_stan_GLMs.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_2_R_jags_stan_GLMs.pdf)
 
 ## Day 3: Hierarchical modelling
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:30 | [Simple hierarchical regression models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_5_hlms.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_5_hlms_handout.pdf)
-10:30-11:00 | Coffee break
-11:00-12:30 | [Hierarchical generalised linear models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_6_hglms.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_6_hglms_handout.pdf)
-12:30-14:00 | Lunch
-14:00-14:30 | Guided practical: Fitting hierarchical models [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_3_fit_hm.R)
-14:30-16:00 | Self-guided practical [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_3_hglms.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_3_hglms.pdf)
-16:00 - | Class trip
+9:30-10:30 | [Simple hierarchical regression models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_5_hlms.pdf) 
+10:30-10:45 | Coffee break
+10:45-11:45 | [Hierarchical generalised linear models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_6_hglms.pdf) 
+11:45-12:45 | Guided practical: Fitting hierarchical models [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_3_fit_hm.R)
+12:45-14:00 | Lunch
+14:00-17:00 | Self-guided practical [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_3_hglms.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_3_hglms.pdf)
 
 ## Day 4: Advanced hierarchical models
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:30 | [Multivariate and multi-layer hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_7_multihms.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_7_multihms_handout.pdf)
-10:30-11:00 | Coffee break
-11:00-12:30 | [Partial pooling, zero-inflation, and missing data](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_8_pp_zi_multinom.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_8_pp_zi_multinom_handout.pdf)
-12:30-14:00 | Lunch
-14:00-14:30 | Guided practical: Advanced examples of hierarchical models [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_4_adv_hms.R)
-14:30-15:00 | Coffee break
-15:00-17:00 | Self-guided practical [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_4_advanced_hglms.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_4_advanced_hglms.pdf)
+9:30-10:30 | [Multivariate and multi-layer hierarchical models](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_7_multihms.pdf) 
+10:30-10:45 | Coffee break
+10:45-11:45 | [Partial pooling, zero-inflation, and missing data](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_8_pp_zi_multinom.pdf) 
+11:45-12:00 | Coffee break
+12:00-12:45 | Guided practical: Advanced examples of hierarchical models [(R code)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/tutor_4_adv_hms.R)
+12:45-14:00 | Lunch
+14:00-17:00 | Self-guided practical [(html)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_4_advanced_hglms.html) [(pdf)](https://rawgit.com/andrewcparnell/bhm_course/master/practicals/practical_4_advanced_hglms.pdf)
 
 ## Day 5: Hierarchical models as tools
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:00-10:30 | [Variable selection and non-parametrics](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_9_varsel.pdf) [(handout)](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_9_varsel_handout.pdf)
-10:30-11:00 | Coffee break
-11:00-12:30 | Bring your data session part 1
-12:30-14:00 | Lunch
+9:30-10:30 | [Variable selection and non-parametrics](https://rawgit.com/andrewcparnell/bhm_course/master/slides/class_9_varsel.pdf) 
+10:30-10:45 | Coffee break
+10:45-12:45 | Bring your data session part 1
+12:45-14:00 | Lunch
 14:00-17:00 | Bring your data session part 2

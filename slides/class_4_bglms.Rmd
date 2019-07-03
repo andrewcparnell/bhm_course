@@ -1,7 +1,7 @@
 ---
 title: 'Class 4: Bayesian Linear and generalised linear models (GLMs)'
-author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
-  \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
 output:
   beamer_presentation:
     includes:
@@ -55,59 +55,9 @@ eps = rnorm(N, mean = 0, sd = 1)
 y = -2 + 0.4 * x + eps
 ```
 
-## The data generating process for a logistic regression
-
-\scriptsize
-- What if the response variable was binary? Clearly the previous code will not produce binary values
-- Instead we could simulate from the binomial distribution:
-```{r, warning=FALSE}
-y = rbinom(N, size = 1, prob = -2 + 0.4 * x)
-```
-... but this will produce `NA`s as the `prob` argument needs to be between 0 and 1. We need to transform the values involving the covariate
-
-- A popular way is to use the inverse logit function. Look!
-```{r}
--2 + 0.4 * x
-exp(-2 + 0.4 * x)/(1 + exp(-2 + 0.4 * x))
-```
-- In fact you can take any number $a$ from $-\infty$ to $\infty$ and create $\exp(a)/(1+\exp(a))$ and it will always lie between 0 and 1
-
-## Generating binomial data
-
-- Thus a way to generate binary data which allows for covariates is:
-```{r}
-library(boot)
-p = inv.logit(-2 + 0.4 * x)
-y = rbinom(N, size = 1, prob = p)
-y
-```
-
-- The logit function itself is $\log \left( \frac{p}{1-p} \right)$ and will turn the probabilities form the range (0,1) to the range $(-\infty,\infty)$
-- Using this type of model is known as _logistic-Binomial_ regression and the logit is known as the _link function_
-
-## Generating other types of data
-
-- Once we have discovered link functions, we can use them to generate other types of data, e.g. Poisson data via the log link:
-```{r}
-lambda = exp(-2 + 0.4 * x)
-y = rpois(N, lambda)
-y
-```
-
-- The rate ($\lambda$) of the Poisson distribution has to be positive, so taking the log of it changes its range to $(-\infty,\infty)$ as before. The inverse-link ($\exp$) turns the unrestricted ranges into something that must be positive
-
-## From LM to GLM
-
-- In general, a _generalised linear model_ (GLM) can be written out as:
-$$y \sim Distribution(f(\theta, x))$$
-where $Distribution$ is some probability distribution, $\theta$ are some parameters, and $f$ is a link function that transforms the parameters into a range so that we can incorporate $x$ in an unrestricted way
-
-- The above allows us to simulate from the model, given some parameters $\theta$ and some covariates $x$ we can use the probability distribution to get simulated data
-- It also allows us to calculate the _likelihood_ as we can get a score for how likely it is to see the data we have observed given some values of the parameters
-
 ## Multiple covariates
 
-- We can extend LMs and GLMs to have multiple covariates if we want, e.g.
+- We can extend LMs to have multiple covariates if we want, e.g.
 ```{r, eval=FALSE}
 y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x2, sd = 1)
 p = inv.logit(-2 + 0.4 * x1 - 0.3 * x2)
@@ -122,19 +72,9 @@ y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x2 +
 
 - ... or non-linear effects
 ```{r, eval=FALSE}
-p = inv.logit(-2 + 0.4 * x1 - 0.3 * x2 - 0.02 * x1^2)
-y = rbinom(N, size = 1, prob = p)
+y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x1^2 + 
+            0.05 * x1 * x2, sd = 1)
 ```
-
-## Directed Acyclic Graphs
-
-- Once we have decided on a model, it is often a good idea to draw a picture of it to make it clear how it works
-- In Bayesian statistics, this is commonly done using a Directed Acyclic Graph or DAG which tells us how to simulate from the model. Circles indicate parameters, squares data, and the dotted lines indicate loops
-- Here is a DAG for the logistic regression model with two covariates:
-
-\begin{center}
-\includegraphics[width=4cm]{DAG.pdf}
-\end{center}
 
 ## Example: earnings data
 
@@ -142,7 +82,7 @@ y = rbinom(N, size = 1, prob = p)
 - The model is:
 $$\log(\mbox{earnings}) \sim N(\alpha + \beta_1 \mbox{height} + \beta_2 \mbox{white}, \sigma^2)$$
 - We want to get the posterior distribution of $\alpha, \beta_1, \beta_2$ and $\sigma$ given the data
-- What prior distributions could we set on these parameters?
+- Let's fit this model in JAGS and Stan and look at the results
 
 ## Fitting linear regression models in JAGS
 
@@ -221,7 +161,7 @@ lines(dat$height_cm, alpha_mean +
       col = 'blue')
 ```
 
-## Stan code
+## Fitting in Stan
 
 ```{r}
 stan_code = '
@@ -266,6 +206,60 @@ plot(stan_run)
 - Stan seems to struggle with regression models where the data are not standardised
 - The advantage of standardising is that you get more numerically stable results (this is true of `R`'s `lm` function too), and that you can directly compare between the different slopes
 - The disadvantage is that the slope values are no longer in the original units (e.g. cm)
+
+## From LM to GLM
+
+- In general, a _generalised linear model_ (GLM) can be written out as:
+$$y \sim Distribution(f(\theta, x))$$
+where $Distribution$ is some probability distribution, $\theta$ are some parameters, and $f$ is a link function that transforms the parameters into a range so that we can incorporate $x$ in an unrestricted way
+
+- The above allows us to simulate from the model, given some parameters $\theta$ and some covariates $x$ we can use the probability distribution to get simulated data
+- It also allows us to calculate the _likelihood_ as we can get a score for how likely it is to see the data we have observed given some values of the parameters
+
+
+## The data generating process for a logistic regression
+
+\scriptsize
+- What if the response variable was binary? Clearly the previous code will not produce binary values
+- Instead we could simulate from the binomial distribution:
+```{r, warning=FALSE}
+y = rbinom(N, size = 1, prob = -2 + 0.4 * x)
+```
+... but this will produce `NA`s as the `prob` argument needs to be between 0 and 1. We need to transform the values involving the covariate
+
+- A popular way is to use the inverse logit function. Look!
+```{r}
+-2 + 0.4 * x
+exp(-2 + 0.4 * x)/(1 + exp(-2 + 0.4 * x))
+```
+- In fact you can take any number $a$ from $-\infty$ to $\infty$ and create $\exp(a)/(1+\exp(a))$ and it will always lie between 0 and 1
+
+## Generating binomial data
+
+- Thus a way to generate binary data which allows for covariates is:
+```{r}
+library(boot)
+p = inv.logit(-2 + 0.4 * x)
+y = rbinom(N, size = 1, prob = p)
+y
+```
+
+- The logit function itself is $\log \left( \frac{p}{1-p} \right)$ and will turn the probabilities form the range (0,1) to the range $(-\infty,\infty)$
+- Using this type of model is known as _logistic-Binomial_ regression and the logit is known as the _link function_
+
+## Generating other types of data
+
+- Once we have discovered link functions, we can use them to generate other types of data, e.g. Poisson data via the log link:
+```{r}
+lambda = exp(-2 + 0.4 * x)
+y = rpois(N, lambda)
+y
+```
+
+- The rate ($\lambda$) of the Poisson distribution has to be positive, so taking the log of it changes its range to $(-\infty,\infty)$ as before. The inverse-link ($\exp$) turns the unrestricted ranges into something that must be positive
+
+
+
 
 ## What are JAGS and Stan doing in the background?
 
@@ -358,7 +352,6 @@ y_sim = rnorm(nrow(dat),
 plot(log(dat$earn), y_sim)
 abline(a = 0, b = 1, col = 'red')
 ```
-
 
 ## Easier posterior predictive distributions
 
@@ -470,15 +463,6 @@ points(swt$forest,
 - Just like the linear regression example, we can create posterior predictive distributions for the binary data from the binomial distribution
 - However, it isn't as easy to plot as the regression situation as all the true values are 0 and 1. 
 - Instead people often use _classification metrics_ which we do not cover in this course (but can discuss if required)
-
-## Binomial modelling as latent data
-
-- The most common way of using binomial or binary data is using the logit link function
-- An alternative way of fitting binomial data is via a cut-off normal distribution:
-$$y_i = \left\{ \begin{array}{ll} 1 & \mbox{if}\; z_i \ge0 \\ 0 & \mbox{if}\; z_i<0 \end{array} \right.$$
-with
-$$z_i \sim N(\alpha + \beta x_i, 1)$$
-- This is known as probit regression, with $z_i$ a _latent parameter_
 
 ## Poisson models
 

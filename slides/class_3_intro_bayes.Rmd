@@ -1,11 +1,13 @@
 ---
 title: 'Class 3: An introduction to Bayesian Statistics'
-author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
-  \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
 output:
   beamer_presentation:
     includes:
       in_header: header.tex
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -87,33 +89,29 @@ summary(model)
 
 ## What you will now get instead
 
+\small 
 ```{r, echo=FALSE, results='hide', message=FALSE}
-library(rstan)
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-stan_code = '
-data {
-  int<lower=0> N;
-  vector[N] x;
-  vector[N] y;
-}
-parameters {
-  real intercept;
-  real slope;
-  real<lower=0> residual_sd;
-} 
+library(R2jags)
+model_code ='
 model {
-  y ~ normal(intercept + slope * x, residual_sd);
+  for(i in 1:N) { 
+    y[i] ~ dnorm(intercept + slope*x[i], residual_sd^-2) 
+  }
+  intercept ~ dnorm(0,100^-2)
+  slope ~ dnorm(0,100^-2)
+  residual_sd ~ dunif(0,100)
 }
 '
-stan_run = stan(data = list(N=nrow(dat), 
+model_parameters =  c("intercept", "slope", "residual_sd")
+model_run = jags(data = list(N=nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),
-                model_code = stan_code)
+                 parameters.to.save = model_parameters,
+                 model.file = textConnection(model_code))
 ```
-\tiny
+\small
 ```{r}
-print(stan_run)
+print(model_run)
 ```
 \normalsize 
 
@@ -126,56 +124,47 @@ print(stan_run)
 ## A model with prior information
 
 ```{r, echo=FALSE, results='hide', message=FALSE}
-stan_code_2 = '
-data {
-  int<lower=0> N;
-  vector[N] x;
-  vector[N] y;
-}
-parameters {
-  real intercept;
-  real slope;
-  real<lower=0> residual_sd;
-} model {
-  intercept ~ normal(9, 0.5);
-  y ~ normal(intercept + slope * x, residual_sd);
+library(R2jags)
+model_code ='
+model {
+  for(i in 1:N) { 
+    y[i] ~ dnorm(intercept + slope*x[i], residual_sd^-2) 
+  }
+  intercept ~ dnorm(9,0.5^-2)
+  slope ~ dnorm(0,100^-2)
+  residual_sd ~ dunif(0,100)
 }
 '
-stan_run_2 = stan(data = list(N=nrow(dat), 
+model_parameters =  c("intercept", "slope", "residual_sd")
+model_run_2 = jags(data = list(N=nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),
-                model_code = stan_code_2)
+                 parameters.to.save = model_parameters,
+                 model.file = textConnection(model_code))
+
 ```
-\tiny
+
+\small
 ```{r}
-print(stan_run_2)
+print(model_run_2)
 ```
 \normalsize 
 
 ## An early example of a Bayesian model
 
-- To create the Bayesian version of this model I used the following Stan code:
+- To create the Bayesian version of this model I used the following JAGS code:
 
-\scriptsize
 ```{r, eval = FALSE}
-stan_code = '
-data {
-  int N;
-  vector[N] x;
-  vector[N] y;
-}
-parameters {
-  real intercept;
-  real slope;
-  real<lower=0> residual_sd;
-} 
+model_code ='
 model {
-  // Likelihood
-  y ~ normal(intercept + slope * x, residual_sd);
-  // Priors
-  intercept ~ normal(0, 100);
-  slope ~ normal(0, 100);
-  residual_sd ~ uniform(0, 100);
+  # Likelihood
+  for(i in 1:N) { 
+    y[i] ~ dnorm(intercept + slope*x[i], residual_sd^-2) 
+  }
+  # Priors
+  intercept ~ dnorm(9,0.5^-2)
+  slope ~ dnorm(0,100^-2)
+  residual_sd ~ dunif(0,100)
 }
 '
 ```
@@ -188,14 +177,25 @@ model {
 - The posterior is the probability distribution of the parameters given the data. It is always the target of our inference
 - The two software packages we will explore (Stan and JAGS), create the posterior distribution for us
 
+## How do I specify the prior distribution?
+
+There are several choices when it comes to specifying prior distributions:
+
+- _Informative_, when there is information from a previous study, or other good external source, e.g intercept $\sim N(-30,5^2)$
+- _Vague_, when there is only weak information, perhaps as to the likely range of the parameter e.g. intercept $\sim N(0,100^2)$
+- _Flat_, when there is no information at all about a parameter (very rare). In JAGS, write `intercept ~ dflat()`
+
+In fact, choosing the prior and choosing the likelihood are very similar problems
+
+
 ## Lots of probability distributions
 
 Almost always, the likelihood and prior can be picked from the standard probability distributions:
 
 \tiny
-\begin{tabular}{p{3cm}lp{4cm}}
+\begin{tabular}{p{2cm}lp{4cm}}
 \hline
-Distribution & Range of parameter & Useful for \\
+Distribution & Range of data & Useful for \\
 \hline
 Normal, $N(\mu,\sigma^2)$ & $(-\infty,\infty$) & A good default choice \\
 Uniform, $U(a,b)$ & $(a,b)$ & Vague priors when we only know the range of the parameter \\
@@ -208,48 +208,6 @@ Multivariate Normal, $MVN(\mu,\Sigma)$ & $(-\infty,\infty$) & Multivariate unbou
 
 \normalsize
 The more probability distributions you know the better you will be at Bayes!
-
-
-## An example: linear regression
-
-- Let's suppose we decide that a straight line will be a good fit for our earnings data
-- A straight line has two parameters, the _slope_ and the _intercept_
-- For a full linear regression model, we also have a parameter for the residual standard deviation
-- If we knew these three values we can simulate some data:
-```{r}
-slope = 6
-intercept = 0.03
-res_sd = 1
-log_earn_sim = rnorm(n = nrow(dat), 
-                     mean = intercept + 
-                       slope * dat$height_cm, 
-                     sd =  res_sd)
-```
-
-## Example continued
-
-- If the data we simulated looked exactly like the real data, we might believe that these are plausible values of the parameters
-- We could do this lots of times with slightly different `slope`, `intercept` and `res_sd` values, and collect all the parameter values that are 'close' to the true data values
-- This would provide us with a list of parameter values that approximately _match_ the data
-- To decide how close the match should be we use the normal distribution to give each set of parameter values a _score_. This score is the likelihood
-
-## Simulating from the prior and the likelihood
-
-- But which values should we choose to simulate our parameters from?
-- We could use vague priors
-```{r}
-slope = rnorm(1, mean = 0, sd = 100)
-intercept = rnorm(1, mean = 0, sd = 100)
-res_sd = runif(1, min = 0, max = 100)
-log_earn_sim = rnorm(n = nrow(dat), 
-                     mean = intercept + 
-                       slope * dat$height_cm, 
-                     sd =  res_sd)
-```
-
-... but this would lead to crazily variable simulated data and we would have a very inefficient algorithm
-
-- The computer software we will use avoids this random simulation and instead focusses on the values of the parameters which score highly on the likelihood and the prior
 
 ## Practical differences between frequentist statistics and Bayes
 
@@ -365,8 +323,8 @@ plot(jags_run)
 - Number 1 is impractical once you move beyond a few parameters, so number 2 is used by almost everybody
 - This means that we create _samples_ from the posterior distribution. Here are three samples from the earnings example:
 ```{r,echo=FALSE}
-parameters = data.frame(extract(stan_run))
-head(parameters, 3)
+posterior = model_run$BUGSoutput$sims.matrix
+head(posterior, 3)
 ```
 - We often create thousands of posterior samples to represent the posterior distribution
 
@@ -406,7 +364,7 @@ Some of this we will cover in later classes, but e.g. traditional residual analy
 
 ## The danger of vague priors
 
-- Suppose you use the prior distribution `intercept ~ normal(0, 100)` in Stan because you had very little information about the intercept. Is this a reasonable thing to do? Do you honestly believe that the intercept might be as small as -200 or as big as 200?
+- Suppose you use the prior distribution `intercept ~ dnorm(0, 100^-2)` in JAGS because you had very little information about the intercept. Is this a reasonable thing to do? Do you honestly believe that the intercept might be as small as -200 or as big as 200?
 - If you fit a model and the parameters do not match your views about the data, there must be some information you have not encoded in the prior, go back and change it!
 - In more complex models, you need the prior to constrain some of the parameters so that the model will fit. These are known as _regularisation_ priors
 - Use an _informative prior_ when you can
