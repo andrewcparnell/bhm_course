@@ -34,5 +34,5 @@ Once you have installed these I would recommend checking the [rstan installation
 
 ### Troubleshooting
 
-If you run into any problems please drop me a line at <andrew.parnell@ucd.ie>.
+If you run into any problems please drop me a line at <andrew.parnell@mu.ie>.
 

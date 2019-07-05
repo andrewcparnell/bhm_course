@@ -3,12 +3,9 @@
 # Class 5
 
 ## ----setup, include=FALSE------------------------------------------------
-par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-#setwd("slides")
-
-## ------------------------------------------------------------------------
 N = 100
 x = sort(runif(N, 150, 190))
+
 
 ## ---- fig.height = 4-----------------------------------------------------
 dat = read.csv('../data/earnings.csv')
@@ -19,14 +16,17 @@ y = rnorm(N, alpha + beta * (x - mean(x)), sd = sigma)
 plot(x, y)
 lines(x, alpha + beta * (x - mean(x)), col = 'red')
 
+
 ## ---- message=FALSE, results='hide'--------------------------------------
 library(R2jags)
 jags_code = '
-model {
+model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dnorm(alpha + beta*(x[i] - mean(x)), sigma^-2)
-    y_sim[i] ~ dnorm(alpha + beta*(x[i] - mean(x)), sigma^-2)
+    y[i] ~ dnorm(alpha + beta*(x[i] - mean(x)),
+                  sigma^-2)
+    y_sim[i] ~ dnorm(alpha + beta*(x[i] - mean(x)),
+                      sigma^-2)
   }
   # Priors
   alpha ~ dnorm(11, 2^-2)
@@ -45,6 +45,7 @@ jags_run = jags(data = list(N = nrow(dat),
                                        'y_sim'),
                 model.file = textConnection(jags_code))
 
+
 ## ---- echo = FALSE-------------------------------------------------------
 pars = jags_run$BUGSoutput$sims.list
 par(mfrow=c(1,3))
@@ -59,6 +60,7 @@ curve(dunif(x, 0, 5), 0, 5, xlab = 'sigma', ylab = '', ylim = range(dens$y))
 lines(dens, col='red')
 par(mfrow=c(1,1))
 
+
 ## ---- fig.height=4-------------------------------------------------------
 pred = pars$y_sim
 y_sim_summary = apply(pred, 2, 'quantile',
@@ -68,13 +70,15 @@ plot(log(dat$earn), y_sim_summary[2,],
      ylab = 'Posterior Predicted y value')
 abline(a=0, b=1, col = 'red')
 
+
 ## ------------------------------------------------------------------------
 jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dnorm(alpha[eth[i]] + beta[eth[i]]*(x[i] - mean(x)),
-sigma^-2)
+    y[i] ~ dnorm(alpha[eth[i]] +
+                  beta[eth[i]]*(x[i] - mean(x)),
+                    sigma^-2)
   }
   # Priors
   for(j in 1:N_eth) {
@@ -88,6 +92,7 @@ sigma^-2)
   sigma_beta ~ dunif(0, 2)
 }
 '
+
 
 ## ---- message=FALSE, results='hide'--------------------------------------
 jags_run = jags(data = list(N = nrow(dat),
@@ -104,6 +109,7 @@ jags_run = jags(data = list(N = nrow(dat),
                                        'sigma_beta'),
                 model.file = textConnection(jags_code))
 
+
 ## ---- echo = FALSE-------------------------------------------------------
 pars = jags_run$BUGSoutput$mean
 par(mfrow=c(2,2))
@@ -115,6 +121,7 @@ for(i in 1:4) {
 }
 par(mfrow=c(1,1))
 
+
 ## ---- echo = FALSE-------------------------------------------------------
 par(mfrow=c(2,2))
 pars = jags_run$BUGSoutput$sims.list
@@ -123,14 +130,15 @@ for(i in 1:4) {
 }
 par(mfrow=c(1,1))
 
+
 ## ------------------------------------------------------------------------
 jags_code = '
-model {
+model{
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dnorm(alpha[eth[i]] +
-      beta[eth[i]]*(x[i] - mean(x)),
-      sigma^-2)
+                  beta[eth[i]]*(x[i] - mean(x)),
+                    sigma^-2)
   }
   # Priors
   for(j in 1:N_eth) {
@@ -140,6 +148,7 @@ model {
   sigma ~ dunif(0, 5)
 }
 '
+
 
 ## ---- echo = FALSE, message=FALSE, results = 'hide'----------------------
 jags_run = jags(data = list(N = nrow(dat),
@@ -161,23 +170,27 @@ for(i in 1:4) {
 }
 par(mfrow=c(1,1))
 
+
 ## ------------------------------------------------------------------------
 jags_code = '
-model {
+model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dnorm(alpha + beta*(x[i] - mean(x)),
-      sigma^-2)
+    y[i] ~ dnorm(alpha +
+                  beta*(x[i] - mean(x)),
+                    sigma^-2)
   }
   for(j in 1:N_pred) {
-    y_pred[j] ~ dnorm(alpha + beta*(x_pred[j] - mean(x)),
-      sigma^-2)
+    y_pred[j] ~ dnorm(alpha +
+                        beta*(x_pred[j] - mean(x)),
+                          sigma^-2)
   }
   alpha ~ dnorm(11, 2^-2)
   beta ~ dnorm(0, 0.1^-2)
   sigma ~ dunif(0, 5)
 }
 '
+
 
 ## ---- eval=FALSE---------------------------------------------------------
 ## folds = sample(rep(1:5, length = nrow(dat)))
@@ -197,16 +210,16 @@ model {
 ## }
 ## sqrt(mean(rmsep))
 
-
 # Class 6 -----------------------------------------------------------------
 
 ## ------------------------------------------------------------------------
 swt = read.csv('../data/swt.csv')
 head(swt)
 
+
 ## ---- message = FALSE, results = 'hide'----------------------------------
 jags_code = '
-model {
+model{
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dbin(p[i], N_exp[i])
@@ -223,6 +236,7 @@ model {
   sigma_beta ~ dt(0,5,1)T(0,)
 }
 '
+
 
 ## ---- echo = FALSE, message=FALSE, results = 'hide'----------------------
 sum_fun = function(x) {
@@ -255,6 +269,7 @@ for(i in c(2,3,1)) {
 }
 par(mfrow=c(1,1))
 
+
 ## ---- echo = FALSE-------------------------------------------------------
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$sims.list
@@ -264,6 +279,7 @@ for(i in c(2,3,1)) {
        xlim = range(pars$beta), xlab = 'Slope value')
 }
 par(mfrow=c(1,1))
+
 
 ## ---- echo=FALSE---------------------------------------------------------
 library(boot)
@@ -275,6 +291,7 @@ for(i in c(2,3,1)) {
 }
 par(mfrow=c(1,1))
 
+
 ## ---- message = FALSE, results = 'hide'----------------------------------
 jags_code = '
 model{
@@ -282,7 +299,7 @@ model{
   for(i in 1:N) {
     y[i] ~ dpois(exp(log_lambda[i]))
     log_lambda[i] ~ dnorm(alpha + beta * (x[i] - mean(x)),
-      sigma^-2)
+        sigma^-2)
   }
   alpha ~ dnorm(0, 5^-2)
   beta ~ dnorm(0, 0.1^-2)
@@ -290,7 +307,9 @@ model{
 }
 '
 
+
 ## ---- echo = FALSE, message=FALSE, results = 'hide'----------------------
+set.seed(123)
 jags_run = jags(data = list(N = nrow(swt),
                             y = y,
                             x = swt$forest),
@@ -309,10 +328,12 @@ for(i in c(1:2,4)) {
 }
 par(mfrow=c(1,1))
 
+
 ## ------------------------------------------------------------------------
 curve(dnorm, from = -5, to = 5)
 curve(dt(x, df = 1), add = TRUE, col = 'red')
 curve(dt(x, df = 4), add = TRUE, col = 'blue')
+
 
 ## ---- echo = FALSE, fig.height= 6----------------------------------------
 N = 100
@@ -321,12 +342,14 @@ x = runif(N)
 y = rt(N, df = 3)*0.8 + 2 - 2*x
 plot(x, y)
 
+
 ## ------------------------------------------------------------------------
 jags_code = '
-model {
+model{
   # Likelihood
   for(i in 1:N) {
-    y[i] ~ dt(alpha + beta * (x[i] - mean(x)), sigma, df[i] + 1)
+    y[i] ~ dt(alpha + beta * (x[i] - mean(x)),
+                sigma, df[i] + 1)
     df[i] ~ dbin(p, 10)
   }
   p ~ dunif(0, 1)
@@ -335,6 +358,7 @@ model {
   sigma ~ dt(0,1,1)T(0,)
 }
 '
+
 
 ## ---- echo = FALSE, message=FALSE, results = 'hide'----------------------
 jags_run = jags(data = list(N = N,
@@ -345,18 +369,23 @@ jags_run = jags(data = list(N = N,
                                        'df'),
                 model.file = textConnection(jags_code))
 
+
 ## ---- fig.height=6-------------------------------------------------------
 dfs = jags_run$BUGSoutput$median$df
 pars = jags_run$BUGSoutput$mean
 plot(x, y, col = as.factor(dfs))
-lines(x, pars$alpha + pars$beta*(x - mean(x)), col = 'red')
+lines(x, as.numeric(pars$alpha) +
+        as.numeric(pars$beta)*(x - mean(x)),
+      col = 'red')
+
 
 ## ------------------------------------------------------------------------
 jags_code = '
 model{
   # Likelihood
   for(i in 1:N) {
-    z[i] ~ dnorm(alpha + beta * (x[i] - mean(x)), sigma^-2)
+    z[i] ~ dnorm(alpha + beta * (x[i] - mean(x)),
+                    sigma^-2)
     y[i] ~ dinterval(z[i], cuts)
   }
   alpha ~ dnorm(0, 100^-2)
@@ -364,6 +393,7 @@ model{
   sigma ~ dt(0, 10, 1)T(0, )
 }
 '
+
 
 ## ------------------------------------------------------------------------
 N = 100
@@ -376,8 +406,10 @@ cuts = c(-0.5, 0.5)
 z = rnorm(N, alpha + beta * (x - mean(x)), sigma)
 y = findInterval(z, cuts)
 
+
 ## ------------------------------------------------------------------------
 plot(x, z, col = y + 1)
+
 
 ## ---- message=FALSE, results = 'hide'------------------------------------
 jags_inits = function() {
@@ -396,8 +428,7 @@ jags_run = jags(data = list(N = N,
                                        'sigma'),
                 model.file = textConnection(jags_code))
 
+
 ## ------------------------------------------------------------------------
 print(jags_run)
-
-
 

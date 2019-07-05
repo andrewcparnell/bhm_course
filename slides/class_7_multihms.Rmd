@@ -1,7 +1,7 @@
 ---
-title: 'Class 7: Multivariate and multi-layer hierarchical models'
-author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
-  \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+title: 'Class 7: Multi-layer hierarchical models'
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
 output:
   beamer_presentation:
     includes:
@@ -22,7 +22,6 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 
 - Understand how to add in multiple layers to a hierarchical model
 - Follow a detailed example of building a model
-- Be able to fit multivariate models in JAGS
 - Be able to work with missing data in JAGS
 
 ## Some new terminology
@@ -492,121 +491,6 @@ pD = round(jags_run$BUGSoutput$pD,2)
 
 - The DIC here is now DIC now $`r format(DIC,scientific=FALSE)`$ with $`r format(pD,scientific=FALSE)`$ effective parameters - a big drop!
 
-- There is another way to make the model even more complicated ...
-
-## Multivariate models
-
-- Often we have more than one variable or parameter that changes simultaneously
-
-- For example, we might be interested in how both earnings and social grade change in response to height. These are likely to be correlated, even after we take into account the effect of height
-
-- Or we might be interested in how both the slope and the intercept change in a particular model
-
-- In either case, the _multivariate normal distribution_ helps us achieve this by borrowing strength across the different dimensions
-
-## The multivariate normal distribution
-
-- The standard normal distribution we have met has two parameters, a mean and a standard deviation/variance
-- The multivariate normal (MVN) distribution has the same, except that the mean is now a _vector_ and the variance is now a _matrix_ sometimes called the _covariance matrix_
-- Each element of the mean represents the mean of each variable. Each diagonal element of the covariance matrix is the variance of that variable, and each off-diagonal element is the covariance between those two variables
-- For the 2D MVN distribution, we write:
-$$\left[ \begin{array}{c} y_1 \\ y_2 \end{array} \right] \sim N \left( \left[ \begin{array}{c} \mu_1 \\ \mu_2 \end{array} \right], \left[ \begin{array}{cc} v_{11} & v_{12} \\ v_{12} & v_{22} \end{array} \right] \right)$$
-or, for short
-$$y \sim MVN(\mu, \Sigma)$$
-
-## Learning about the parameters of the MVN
-
-- You can think of the MVN distribution as borrowing strength between variables, just like the hierarchical model borrows strength across categories
-- If we want to use the MVN in a Bayesian model we need to be able to put prior distributions on the parameters
-- The means $\mu$ are easier as we can set independent prior distributions on them, e.g. $\mu_1 \sim N(0, 100)$
-- The covariance matrix is more fiddly. Luckily there is a probability distribution called the _Wishart distribution_ which works on covariance matrices. These are especially tricky as the covariances and the variances have to match appropriately
-
-## Returning to the earnings data
-
-- Let's add to our complicated model with intercepts and slopes varying by ethnicity and age group
-
-- We will include a multivariate normal prior on the intercept/slope pairs and look at the interaction between ethnicity and ages
-
-- We are introducing a specific parameter which measures the degree of correlation between the intercept and the slope for each group. This could potentially vary between age group or ethnicity
-
-## Fitting a multivariate, multi-layer model
-
-\tiny
-```{r}
-jags_code = '
-model{
-  # Likelihood
-  for(i in 1:N) {
-    log_earn[i] ~ dnorm(beta[eth[i],age_grp[i],1] +
-                          beta[eth[i],age_grp[i],2]*(height[i] - mean(height)), 
-                    sigma^-2)
-  }
-  # Priors
-  for(j in 1:N_eth) {
-    for(k in 1:N_age_grp) {
-      beta[j,k,1:2] ~ dmnorm(mu_beta[1:2,1], Sigma_beta_inv)
-    }
-  }
-  for(l in 1:2) {
-      mu_beta[l,1] ~ dnorm(0, 20^-2)
-  }
-  Sigma_beta_inv ~ dwish(R_beta,k_beta)
-  sigma ~ dt(0,10,1)T(0,)
-}
-'
-```
-
-## Running the model
-
-\tiny
-```{r, include = FALSE}
-jags_run = jags(data = list(N = nrow(dat), 
-                            N_eth = length(unique(dat$eth)),
-                            N_age_grp = length(unique(dat$age)),
-                            log_earn = log(dat$earn),
-                            height = dat$height_cm,
-                            eth = dat$eth,
-                            age_grp = dat$age,
-                            k_beta = 2,
-                            R_beta = diag(2)),
-                parameters.to.save = c('beta'),
-                model.file = textConnection(jags_code))
-```
-```{r}
-print(jags_run)
-```
-
-## Did the model fit the data any better?
-
-```{r, include = FALSE}
-jags_summ = jags_run$BUGSoutput$summary
-DIC = round(jags_run$BUGSoutput$DIC,2)
-pD = round(jags_run$BUGSoutput$pD,2)
-```
-
-- The DIC here is now DIC now $`r format(DIC,scientific=FALSE)`$ with $`r format(pD,scientific=FALSE)`$ effective parameters - about the same as before?
-
-- We could also watch the parameters `mu_beta` and `sigma_beta_inv`. The latter will tell us about the correlation structure between the intercepts and the slopes
-
-- We could make the model even more complicated by allowing the multivariate `mu_beta` parameters to vary by age group, ethnicity, and their interaction
-
-## Plots of output
-
-```{r, echo = FALSE}
-pars = jags_run$BUGSoutput$mean
-age_grp_names = c('18-34','35-49','50-64')
-eth_names = c('Blacks','Hispanics','Whites','Others')
-
-par(mfrow=c(4,3))
-for(i in 1:4) {
-  for(j in 1:3) {
-    curr_dat = subset(dat, dat$eth == i & dat$age == j)
-    plot(curr_dat$height_cm, log(curr_dat$earn), main = paste(eth_names[i], age_grp_names[j]), ylab = 'log(earnings)', xlab = 'Height (cm)')
-    lines(dat$height_cm, pars$beta[i,j,1] + pars$beta[i,j,2]*(dat$height_cm - mean (dat$height_cm)), col = i)    
-  }
-}
-par(mfrow=c(1,1))
-```
 
 ## Missing and unbalanced data
 

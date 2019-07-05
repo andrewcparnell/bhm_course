@@ -6,6 +6,8 @@ output:
   beamer_presentation:
     includes:
       in_header: header.tex
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -209,25 +211,25 @@ plot(stan_run)
 
 ## From LM to GLM
 
-- In general, a _generalised linear model_ (GLM) can be written out as:
-$$y \sim Distribution(f(\theta, x))$$
-where $Distribution$ is some probability distribution, $\theta$ are some parameters, and $f$ is a link function that transforms the parameters into a range so that we can incorporate $x$ in an unrestricted way
+- In general, we use a _generalised linear model_ (GLM) when the normal distribution is not longer appropriate for the data
 
-- The above allows us to simulate from the model, given some parameters $\theta$ and some covariates $x$ we can use the probability distribution to get simulated data
-- It also allows us to calculate the _likelihood_ as we can get a score for how likely it is to see the data we have observed given some values of the parameters
+- This probability distribution should match the type of data (e.g. count data, binary, etc) and will have its own parameters
 
+- We pften have to transform the parameters if we still want to use a linear regression type relationship with a covariate. The transformation is called a _link function_
+
+- For a Bayesian model the probability distribution allows us to calculate a likelihood and to be able to get some priors for the unknown parameters
 
 ## The data generating process for a logistic regression
 
 \scriptsize
-- What if the response variable was binary? Clearly the previous code will not produce binary values
+- What if the response variable was binary? Clearly the linear regression simulation code will not produce binary values
 - Instead we could simulate from the binomial distribution:
 ```{r, warning=FALSE}
 y = rbinom(N, size = 1, prob = -2 + 0.4 * x)
 ```
 ... but this will produce `NA`s as the `prob` argument needs to be between 0 and 1. We need to transform the values involving the covariate
 
-- A popular way is to use the inverse logit function. Look!
+- A popular way is to use the _inverse logit_ function. Look!
 ```{r}
 -2 + 0.4 * x
 exp(-2 + 0.4 * x)/(1 + exp(-2 + 0.4 * x))
@@ -245,7 +247,8 @@ y
 ```
 
 - The logit function itself is $\log \left( \frac{p}{1-p} \right)$ and will turn the probabilities form the range (0,1) to the range $(-\infty,\infty)$
-- Using this type of model is known as _logistic-Binomial_ regression and the logit is known as the _link function_
+- This type of model is known as _logistic-Binomial_ regression (or just _logistic regression_) and the logit is known as the _link function_
+- It's also possible to generate data with maximum value bigger than 1 by changing the `size` parameter
 
 ## Generating other types of data
 
@@ -258,8 +261,164 @@ y
 
 - The rate ($\lambda$) of the Poisson distribution has to be positive, so taking the log of it changes its range to $(-\infty,\infty)$ as before. The inverse-link ($\exp$) turns the unrestricted ranges into something that must be positive
 
+## Example: Swiss Willow tit data
+
+Recall the Willow tit data:
+\tiny
+```{r}
+swt = read.csv('../data/swt.csv')
+head(swt)
+```
+\normalsize
+
+## Fitting a Binomial-logistic model
+
+- Suppose we want to fit a Binomial-logistic model to the first binary replicate with forest cover as a covariate
+
+- The model is:
+$$y_i \sim Bin(1, p_i), logit(p_i) = \alpha + \beta x_i$$
+
+- Note that there is no residual standard deviation parameter here. This is because the variance of the binomial distribution depends only on the number of counts (here 1) and the probability, i.e. $Var(y_i) = p_i (1 - p_i)$
+
+## Fitting the model in JAGS
+
+\small
+```{r, message = FALSE, results = 'hide'}
+jags_code = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dbin(p[i], 1)
+    logit(p[i]) <- alpha + beta*x[i]
+  }
+  # Priors
+  alpha ~ dnorm(0, 20^-2)
+  beta ~ dnorm(0, 20^-2)
+}
+'
+jags_run = jags(data = list(N = nrow(swt), 
+                            y = swt$rep.1,
+                            x = swt$forest),
+                parameters.to.save = c('alpha',
+                                       'beta'),
+                model.file = textConnection(jags_code))
+```
+\normalsize
+
+## Looking at the output
+
+```{r, echo = FALSE}
+pars = jags_run$BUGSoutput$sims.matrix
+par(mfrow=c(1,2))
+hist(pars[,'alpha'], breaks = 30)
+hist(pars[,'beta'], breaks = 30)
+par(mfrow=c(1,1))
+```
+
+## Plotting the fits
+
+- It's not as easy to plot a fitted line in a Binomial regression model, but we can plot the probabilities:
+\small
+```{r, fig.height = 4}
+plot(swt$forest, swt$rep.1)
+points(swt$forest, 
+      inv.logit(mean(pars[,'alpha']) + 
+                  mean(pars[,'beta'])*swt$forest ),
+      col = 'red')
+```
 
 
+## Poisson models
+
+- Here's some JAGS code for a Poisson model:
+```{r}
+jags_code = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dpois(lambda[i])
+    log(lambda[i]) <- alpha + beta*x[i]
+  }
+  # Priors
+  alpha ~ dnorm(0, 20^-2)
+  beta ~ dnorm(0, 20^-2)
+}
+'
+```
+
+## Offsets
+
+- For Poisson data it's quite common for the counts to be dependent on the amount of effort required to collect the data
+- If there is a variable that quantifies this amount of effort it should be included in the model, as it will be directly linked to the size of the counts
+- These variables are often called an _offset_, and are included in the model likelihood via 
+```
+y[i] ~ dpois(offset * lambda[i])
+```
+
+## Example of a full binomial regression model
+
+\small
+```{r, include = FALSE}
+# Adapted data from Royle and Dorazio (Chapter 2)
+n = 12 # Number of experiments
+total_moths = 20 # Number of moths in each experiment
+num_died = c(1,4,9,13,18,20, 0,2,6,10,12,16) # Number died
+sex = c(rep('male',6), rep('female',6)) # Sex
+dose = rep(0:5, 2) # Dose of ???
+sex_male = as.integer(sex == 'male') # Turn sex into an integer
+# The key questions is: what are the effects of dose and sex?
+```
+```{r, fig.height = 5}
+plot(dose, num_died, col = sex_male + 1)
+legend('topleft', legend = c('Female', 'Male'), 
+       col = 1:2, pch = 1)
+```
+
+## Looking at the data differently - proportion died
+
+```{r, fig.height = 5}
+plot(dose, num_died/total_moths, col = sex_male + 1, las = 1)
+legend('topleft', legend = c('Female', 'Male'), 
+       col = 1:2, pch = 1)
+```
+
+## Fit with JAGS
+
+\small
+```{r}
+model_code = '
+model
+{
+  # Likelihood
+  for (i in 1:N) {
+    y[i] ~ dbin(p_died[i], K)
+    logit(p_died[i]) <- alpha + beta_male * x_male[i] + beta_dose * x_dose[i]
+  }
+  # Priors
+  alpha ~ dnorm(0, 10^-2)
+  beta_male ~ dnorm(0, 10^-2)
+  beta_dose ~ dnorm(0, 10^-2)
+}
+'
+model_data = list(N = N, y = num_died, x_male = sex_male, x_dose = dose, K = total_moths)
+model_parameters =  c("alpha", "beta_male", "beta_dose")
+model_run = jags(data = model_data,
+                 parameters.to.save = model_parameters,
+                 model.file = textConnection(model_code))
+```
+
+## Model output
+
+```{r}
+plot(model_run)
+```
+
+## Further examples of GLM-type data
+
+- Later in the course we will talk about different types of models for count data
+- The Poisson is a bit restrictive, in that the variance and the mean of the counts should be the same, which is rarely satisfied by data
+- We'll extend to over-dispersed and zero-inflated data
+- We'll also discuss multivariate models using e.g. the multinomial distribution
 
 ## What are JAGS and Stan doing in the background?
 
@@ -325,35 +484,7 @@ hist(post[,'beta2'], breaks = 30)
 - One way is to simulate from the posterior distribution of the parameters, and subsequently simulate from the likelihood to see if the these data match the real data we observed
 - This is known as a _posterior predictive check_ 
 
-## Posterior predictive: the long way
-
- - The long way of doing this is in R after running the model
- - For each value sampled from the posterior, compute:
-
-```{r, eval = FALSE}
-y_sim = rnorm(nrow(dat), 
-              post[1,'alpha'] + 
-                post[1,'beta1'] * dat$height_cm + 
-                post[1,'beta2'] * as.integer(dat$eth ==3), 
-              sd = post[1, 'sigma'])
-plot(log(dat$earn), y_sim)
-abline(a = 0, b = 1, col = 'red')
-```
-If the model is good, these should form a straight line!
-
-## Posterior predictive plot for one iteration
-
-```{r, echo = FALSE}
-y_sim = rnorm(nrow(dat), 
-              post[1,'alpha'] + 
-                post[1,'beta1'] * dat$height_cm + 
-                post[1,'beta2'] * as.integer(dat$eth ==3), 
-              sd = post[1, 'sigma'])
-plot(log(dat$earn), y_sim)
-abline(a = 0, b = 1, col = 'red')
-```
-
-## Easier posterior predictive distributions
+## Simple posterior predictive distributions
 
 - The easier way is to put an extra line in the JAGS code:
 \small
@@ -392,111 +523,11 @@ plot(log(dat$earn), apply(pars,2,'mean'))
 abline(a=0, b = 1, col = 'red')
 ```
 
-## Example: Swiss Willow tit data
-
-Recall the Willow tit data:
-\tiny
-```{r}
-swt = read.csv('../data/swt.csv')
-head(swt)
-```
-\normalsize
-
-## Fitting a Binomial-logistic model
-
-- Suppose we want to fit a Binomial-logistic model to the first binary replicate with forest cover as a covariate
-
-- The model is:
-$$y_i \sim Bin(1, p_i), logit(p_i) = \alpha + \beta x_i$$
-
-- Note that there is no residual standard deviation parameter here. This is because the variance of the binomial distribution depends only on the number of counts (here 1) and the probability, i.e. $Var(y_i) = p_i (1 - p_i)$
-
-## Fitting the model in JAGS
-
-\tiny
-```{r, message = FALSE, results = 'hide'}
-jags_code = '
-model{
-  # Likelihood
-  for(i in 1:N) {
-    y[i] ~ dbin(p[i], 1)
-    logit(p[i]) <- alpha + beta*x[i]
-  }
-  # Priors
-  alpha ~ dnorm(0, 20^-2)
-  beta ~ dnorm(0, 20^-2)
-}
-'
-jags_run = jags(data = list(N = nrow(swt), 
-                            y = swt$rep.1,
-                            x = swt$forest),
-                parameters.to.save = c('alpha',
-                                       'beta'),
-                model.file = textConnection(jags_code))
-```
-\normalsize
-
-## Looking at the output
-
-```{r, echo = FALSE}
-pars = jags_run$BUGSoutput$sims.matrix
-par(mfrow=c(1,2))
-hist(pars[,'alpha'], breaks = 30)
-hist(pars[,'beta'], breaks = 30)
-par(mfrow=c(1,1))
-```
-
-## Plotting the fits
-
-- It's not as easy to plot a fitted line in a Binomial regression model, but we can plot the probabilities:
-\small
-```{r, fig.height = 4}
-plot(swt$forest, swt$rep.1)
-points(swt$forest, 
-      inv.logit(mean(pars[,'alpha']) + 
-                  mean(pars[,'beta'])*swt$forest ),
-      col = 'red')
-```
-
 ## Checking model assumptions
 
 - Just like the linear regression example, we can create posterior predictive distributions for the binary data from the binomial distribution
 - However, it isn't as easy to plot as the regression situation as all the true values are 0 and 1. 
 - Instead people often use _classification metrics_ which we do not cover in this course (but can discuss if required)
-
-## Poisson models
-
-- Here's some JAGS code for a Poisson model:
-```{r}
-jags_code = '
-model{
-  # Likelihood
-  for(i in 1:N) {
-    y[i] ~ dpois(lambda[i])
-    log(lambda[i]) <- alpha + beta*x[i]
-  }
-  # Priors
-  alpha ~ dnorm(0, 20^-2)
-  beta ~ dnorm(0, 20^-2)
-}
-'
-```
-
-## Offsets
-
-- For Poisson data it's quite common for the counts to be dependent on the amount of effort required to collect the data
-- If there is a variable that quantifies this amount of effort it should be included in the model, as it will be directly linked to the size of the counts
-- These variables are often called an _offset_, and are included in the model likelihood via 
-```
-y[i] ~ dpois(offset * lambda[i])
-```
-
-## Further examples of GLM-type data
-
-- Later in the course we will talk about different types of models for count data
-- The Poisson is a bit restrictive, in that the variance and the mean of the counts should be the same, which is rarely satisfied by data
-- We'll extend to over-dispersed and zero-inflated data
-- We'll also discuss multivariate models using e.g. the multinomial distribution 
 
 ## Summary
 

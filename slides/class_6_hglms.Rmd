@@ -1,11 +1,13 @@
 ---
 title: 'Class 6: Hierarchical generalised linear models'
-author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
-  \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
 output:
   beamer_presentation:
     includes:
       in_header: header.tex
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -63,7 +65,7 @@ where $x_i$ is the percentage of forest cover
 
 ## JAGS code
 
-\tiny
+\small
 ```{r, message = FALSE, results = 'hide'}
 jags_code = '
 model{
@@ -189,6 +191,7 @@ model{
 ## Model run
 
 ```{r, echo = FALSE, message=FALSE, results = 'hide'}
+set.seed(123)
 jags_run = jags(data = list(N = nrow(swt),
                             y = y,
                             x = swt$forest),
@@ -210,7 +213,7 @@ par(mfrow=c(1,1))
 
 ## Notes about OD Poisson model
 
-- The way to think about OD models is via the data generating process. Draw a DAG and think about how these processes might arise
+- The way to think about OD models is via the data generating process. 
 
 - We could compare this model to one without over dispersion via DIC (or if time, cross validation). We should also compute a posterior predictive distribution for full comparison
 

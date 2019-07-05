@@ -1,17 +1,20 @@
 ---
-title: 'Class 8: Partial pooling, zero-inflation, and multinomial models'
-author: Andrew Parnell \newline \texttt{andrew.parnell@ucd.ie} \newline \vspace{1cm}
-  \newline \includegraphics[width=1cm]{UCDlogo.pdf}
+title: 'Class 8: Partial pooling and zero-inflation'
+author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
+  \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
 output:
   beamer_presentation:
     includes:
       in_header: header.tex
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 #knitr::opts_knit$set(global.par = TRUE)
 set.seed(123)
+library(R2jags)
 ```
 ```{r, include=FALSE}
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
@@ -27,8 +30,6 @@ options(mc.cores = parallel::detectCores())
 - Be able to understand and fit some multinomial modelling examples
 
 \vspace{2cm}
-
-- For this lecture we are going to switch to Stan
 
 ## A false dichotomy: fixed vs random effects
 
@@ -78,32 +79,22 @@ $$Y_i \sim Po(\lambda_i)$$
 $$\log(\lambda_i) = \beta_{\mbox{trt}_i}$$
 - We'll only consider the treatment effect but we could run much more complicated models with e.g. other covariates and interactions
 
-## Fitting the model in Stan
+## Fitting the model in JAGS
 
-\tiny
+\small
 ```{r}
-stan_code = '
-data {
-  int<lower=0> N;
-  int<lower=0> N_trt;
-  int<lower=0> y[N];
-  int trt[N];
-}
-parameters {
-  real beta_trt[N_trt];
-  real trt_mean;
-  real<lower=0> trt_sd;
-}
-model {
-  for (i in 1:N) 
-    y[i] ~ poisson_log(beta_trt[trt[i]]);
-
-  // Priors on coefficients
-  for(j in 1:N_trt)
-    beta_trt[j] ~ normal(trt_mean, trt_sd);
-
-  trt_mean ~ normal(0, 10);
-  trt_sd ~ cauchy(0, 5);
+model_code = '
+model
+{
+  # Likelihood
+  for (i in 1:N) {
+    y[i] ~ dpois(lambda[i])
+    log(lambda[i]) <- beta_trt[trt[i]]
+  }
+  # Priors
+  for (j in 1:N_trt) {
+    beta_trt[j] ~ dnorm(0, 100^-2)
+  }
 }
 '
 ```
@@ -111,17 +102,18 @@ model {
 ## Running the model
 
 ```{r, message=FALSE, results='hide'}
-stan_run = stan(data = list(N = nrow(wf), 
+jags_run = jags(data = list(N = nrow(wf), 
                             N_trt = length(unique(wf$trt)),
                             y = wf$imm,
                             trt = wf$trt),
-                model_code = stan_code)
+                parameters.to.save = 'beta_trt',
+                model.file = textConnection(model_code))
 ```
 
 ## Results
 
 ```{r, fig.height=5}
-plot(stan_run)
+plot(jags_run)
 ```
 
 Some clear treatment effects - treatment 5 in particular
@@ -129,8 +121,7 @@ Some clear treatment effects - treatment 5 in particular
 ## Did the model actually fit well?
 
 ```{r, fig.height=4}
-pars = extract(stan_run, pars = 'beta_trt')$beta_trt
-beta_means = apply(pars,2,'mean')
+beta_means = jags_run$BUGSoutput$mean$beta_trt
 y_sim_mean = exp(beta_means[wf$trt])
 y_sim = rpois(nrow(wf), y_sim_mean)
 hist(wf$imm, breaks = seq(0,max(wf$imm)))
@@ -152,41 +143,29 @@ $$p(y|\lambda) = \left\{ \begin{array}{ll} q_0 + (1-q_0) \times Poisson(0, \lamb
 ## Fitting models with custom probability distributions
 
 - The Zero-inflated Poisson distribution is not included in Stan or JAGS by default. We have to create it
-- It's pretty easy to create new probability distributions in Stan
-- It's quite hard to do so in JAGS, requiring some weird tricks
-- In Stan all of you have to do is give it a way of computing the likelihood score, which it keeps track of via a variable called `target`
+- It's possible to create new probability distributions in Stan
+- It's a little bit fiddly to do so in JAGS, we have to use some tricks
+- We will use JAGS to create a mixture of Poisson distributions; A Poisson(0) distribution for the zeros, and a Poisson($\lambda$) distribution for the rest
 
-## Fitting the ZIP in Stan
+## Fitting the ZIP in JAGS
 
-\tiny
+\small
 ```{r}
-stan_code = '
-data {
-  int<lower=0> N;
-  int<lower=0> N_trt;
-  int<lower=0> y[N];
-  int trt[N];    
-}
-parameters {
-  real<lower=0, upper=1> q_0;
-  real beta_trt[N_trt];
-  real trt_mean;
-  real<lower=0> trt_sd;
-}
-model {
-  for(j in 1:N_trt)
-    beta_trt[j] ~ normal(trt_mean, trt_sd);
-  trt_mean ~ normal(0, 10);
-  trt_sd ~ cauchy(0, 5);
-
+model_code = '
+model
+{
+  # Likelihood
   for (i in 1:N) {
-    if (y[i] == 0)
-      target += log_sum_exp(bernoulli_lpmf(1 | q_0),
-                                bernoulli_lpmf(0 | q_0)
-                                  + poisson_log_lpmf(y[i] | beta_trt[trt[i]]));
-    else
-      target += bernoulli_lpmf(0 | q_0) + poisson_log_lpmf(y[i] | beta_trt[trt[i]]);
+    y[i] ~ dpois(lambda[i] * z[i] + 0.0001)
+    log(lambda[i]) <- beta_trt[trt[i]]
+    z[i] ~ dcat(q_1)
   }
+  # Priors
+  for (j in 1:N_trt) {
+    beta_trt[j] ~ dnorm(0, 100^-2)
+  }
+  q_1 <- 1 - q_0
+  q_0 ~ dunif(0, 1)
 }
 '
 ```
@@ -194,27 +173,26 @@ model {
 ## Running the model
 
 ```{r, message=FALSE, results='hide'}
-stan_run = stan(data = list(N = nrow(wf), 
+jags_run = jags(data = list(N = nrow(wf), 
                             N_trt = length(unique(wf$trt)),
                             y = wf$imm,
                             trt = wf$trt),
-                model_code = stan_code)
+                parameters.to.save = c('beta_trt','q_0'),
+                model.file = textConnection(model_code))
 ```
 
 ## Results
 
 ```{r, fig.height=5}
-plot(stan_run)
+plot(jags_run)
 ```
 
 ## Did it work any better? - code
 
 \small
 ```{r}
-beta_means = apply(extract(stan_run, 
-                           pars = 'beta_trt')$beta_trt,
-                   2,'mean')
-q_0_mean = mean(extract(stan_run, pars = 'q_0')$q_0)
+beta_means = jags_run$BUGSoutput$mean$beta_trt
+q_0_mean = jags_run$BUGSoutput$mean$q_0[1]
 y_sim_mean = exp(beta_means[wf$trt])
 rZIP = function(mean, q_0) {
   pois = rpois(length(mean), mean)
@@ -233,7 +211,7 @@ hist(y_sim, breaks = seq(0,max(wf$imm)),
 
 ## Some more notes on Zero-inflated Poisson
 
-- This model seems to over-predict the number of zeros! It would be interesting to perhaps try having a different probability of zeros ($q_0$) for different treatments
+- This model seems to predict the number of zeros pretty well. It would also be interesting to perhaps try having a different probability of zeros ($q_0$) for different treatments
 - It might be that the other covariates explain some of the zero behaviour
 - We could further add in both zero-inflation and over-dispersion
 
@@ -242,37 +220,28 @@ hist(y_sim, breaks = seq(0,max(wf$imm)),
 - ZI models work by having a parameter (here $q_0$) which is the probability of getting a zero, and so the probability of getting a Poisson value (which could also be a zero) is 1 minus this value
 - An alternative (which is slightly more complicated) is a hurdle model where $q_0$ represents the probability of the _only way_ of getting a zero. With probability (1-$q_0$) we end up with a special Poisson random variable which has to take values 1 or more
 - In some ways this is richer than a ZI model since zeros can be deflated or inflated
+- This is a bit fiddlier to fit in JAGS
 
-## A hurdle-Poisson model in Stan
+## A hurdle-Poisson model in JAGS
 
-\tiny
+\small
 ```{r}
-stan_code = '
-data {
-  int<lower=0> N;
-  int<lower=0> N_trt;
-  int<lower=0> y[N];
-  int trt[N];    
-}
-parameters {
-  real<lower=0, upper=1> q_0;
-  real beta_trt[N_trt];
-  real trt_mean;
-  real<lower=0> trt_sd;
-}
-model {
-  for(j in 1:N_trt)
-    beta_trt[j] ~ normal(trt_mean, trt_sd);
-  trt_mean ~ normal(0, 10);
-  trt_sd ~ cauchy(0, 5);
-
+model_code = '
+model
+{
+  # Likelihood
   for (i in 1:N) {
-    if (y[i] == 0)
-          target += log(q_0);
-        else
-          target += log1m(q_0) + poisson_log_lpmf(y[i] | beta_trt[trt[i]])
-                    - poisson_lccdf(0 | exp(beta_trt[trt[i]]));
+    y[i] ~ dpois(lambda[i])T(1,)
+    log(lambda[i]) <- beta_trt[trt[i]]
   }
+  for(i in 1:N_0) {
+    y_0[i] ~ dbin(q_0, 1)
+  }
+  # Priors
+  for (j in 1:N_trt) {
+    beta_trt[j] ~ dnorm(0, 100^-2)
+  }
+  q_0 ~ dunif(0, 1)
 }
 '
 ```
@@ -280,190 +249,32 @@ model {
 ## Running the model
 
 ```{r, message=FALSE, results='hide'}
-stan_run = stan(data = list(N = nrow(wf), 
+jags_run = jags(data = list(N = nrow(wf[wf$imm > 0,]), 
                             N_trt = length(unique(wf$trt)),
-                            y = wf$imm,
-                            trt = wf$trt),
-                model_code = stan_code)
+                            y = wf$imm[wf$imm > 0],
+                            y_0 = as.integer(wf$imm == 0),
+                            N_0 = nrow(wf),
+                            trt = wf$trt[wf$imm > 0]),
+                parameters.to.save = c('beta_trt', 'q_0'),
+                model.file = textConnection(model_code))
 ```
 
 ## Results
 
 \tiny
 ```{r, fig.height = 5}
-plot(stan_run)
+plot(jags_run)
 ```
 
-## Did it work any better? - code
+## Some final notes on ZI models
 
-\small
-```{r}
-beta_means = apply(extract(stan_run, 
-                           pars = 'beta_trt')$beta_trt,
-                   2,'mean')
-q_0_mean = mean(extract(stan_run, pars = 'q_0')$q_0)
-y_sim_mean = exp(beta_means[wf$trt])
-rZIP = function(mean, q_0) {
-  pois = rpois(length(mean), mean)
-  pois[runif(length(mean))<q_0] = 0
-  return(pois)
-}
-y_sim = rZIP(y_sim_mean, q_0_mean)
-```
+- To complete the Poisson-Hurdle fit we would need to simulate from a truncated Poisson model. This starts to get very fiddly though - see the `jags_examples` repository for worked examples
+- We can extend these models further by using a better count distribution such as the negative binomial which has an extra over-dispersion parameter
+- We can also add covariates into the zero-inflation component, though it is not always clear whether this is desirable
 
-## Did it work any better? - picture
-
-```{r, fig.height=5}
-hist(wf$imm, breaks = seq(0,max(wf$imm)))
-hist(y_sim, breaks = seq(0,max(wf$imm)), 
-     add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
-```
-
-
-## The multinomial distribution
-
-- Multinomial data can be thought of as multivariate discrete data
-- It's usually used in two different scenarios:
-
-    1. For classification, when you have an observation falling into a single one of $K$ possible categories
-    1. For multinomial regression, where you have a set of counts which sum to a known value $N$
-    
-- We will just consider the multinomial regression case, whereby we have observations $y_i = \left[ y_{i1}, \ldots, y_{iK} \right]$ where the sum $\sum_{k=1}^K y_{ik} = N_i$ is fixed
-
-- The classification version is a simplification of the regression version
-
-## Some new data! - pollen
-
-\tiny
-```{r}
-pollen = read.csv('../data/pollen.csv')
-head(pollen)
-```
-
-\normalsize
-These data are pollen counts of 7 varieties of pollen from modern samples with two covariates
-
-## Some plots
-
-- The two covariates represent the length of the growing season (GDD5) and harshness of the winter (MTCO)
-- The task is to find which climate regimes each pollen variety favours
-```{r, fig.height = 5, echo = FALSE}
-N = rowSums(pollen[,3:ncol(pollen)])
-par(mfrow=c(1,2))
-plot(pollen$GDD5, pollen$Pinus.D)
-plot(pollen$GDD5, pollen$Pinus.D/N)
-par(mfrow=c(1,1))
-```
-
-## A multinomial model
-
-- The multinomial distribution is often written as:
-$$\left[ y_{i1}, \ldots, y_{iK} \right] \sim Mult(N_i, \left\{ p_{i1}, \ldots, p_{iK} \right\})$$
-or, for short:
-$$y_i \sim Mult(N_i, p_i)$$
-
-- The key parameters here are the probability vectors $p_i$. It's these we want to use a link function on to include the covariates
-
-- We need to be careful as each must sum to one: $\sum_{k=1}^K p_{ik} = 1$. Any link function must satisfy this constraint
-
-## Prior distributions on probability vectors
-
-- When $K=2$ we're back the binomial-logit we met in the first day, and we can use the logit link function
-- When $K>2$ a common function to use is the _soft-max_ function:
-$$p_{ik} = \frac{ \exp(\theta_{ik})}{ \sum_{j=1}^K \exp(\theta_{ij})}$$
-- This is a generalisation of the logit function
-- The next layer of our model sets, e.g.:
-$$\theta_{ik} = \alpha_k + \beta_k \mbox{GDD5}_i + \gamma_k \mbox{MTCO}_i$$
-
-## Stan code part 1
-
-\tiny
-```{r}
-stan_code = '
-data {
-  int<lower=1> n;
-  int<lower=1> K;
-  int<lower=0> y[n,K];
-  real x1[n];
-  real x2[n];
-}
-parameters {
-  vector[K] alpha; 
-  vector[K] beta;
-  vector[K] gamma;
-  real alpha_mean;
-  real beta_mean;
-  real gamma_mean;
-  real<lower=0> sigma_alpha;
-  real<lower=0> sigma_beta;
-  real<lower=0> sigma_gamma;
-}
-transformed parameters {
-  vector[K] theta[n];
-  simplex[K] p[n]; 
-  
-  for(i in 1:n){
-    theta[i] =  alpha + beta*x1[i] + gamma*x2[i];
-  }
-  for(i in 1:n){
-    p[i] = softmax(theta[i]);
-  }
-}
-...
-'
-```
-
-## Stan code part 2
-
-\tiny
-```{r}
-stan_code = '
-...
-model {
-  for(k in 1:K) {
-    alpha[k] ~ normal(alpha_mean,sigma_alpha);
-    beta[k] ~ normal(beta_mean,sigma_beta);
-    gamma[k] ~ normal(gamma_mean,sigma_gamma);
-  }
-  alpha_mean ~ normal(0, 10);
-  beta_mean ~ normal(0, 10);
-  gamma_mean ~ normal(0, 10);
-  sigma_alpha ~ cauchy(0, 5);
-  sigma_beta ~ cauchy(0, 5);
-  sigma_gamma ~ cauchy(0, 5);
-
-  for(i in 1:n)
-    y[i] ~ multinomial(p[i]);
-}
-'
-```
-
-
-```{r, echo=FALSE}
-# pollen2 = pollen[sample(1:nrow(pollen), 200),]
-# stan_run = stan(data = list(K = 3,
-#                             n = nrow(pollen2), 
-#                             y = pollen2[,3:5],
-#                             x1 = scale(pollen2$GDD5)[,1],
-#                             x2  = scale(pollen2$MTCO)[,1]),
-#                 model_code = stan_code)
-```
-
-## Notes about this model
-
-- This model is not going to fit very well, since it is unlikely that a linear relationship between the covariates and the pollen counts will match the data
-- It might be better to use e.g. a spline model (not covered in this course, but we can talk about it)
-- Similarly we might need some complex interactions between the covariates as they are strongly linked
-- We have constrained the parameters here so that the slopes and intercepts borrow strength across species. Does this make sense? What else could we do?
-
-## Some final notes about multinomial models
-
-- These models can be a pain to deal with as there are tricky constraints on the $\theta$ parameters to make them all sum to 1. 
-- The `softmax` function is one choice but there are lots of others (logistic ratios, the Dirichlet distribution, ...)
-- Whilst the classification version of this model just has binary $y_i$ (with just a single 1 in it) most packages (including JAGS and Stan) have a special distribution (e.g. `dcat` in JAGS) for this situation
+## Multinomial models
 
 ## Summary
 
 - We have seen how partial pooling is a balance between a model of complete independence and complete dependence between groups
-- We have fitted some zero inflated and hurdle Poisson models
-- We have seen some (poorly fitting) multinomial regression models
+- We have fitted some zero inflated and hurdle Poisson models in JAGS
