@@ -158,13 +158,12 @@ model
   for (i in 1:N) {
     y[i] ~ dpois(lambda[i] * z[i] + 0.0001)
     log(lambda[i]) <- beta_trt[trt[i]]
-    z[i] ~ dcat(q_1)
+    z[i] ~ dbinom(q_0, 1)
   }
   # Priors
   for (j in 1:N_trt) {
     beta_trt[j] ~ dnorm(0, 100^-2)
   }
-  q_1 <- 1 - q_0
   q_0 ~ dunif(0, 1)
 }
 '
@@ -272,9 +271,132 @@ plot(jags_run)
 - We can extend these models further by using a better count distribution such as the negative binomial which has an extra over-dispersion parameter
 - We can also add covariates into the zero-inflation component, though it is not always clear whether this is desirable
 
-## Multinomial models
+## The multinomial distribution
+
+- Multinomial data can be thought of as multivariate discrete data
+- It's usually used in two different scenarios:
+
+    1. For classification, when you have an observation falling into a single one of $K$ possible categories
+    1. For multinomial regression, where you have a set of counts which sum to a known value $N$
+    
+- We will just consider the multinomial regression case, whereby we have observations $y_i = \left[ y_{i1}, \ldots, y_{iK} \right]$ where the sum $\sum_{k=1}^K y_{ik} = N_i$ is fixed
+
+- The classification version is a simplification of the regression version
+
+## Some new data! - pollen
+
+\tiny
+```{r}
+pollen = read.csv('../data/pollen.csv')
+head(pollen)
+```
+
+\normalsize
+These data are pollen counts of 7 varieties of pollen from modern samples with two covariates
+
+## Some plots
+
+- The two covariates represent the length of the growing season (GDD5) and harshness of the winter (MTCO)
+- The task is to find which climate regimes each pollen variety favours
+```{r, fig.height = 5, echo = FALSE}
+pollen$S = rowSums(pollen[,3:ncol(pollen)])
+plot(pollen$GDD5, pollen$Betula/pollen$S, xlab = 'Length of growing season', ylab = 'Estimated proportion')
+```
+
+## A multinomial model
+
+- The multinomial distribution is often written as:
+$$\left[ y_{i1}, \ldots, y_{iK} \right] \sim Mult(S_i, \left\{ p_{i1}, \ldots, p_{iK} \right\})$$
+or, for short:
+$$y_i \sim Mult(S_i, p_i)$$
+
+- The key parameters here are the probability vectors $p_i$. It's these we want to use a link function on to include the covariates
+
+- We need to be careful as each must sum to one: $\sum_{k=1}^K p_{ik} = 1$. Any link function must satisfy this constraint
+
+## Prior distributions on probability vectors
+
+- When $K=2$ we're back the binomial-logit we met in the first day, and we can use the logit link function
+- When $K>2$ a common function to use is the _soft-max_ function:
+$$p_{ik} = \frac{ \exp(z_{ik})}{ \sum_{j=1}^K \exp(z_{ij})}$$
+- This is a generalisation of the logit function
+- The next layer of our model sets, e.g.:
+$$z_{ik} = \beta_0 + \beta_1 \mbox{GDD5}_i + \gamma_2 \mbox{MTCO}_i + \ldots$$
+
+## JAGS code
+
+\small
+```{r}
+model_code = '
+model
+{
+  # Likelihood
+  for (i in 1:N) { # Observaton loops
+    y[i,] ~ dmulti(p[i,], S[i])
+    for(j in 1:M) { # Category loop
+      exp_z[i,j] <- exp(z[i,j])
+      p[i,j] <- exp_z[i,j]/sum(exp_z[i,])
+      z[i,j] <- beta[j,]%*%x[i,]
+    }
+  }
+  # Prior
+  for(j in 1:M) {
+    for(k in 1:K) {
+      beta[j,k] ~ dnorm(0, 0.1^-2)
+    }
+  }
+}
+'
+```
+
+## Let's fit it (first 500 obs only)
+
+```{r}
+model_data = list(N = nrow(pollen[1:500,]), 
+                  y = pollen[1:500,3:9],
+                  x = cbind(1, scale(cbind(pollen[1:500,1:2],
+                                           pollen[1:500,1:2]^2))),
+                  S = pollen[1:500,10],
+                  K = 5, # Number of covars
+                  M = 7) # Number of categories
+# Run the model
+model_run = jags(data = model_data,
+                 parameters.to.save = c("p"),
+                 model.file = textConnection(model_code))
+```
+
+## Results 1
+
+```{r}
+plot(model_run)
+```
+
+## Results 2
+
+```{r, fig.height = 5, echo = FALSE}
+p3_model = model_run$BUGSoutput$mean$p[,3]
+p3_data = pollen$Betula/pollen$S
+plot(p3_data[1:500], p3_model,
+     xlab = 'True proportion of Betula',
+     ylab = 'Estimated proportion of Betula')
+abline(a=0, b=1)
+```
+
+## Notes about this model
+
+- This model is not going to fit very well, since it is unlikely that a linear relationship between the covariates and the pollen counts will match the data
+- It might be better to use e.g. a spline model (not covered in this course, but we can talk about it)
+- Similarly we might need some complex interactions between the covariates as they are strongly linked
+- We have constrained the parameters here so that the slopes and intercepts borrow strength across species. Does this make sense? What else could we do?
+
+## Some final notes about multinomial models
+
+- These models can be a pain to deal with as there are tricky constraints on the $\beta$ parameters to make them all sum to 1. Instead it's often easier to just put a tight prior distribution on them, e.g. $\beta \sim N(0, 0.1)$ 
+- The `softmax` function is one choice but there are lots of others (logistic ratios, the Dirichlet distribution, ...)
+- Whilst the classification version of this model just has binary $y_i$ (with just a single 1 in it, i.e. $S_i = 1$) most packages (including JAGS and Stan) have a special distribution (e.g. `dcat` in JAGS) for this situation
 
 ## Summary
 
 - We have seen how partial pooling is a balance between a model of complete independence and complete dependence between groups
 - We have fitted some zero inflated and hurdle Poisson models in JAGS
+- We have seen a simple multinomial logistic regression
