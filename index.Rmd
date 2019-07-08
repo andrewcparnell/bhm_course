@@ -19,11 +19,11 @@ Time  | Class
 12:45-14:00 | Lunch
 14:00-17:00 | Self-guided practical (including coffee breaks) [(html)](https://andrewcparnell.github.io/bhm_course/practicals/practical_1_using_R_for_lr_and_glms.html) [(pdf)](https://andrewcparnell.github.io/bhm_course/practicals/practical_1_using_R_for_lr_and_glms.pdf)
 
-## Day 2: Bayesian Statistical modelling
+## Day 2: Bayesian statistical modelling
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:30-10:30 | [Introduction to Bayesian Statistics](https://andrewcparnell.github.io/bhm_course/slides/class_3_intro_bayes.pdf) 
+9:30-10:30 | [Introduction to Bayesian statistics](https://andrewcparnell.github.io/bhm_course/slides/class_3_intro_bayes.pdf) 
 10:30-10:45 | Coffee break
 10:45-11:45 | [Bayesian linear and generalised linear models (GLMs)](https://andrewcparnell.github.io/bhm_course/slides/class_4_bglms.pdf) 
 11:45-12:00 | Coffee break

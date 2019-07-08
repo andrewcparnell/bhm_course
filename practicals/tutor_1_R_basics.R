@@ -1,4 +1,4 @@
- ############################################################################################################
+############################################################################################################
 # Section 0:
 # First a reminder about RStudio, and getting help with ? and ??, = vs <-, and comments, and projects
 ############################################################################################################
@@ -39,7 +39,9 @@ colnames(x) = c('one', 'two')
 x
 
 # 1.5 Lists
-x = list(p = 1L, q = runif(4), r = c(2 + 3i, 7 - 2i))
+x = list(p = 1L,
+         q = runif(4),
+         r = c(2 + 3i, 7 - 2i))
 x$r
 x[[2]] # Alternative ways to index
 x[[2]][1:2]
@@ -230,7 +232,7 @@ repeat {
 # Plots -------------------------------------------------------------------
 ############################################################################################################
 # 5.1 Use the prostate data
-prostate = read.table('https://web.stanford.edu/~hastie/ElemStatLearn/datasets/prostate.data', header = TRUE)
+prostate = read.csv('data/prostate.csv', header = TRUE)
 
 # Look at the top of the data:
 head(prostate)
