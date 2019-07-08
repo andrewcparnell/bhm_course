@@ -356,107 +356,99 @@ print(jags_run)
 
 # Class 8 -----------------------------------------------------------------
 
-library(rstan)
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+## ----setup, include=FALSE------------------------------------------------
+knitr::opts_chunk$set(dev = 'pdf')
+#knitr::opts_knit$set(global.par = TRUE)
+set.seed(123)
+library(R2jags)
+
+## ---- include=FALSE------------------------------------------------------
+par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 
 ## ------------------------------------------------------------------------
 wf = read.csv('../data/whitefly.csv')
 head(wf)
 
+
 ## ------------------------------------------------------------------------
 barplot(table(wf$imm),
         main = 'Number of immature whiteflies')
 
+
 ## ------------------------------------------------------------------------
-stan_code = '
-data {
-  int<lower=0> N;
-  int<lower=0> N_trt;
-  int<lower=0> y[N];
-  int trt[N];
-}
-parameters {
-  real beta_trt[N_trt];
-  real trt_mean;
-  real<lower=0> trt_sd;
-}
-model {
-  for (i in 1:N)
-    y[i] ~ poisson_log(beta_trt[trt[i]]);
-
-  # Priors on coefficients
-  for(j in 1:N_trt)
-    beta_trt[j] ~ normal(trt_mean, trt_sd);
-
-  trt_mean ~ normal(0, 10);
-  trt_sd ~ cauchy(0, 5);
+model_code = '
+model
+{
+  # Likelihood
+  for (i in 1:N) {
+    y[i] ~ dpois(lambda[i])
+    log(lambda[i]) <- beta_trt[trt[i]]
+  }
+  # Priors
+  for (j in 1:N_trt) {
+    beta_trt[j] ~ dnorm(0, 100^-2)
+  }
 }
 '
 
+
 ## ---- message=FALSE, results='hide'--------------------------------------
-stan_run = stan(data = list(N = nrow(wf),
+jags_run = jags(data = list(N = nrow(wf),
                             N_trt = length(unique(wf$trt)),
                             y = wf$imm,
                             trt = wf$trt),
-                model_code = stan_code)
+                parameters.to.save = 'beta_trt',
+                model.file = textConnection(model_code))
+
 
 ## ---- fig.height=5-------------------------------------------------------
-plot(stan_run)
+plot(jags_run)
+
 
 ## ---- fig.height=4-------------------------------------------------------
-pars = extract(stan_run, pars = 'beta_trt')$beta_trt
-beta_means = apply(pars,2,'mean')
+beta_means = jags_run$BUGSoutput$mean$beta_trt
 y_sim_mean = exp(beta_means[wf$trt])
 y_sim = rpois(nrow(wf), y_sim_mean)
 hist(wf$imm, breaks = seq(0,max(wf$imm)))
 hist(y_sim, breaks = seq(0,max(wf$imm)),
      add = TRUE, col = 'gray')
 
-## ------------------------------------------------------------------------
-stan_code = '
-data {
-  int<lower=0> N;
-  int<lower=0> N_trt;
-  int<lower=0> y[N];
-  int trt[N];
-}
-parameters {
-  real<lower=0, upper=1> q_0;
-  real beta_trt[N_trt];
-  real trt_mean;
-  real<lower=0> trt_sd;
-}
-model {
-  for(j in 1:N_trt)
-    beta_trt[j] ~ normal(trt_mean, trt_sd);
-  trt_mean ~ normal(0, 10);
-  trt_sd ~ cauchy(0, 5);
 
+## ------------------------------------------------------------------------
+model_code = '
+model
+{
+  # Likelihood
   for (i in 1:N) {
-    if (y[i] == 0)
-      target += log_sum_exp(bernoulli_lpmf(1 | q_0),
-        bernoulli_lpmf(0 | q_0)
-        + poisson_log_lpmf(y[i] | beta_trt[trt[i]]));
-    else
-      target += bernoulli_lpmf(0 | q_0) + poisson_log_lpmf(y[i] | beta_trt[trt[i]]);
+    y[i] ~ dpois(lambda[i] * z[i] + 0.0001)
+    log(lambda[i]) <- beta_trt[trt[i]]
+    z[i] ~ dbinom(q_0, 1)
   }
+  # Priors
+  for (j in 1:N_trt) {
+    beta_trt[j] ~ dnorm(0, 100^-2)
+  }
+  q_0 ~ dunif(0, 1)
 }
 '
 
+
 ## ---- message=FALSE, results='hide'--------------------------------------
-stan_run = stan(data = list(N = nrow(wf),
+jags_run = jags(data = list(N = nrow(wf),
                             N_trt = length(unique(wf$trt)),
                             y = wf$imm,
                             trt = wf$trt),
-                model_code = stan_code)
+                parameters.to.save = c('beta_trt','q_0'),
+                model.file = textConnection(model_code))
+
 
 ## ---- fig.height=5-------------------------------------------------------
-plot(stan_run)
+plot(jags_run)
+
 
 ## ------------------------------------------------------------------------
-beta_means = apply(extract(stan_run, pars = 'beta_trt')$beta_trt,2,'mean')
-q_0_mean = mean(extract(stan_run, pars = 'q_0')$q_0)
+beta_means = jags_run$BUGSoutput$mean$beta_trt
+q_0_mean = jags_run$BUGSoutput$mean$q_0[1]
 y_sim_mean = exp(beta_means[wf$trt])
 rZIP = function(mean, q_0) {
   pois = rpois(length(mean), mean)
@@ -465,74 +457,105 @@ rZIP = function(mean, q_0) {
 }
 y_sim = rZIP(y_sim_mean, q_0_mean)
 
+
 ## ---- fig.height=5-------------------------------------------------------
 hist(wf$imm, breaks = seq(0,max(wf$imm)))
 hist(y_sim, breaks = seq(0,max(wf$imm)),
      add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
 
-## ------------------------------------------------------------------------
-stan_code = '
-data {
-  int<lower=0> N;
-  int<lower=0> N_trt;
-  int<lower=0> y[N];
-  int trt[N];
-}
-parameters {
-  real<lower=0, upper=1> q_0;
-  real beta_trt[N_trt];
-  real trt_mean;
-  real<lower=0> trt_sd;
-}
-model {
-  for(j in 1:N_trt)
-    beta_trt[j] ~ normal(trt_mean, trt_sd);
-  trt_mean ~ normal(0, 10);
-  trt_sd ~ cauchy(0, 5);
 
+## ------------------------------------------------------------------------
+model_code = '
+model
+{
+  # Likelihood
   for (i in 1:N) {
-    if (y[i] == 0)
-      target += log(q_0);
-    else
-      target += log1m(q_0) + poisson_log_lpmf(y[i] | beta_trt[trt[i]])
-  - poisson_lccdf(0 | exp(beta_trt[trt[i]]));
+    y[i] ~ dpois(lambda[i])T(1,)
+    log(lambda[i]) <- beta_trt[trt[i]]
   }
+  for(i in 1:N_0) {
+    y_0[i] ~ dbin(q_0, 1)
+  }
+  # Priors
+  for (j in 1:N_trt) {
+    beta_trt[j] ~ dnorm(0, 100^-2)
+  }
+  q_0 ~ dunif(0, 1)
 }
 '
 
+
 ## ---- message=FALSE, results='hide'--------------------------------------
-stan_run = stan(data = list(N = nrow(wf),
+jags_run = jags(data = list(N = nrow(wf[wf$imm > 0,]),
                             N_trt = length(unique(wf$trt)),
-                            y = wf$imm,
-                            trt = wf$trt),
-                model_code = stan_code)
+                            y = wf$imm[wf$imm > 0],
+                            y_0 = as.integer(wf$imm == 0),
+                            N_0 = nrow(wf),
+                            trt = wf$trt[wf$imm > 0]),
+                parameters.to.save = c('beta_trt', 'q_0'),
+                model.file = textConnection(model_code))
+
 
 ## ---- fig.height = 5-----------------------------------------------------
-plot(stan_run)
+plot(jags_run)
 
-## ------------------------------------------------------------------------
-beta_means = apply(extract(stan_run, pars = 'beta_trt')$beta_trt,2,'mean')
-q_0_mean = mean(extract(stan_run, pars = 'q_0')$q_0)
-y_sim_mean = exp(beta_means[wf$trt])
-rZIP = function(mean, q_0) {
-  pois = rpois(length(mean), mean)
-  pois[runif(length(mean))<q_0] = 0
-  return(pois)
-}
-y_sim = rZIP(y_sim_mean, q_0_mean)
-
-## ---- fig.height=5-------------------------------------------------------
-hist(wf$imm, breaks = seq(0,max(wf$imm)))
-hist(y_sim, breaks = seq(0,max(wf$imm)),
-     add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
 
 ## ------------------------------------------------------------------------
 pollen = read.csv('../data/pollen.csv')
 head(pollen)
 
+
 ## ---- fig.height = 5, echo = FALSE---------------------------------------
-N = rowSums(pollen[,3:ncol(pollen)])
-par(mfrow=c(1,2))
-plot(pollen$GDD5, pollen$Pinus.D)
-plot(pollen$GDD5, pollen$Pinus.D/N)
-par(mfrow=c(1,1))
+pollen$S = rowSums(pollen[,3:ncol(pollen)])
+plot(pollen$GDD5, pollen$Betula/pollen$S, xlab = 'Length of growing season', ylab = 'Estimated proportion')
+
+
+## ------------------------------------------------------------------------
+model_code = '
+model
+{
+  # Likelihood
+  for (i in 1:N) { # Observaton loops
+    y[i,] ~ dmulti(p[i,], S[i])
+    for(j in 1:M) { # Category loop
+      exp_z[i,j] <- exp(z[i,j])
+      p[i,j] <- exp_z[i,j]/sum(exp_z[i,])
+      z[i,j] <- beta[j,]%*%x[i,]
+    }
+  }
+  # Prior
+  for(j in 1:M) {
+    for(k in 1:K) {
+      beta[j,k] ~ dnorm(0, 0.1^-2)
+    }
+  }
+}
+'
+
+
+## ------------------------------------------------------------------------
+model_data = list(N = nrow(pollen[1:500,]),
+                  y = pollen[1:500,3:9],
+                  x = cbind(1, scale(cbind(pollen[1:500,1:2],
+                                           pollen[1:500,1:2]^2))),
+                  S = pollen[1:500,10],
+                  K = 5, # Number of covars
+                  M = 7) # Number of categories
+# Run the model
+model_run = jags(data = model_data,
+                 parameters.to.save = c("p"),
+                 model.file = textConnection(model_code))
+
+
+## ------------------------------------------------------------------------
+plot(model_run)
+
+
+## ---- fig.height = 5, echo = FALSE---------------------------------------
+p3_model = model_run$BUGSoutput$mean$p[,3]
+p3_data = pollen$Betula/pollen$S
+plot(p3_data[1:500], p3_model,
+     xlab = 'True proportion of Betula',
+     ylab = 'Estimated proportion of Betula')
+abline(a=0, b=1)
+

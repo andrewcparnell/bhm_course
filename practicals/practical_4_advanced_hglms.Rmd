@@ -23,7 +23,7 @@ In practical 4 we are going to:
   - Perform some model comparison using WAIC with Stan
   - Create some plots of the posterior predicted values with uncertainty
 
-We are going to focus on the `prostate` data set in the `data` folder. We're going to use Stan throughout. 
+We are going to focus on the `prostate` data set in the `data` folder. We're going to use Stan throughout, though if you've stuck to JAGS so far you should try and translate the code into JAGS. Everything in this tutorial should still run for you.
 
 ## The prostate data set
 
@@ -96,7 +96,6 @@ stan_run = stan(data = list(N = nrow(prostate),
 ***
 **Exercise 2**  
 
-1. Draw a DAG for this model
 1. This model isn't mean corrected. Mean correct it properly either in the `stan_code` object or in the data list provided to `stan`.
 1. These are pretty poor priors. Try simulating data from these priors and this likelihood (once you've mean corrected it). Try and come up with your own better priors (pretend you are the data expert here)
 1. Once you have come up with a model that you like, re-fit the model and interpret the output. Which variables are important?
@@ -165,7 +164,7 @@ This package is currently quite new and still seems to spit out some odd warning
 loo(log_lik)
 ```
 
-These two will generally be pretty similar as the WAIC is designed to match the LOO except in the case of very influential observations. My current view is to stick whit the WAIC as most people will be familiar with this type of measure from using AIC, BIC, DIC, etc.
+These two will generally be pretty similar as the WAIC is designed to match the LOO except in the case of very influential observations. My current view is to stick with the WAIC as most people will be familiar with this type of measure from using AIC, BIC, DIC, etc.
 
 ## Extending the model
 
@@ -213,10 +212,9 @@ stan_run = stan(data = list(N = nrow(prostate),
 ***
 **Exercise 3**  
 
-1. Draw a DAG for the above model and try to calculate its WAIC value (ask if you get stuck with the `generated quantities` value)
+1. Try to calculate the WAIC value for this model (ask if you get stuck with the `generated quantities` value)
 1. Improve the model with the priors you developed in the previous exercise
 1. Think of two or three different ways to expand this model. 
-1. Draw out some DAGs for each version
 1. Try to fit each of the models and keep a note of the WAIC.
 1. Find your 'best' model and interpret the parameters
 

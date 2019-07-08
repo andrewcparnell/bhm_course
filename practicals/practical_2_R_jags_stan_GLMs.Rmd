@@ -2,8 +2,8 @@
 title: "Practical 2 - Using R, JAGS and Stan for fitting GLMs"
 author: "Andrew Parnell"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -43,7 +43,7 @@ Here is a quick warm-up exercise:
 **Exercise 1**  
 
 1. Load in the earnings data using `read.csv`:
-1. Perform a linear regression with log(earnings) as the response and height in cm as the explanatory variable
+1. Use `lm` to perform a linear regression with log(earnings) as the response and height in cm as the explanatory variable
 1. Have a look at the fit of the model (R-squared, significance, etc)
 1. Create a plot of the fitted values ($x$ - axis) vs residuals
 
@@ -91,17 +91,6 @@ model{
 
 Run the code by calling `jags`:
 ```{r, message=FALSE, results='hide'}
-jags_model = jags.model(file = textConnection(jags_code),
-                        data = list(N = nrow(dat), 
-                            y = log(dat$earn),
-                            x = dat$height_cm))
-jags_run = jags.samples(jags_model,
-                        variable.names = c('intercept',
-                                       'slope',
-                                       'residual_sd'),
-                        n.iter = 2000)
-
-
 jags_run = jags(data = list(N = nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),
@@ -130,7 +119,7 @@ Once you are happy that the above runs for you, try the following:
 
 1. Try changing the `x` variable in the data list from `height_cm` to `height`. How does the model change? 
 1. Try changing some of the prior distributions in the JAGS code. What happens if you make the prior standard deviations, or the `residual_sd` upper limit very small?
-1. Try removing one or more of the parameters given in the `parameters.to.save` argument of the JAGS call. What happens to the resulting `print`/`plot` commands? Do any of the values change?
+1. Try removing one or more of the parameters given in the `parameters.to.save` argument of the JAGS call. What happens to the resulting `print`/`plot` commands? Do any of the values change? (they shouldn't!)
 
 ***
 
@@ -419,7 +408,6 @@ If the traceplots look bad there are five things you can change in a JAGS/Stan r
 1. The amount of thinning (JAGS/Stan default 1). Increase this if the parameters are wandering around slowly
 1. The starting parameter guesses. By default JAGS and Stan come up with their own, but you can provide a function which generates good starting values and provides it to JAGS/Stan. We will see an example of this in one of the later classes. It's usually only necessary for very complex models that struggle to start.
 1. The number of chains (JAGS default 3, Stan default 4). There's usually no need to increase this unless you have a lot of spare processors and want to be _really sure_ of convergence
-
 
 Here's an example of Stan code with the iterations/burn-in/thinning values doubled (Stan calls the burn-in the `warmup`):
 ```{r, eval = FALSE}

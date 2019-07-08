@@ -1,6 +1,6 @@
  ############################################################################################################
 # Section 0:
-# First a reminder about RStudio, and getting help with ? and ??, = vs <-, and comments, and setting the working directory
+# First a reminder about RStudio, and getting help with ? and ??, = vs <-, and comments, and projects
 ############################################################################################################
 
 ############################################################################################################
