@@ -5,7 +5,7 @@ date: "July 2019"
 output: html_document
 ---
 
-Module pre-requisites can be found [here](https://andrewcparnell.github.io/bhm_course/Prerequisites.html). All the raw files and code can be found [here](https://andrewcparnell.github.io/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). All links below are in pdf format for you to annotate. A glossary of technical terms is [here](https://andrewcparnell.github.io/bhm_course/glossary.html).
+Module pre-requisites can be found [here](https://andrewcparnell.github.io/bhm_course/Prerequisites.html). All the raw files and code can be found [here](https://www.github.com/andrewcparnell/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). All links below are in pdf format for you to annotate. A glossary of technical terms is [here](https://andrewcparnell.github.io/bhm_course/glossary.html).
 
 ## Day 1: Basic concepts
 
