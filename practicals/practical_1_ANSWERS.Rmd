@@ -161,6 +161,17 @@ pois_mod = glm(satell ~ width, data = horseshoe, family = poisson)
 summary(pois_mod)
 ```
 
+```{r}
+# Example of a qq-plot for a Poisson distribution - bit of a hack!
+# qqrplot comes from the countreg package
+source('https://raw.githubusercontent.com/rforge/countreg/master/pkg/R/qqrplot.R')
+source('https://raw.githubusercontent.com/rforge/countreg/master/pkg/R/qresiduals.R')
+qqrplot(pois_mod, 
+        main = "Poisson")
+```
+
+
+
 1. Now try a model with all of the covariates (make sure not to include the binary variable you created before). Summarise and see if there's any improvement. You might notice that more variables are important (compared to the previous binary logistic regression) because we're using more of the data
 
 ```{r}
@@ -180,6 +191,17 @@ with(horseshoe, plot(width, satell))
 points(horseshoe$width, nb_mod$fitted.values, col = 'red')
 # Width not the only variable we could plot against (try e.g. color_fac or others)
 ```
+
+```{r}
+# QQ-plot for negative binomial
+qqrplot(nb_mod, 
+        main = "Negative Binomial")
+# Compare with the Poisson fit
+qqrplot(pois_mod_2, 
+        main = "Poisson")
+
+```
+
 
 ## Extra questions
 
