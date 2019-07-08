@@ -211,13 +211,13 @@ plot(stan_run)
 
 ## From LM to GLM
 
-- In general, we use a _generalised linear model_ (GLM) when the normal distribution is not longer appropriate for the data
+- We use a _generalised linear model_ (GLM) when the normal distribution is not longer appropriate for the data
 
 - This probability distribution should match the type of data (e.g. count data, binary, etc) and will have its own parameters
 
-- We pften have to transform the parameters if we still want to use a linear regression type relationship with a covariate. The transformation is called a _link function_
+- We often have to transform the parameters if we still want to use a linear regression type relationship with a covariate. The transformation is called a _link function_
 
-- For a Bayesian model the probability distribution allows us to calculate a likelihood and to be able to get some priors for the unknown parameters
+- In a Bayesian generalised linear model we just compute a likelihood and combine it with a prior distribution just like every other model we fit
 
 ## The data generating process for a logistic regression
 
@@ -384,8 +384,8 @@ legend('topleft', legend = c('Female', 'Male'),
 
 ## Fit with JAGS
 
-\small
-```{r}
+\tiny
+```{r, message = FALSE, results = 'hide'}
 model_code = '
 model
 {
@@ -467,7 +467,7 @@ A good trace plot will show no patterns or runs, and will look like it has a sta
 
 \tiny
 ```{r}
-apply(post,2, quantile, probs = c(0.025, 0.975))
+apply(post, 2, quantile, probs = c(0.025, 0.975))
 ```
 
 \normalsize

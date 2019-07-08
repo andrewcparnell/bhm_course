@@ -89,7 +89,6 @@ summary(model)
 
 ## What you will now get instead
 
-\small 
 ```{r, echo=FALSE, results='hide', message=FALSE}
 library(R2jags)
 model_code ='
@@ -109,10 +108,13 @@ model_run = jags(data = list(N=nrow(dat),
                  parameters.to.save = model_parameters,
                  model.file = textConnection(model_code))
 ```
-\small
+
+\tiny
+
 ```{r}
 print(model_run)
 ```
+
 \normalsize 
 
 ## Using prior information
@@ -144,7 +146,7 @@ model_run_2 = jags(data = list(N=nrow(dat),
 
 ```
 
-\small
+\tiny
 ```{r}
 print(model_run_2)
 ```

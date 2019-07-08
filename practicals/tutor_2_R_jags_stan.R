@@ -5,7 +5,7 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 
 # First class 3 -----------------------------------------------------------
 
-dat = read.csv('../data/earnings.csv')
+dat = read.csv('data/earnings.csv')
 with(dat, plot(height_cm, log(earn)))
 
 
@@ -178,7 +178,7 @@ y = -2 + 0.4 * x + eps
 
 ## ---- message=FALSE, results='hide'--------------------------------------
 library(R2jags)
-dat = read.csv('../data/earnings.csv') # Called dat
+dat = read.csv('data/earnings.csv') # Called dat
 jags_code = '
 model{
   # Likelihood
@@ -294,7 +294,7 @@ y
 
 
 ## ------------------------------------------------------------------------
-swt = read.csv('../data/swt.csv')
+swt = read.csv('data/swt.csv')
 head(swt)
 
 
