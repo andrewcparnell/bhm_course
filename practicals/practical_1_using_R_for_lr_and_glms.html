@@ -424,7 +424,7 @@ $(document).ready(function () {
 <ol style="list-style-type: decimal">
 <li><p>This time fit a Poisson GLM to the horseshoe data, using the original number of satellites rather than the binary version you fitted previously. Again use <code>width</code> as the sole covariate, and again plot the fitted values</p></li>
 <li><p>Now try a model with all of the covariates (make sure not to include the binary variable you created before). Summarise and see if there’s any improvement. You might notice that more variables are important (compared to the previous binary logistic regression) because we’re using more of the data</p></li>
-<li><p>A common occurrence is that the Poisson distribution is a poor fit to the data as the mean=variance relationship is rarely met. (You could check if the mean and the variance match for these data). A common alternative is to fit a Negative-Binomial GLM which has an extra parameter to measure excess variance (over-dispersion). The <code>glm</code> function doesn’t have this distribution in it by default so you need to call in the MASS library with <code>library(MASS)</code>. The family will now be called <code>negative.binomial</code> and you’ll need to specify a value of the excess variance <code>theta</code>. The ratio of the variance to the mean of the response would be a good start. Fit a Negative Binomial GLM to these data, interpret your findings, see if the AIC improves, and plot your output.</p></li>
+<li><p>A common occurrence is that the Poisson distribution is a poor fit to the data as the mean=variance relationship is rarely met. (You could check if the mean and the variance match for these data). A common alternative is to fit a Negative-Binomial GLM which has an extra parameter to measure excess variance (over-dispersion). The <code>glm</code> function doesn’t have this distribution in it by default so you need to call in the MASS library with <code>library(MASS)</code>. The command will now be called <code>glm.nb</code> which will also try to estimate the over-dispersion parameter (the excess variance over the Poisson). Use <code>glm.nb</code> to fit a Negative Binomial GLM to these data, interpret your findings, see if the AIC improves, and plot your output.</p></li>
 </ol>
 </div>
 <div id="extra-questions" class="section level2">
@@ -434,6 +434,7 @@ $(document).ready(function () {
 <li>Another data sets which is worth fitting a linear regression model to is the <code>geese_isotopes.csv</code> data. You might like to see if one of the isotope values is affected by some of the other variables (sex, adult, etc)</li>
 <li>The whitefly data set. This is binomial (as used in the lectures) but you might like to additionally try some of the other variables and see which are important and why. The data set has particular issues with zero-inflation. See if you can find which zero data points are poorly predicted by the model.</li>
 </ol>
+<p>The answer script is <a href="https://andrewcparnell.github.io/bhm_course/practicals/practical_1_ANSWERS.html">here</a></p>
 </div>
 
 

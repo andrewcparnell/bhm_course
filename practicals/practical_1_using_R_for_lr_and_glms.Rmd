@@ -74,7 +74,7 @@ Tasks:
 
 1. Now try a model with all of the covariates (make sure not to include the binary variable you created before). Summarise and see if there's any improvement. You might notice that more variables are important (compared to the previous binary logistic regression) because we're using more of the data
 
-1. A common occurrence is that the Poisson distribution is a poor fit to the data as the mean=variance relationship is rarely met. (You could check if the mean and the variance match for these data). A common alternative is to fit a Negative-Binomial GLM which has an extra parameter to measure excess variance (over-dispersion). The `glm` function doesn't have this distribution in it by default so you need to call in the MASS library with `library(MASS)`. The family will now be called `negative.binomial` and you'll need to specify a value of the excess variance `theta`. The ratio of the variance to the mean of the response would be a good start. Fit a Negative Binomial GLM to these data, interpret your findings, see if the AIC improves, and plot your output.
+1. A common occurrence is that the Poisson distribution is a poor fit to the data as the mean=variance relationship is rarely met. (You could check if the mean and the variance match for these data). A common alternative is to fit a Negative-Binomial GLM which has an extra parameter to measure excess variance (over-dispersion). The `glm` function doesn't have this distribution in it by default so you need to call in the MASS library with `library(MASS)`. The command will now be called `glm.nb` which will also try to estimate the over-dispersion parameter (the excess variance over the Poisson). Use `glm.nb` to fit a Negative Binomial GLM to these data, interpret your findings, see if the AIC improves, and plot your output.
 
 ## Extra questions
 
@@ -82,3 +82,5 @@ If you did all the above and have time to spare, try these:
 
 1. Another data sets which is worth fitting a linear regression model to is the `geese_isotopes.csv` data. You might like to see if one of the isotope values is affected by some of the other variables (sex, adult, etc)
 2. The whitefly data set. This is binomial (as used in the lectures) but you might like to additionally try some of the other variables and see which are important and why. The data set has particular issues with zero-inflation. See if you can find which zero data points are poorly predicted by the model.
+
+The answer script is [here](https://andrewcparnell.github.io/bhm_course/practicals/practical_1_ANSWERS.html)
