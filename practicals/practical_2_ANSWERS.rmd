@@ -50,7 +50,7 @@ Here is a quick warm-up exercise:
 1. Create a plot of the fitted values ($x$ - axis) vs residuals
 
 ```{r}
-dat = read.csv('data/earnings.csv')
+dat = read.csv('../data/earnings.csv')
 model = lm(log(earn) ~ height_cm, data = dat)
 summary(model) # Poor r-squared
 with(model, plot(residuals, fitted.values))
