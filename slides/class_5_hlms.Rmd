@@ -134,7 +134,7 @@ $$y_i \sim N(\alpha + \beta_{\mbox{ethnicity}_i} (x_i - \bar{x}), \sigma^2) $$
 
 ## Writing a varying intercepts/slopes model in JAGS/Stan
 
-\tiny
+\small
 - One way is to simply include it as an extra covariate:
 ```
 log_earn[i] ~ dnorm(alpha + beta1 * height[i] + 
@@ -160,6 +160,7 @@ log_earn[i] ~ dnorm(alpha[ethnicity[i]] +
 
 ## Prior distributions for varying intercepts and slopes
 
+\small 
 - Let's think about our different choices for prior distributions on these varying parameters
 
 - Remember we now have four values `alpha[1]`,  `alpha[2]`, ... and `beta[1]`, `beta[2]`, ... i.e. intercepts and slopes depending on ethnicity
