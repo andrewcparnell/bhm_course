@@ -1,9 +1,11 @@
 ---
-title: "Practical 2 - Using R, JAGS and Stan for fitting GLMs"
+title: "Practical 2 - ANSWER SCRIPT"
 author: "Andrew Parnell"
 output:
   html_document: default
   pdf_document: default
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -46,6 +48,14 @@ Here is a quick warm-up exercise:
 1. Use `lm` to perform a linear regression with log(earnings) as the response and height in cm as the explanatory variable
 1. Have a look at the fit of the model (R-squared, significance, etc)
 1. Create a plot of the fitted values ($x$ - axis) vs residuals
+
+```{r}
+dat = read.csv('data/earnings.csv')
+model = lm(log(earn) ~ height_cm, data = dat)
+summary(model) # Poor r-squared
+with(model, plot(residuals, fitted.values))
+```
+
 
 ***
 
@@ -118,8 +128,56 @@ plot(jags_run)
 Once you are happy that the above runs for you, try the following:
 
 1. Try changing the `x` variable in the data list from `height_cm` to `height`. How does the model change? 
-1. Try changing some of the prior distributions in the JAGS code. What happens if you make the prior standard deviation of the intercept parameter smaller (e.g. try 0.1)
-1. Try removing one or more of the parameters given in the `parameters.to.save` argument of the JAGS call. What happens to the resulting `print`/`plot` commands? Do any of the values change? (they shouldn't change much, but remember that these are stochastic algorithms and you won't get exactly the same values every time, though they should be close)
+1. Try changing some of the prior distributions in the JAGS code. What happens if you make the prior standard deviation of the intercept parameter smaller (e.g. try 0.1)?
+1. Try removing one or more of the parameters given in the `parameters.to.save` argument of the JAGS call. What happens to the resulting `print`/`plot` commands? Do any of the values change? (they shouldn't change much, but remember that these are stochastic algorithms and you won't get exactly the same values every time, though they should be close!)
+
+```{r}
+# Run with height in inches
+jags_run_inches = jags(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x = dat$height),
+                parameters.to.save = c('intercept',
+                                       'slope',
+                                       'residual_sd'),
+                model.file = textConnection(jags_code))
+cbind(jags_run$BUGSoutput$mean,jags_run_inches$BUGSoutput$mean)
+# Slope changes quite a lot but not the intercept
+
+# Change the prior distribution
+jags_code_small_intercept_sd = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dnorm(intercept + slope * x[i], 
+                    residual_sd^-2)
+  }
+  # Priors
+  intercept ~ dnorm(0, 0.1^-2)
+  slope ~ dnorm(0, 100^-2)
+  residual_sd ~ dunif(0, 100)
+}
+'
+jags_run_small_intercept_sd = jags(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x = dat$height),
+                parameters.to.save = c('intercept',
+                                       'slope',
+                                       'residual_sd'),
+                model.file = textConnection(jags_code_small_intercept_sd))
+cbind(jags_run$BUGSoutput$mean,
+      jags_run_inches$BUGSoutput$mean,
+      jags_run_small_intercept_sd$BUGSoutput$mean)
+# Reduces the intercept (unsurprisingly), increases the residual standard deviation, and increases the slop by quite a lot (because the intercept is pulled down)
+
+# Run again without slope
+jags_run_no_slope = jags(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x = dat$height),
+                parameters.to.save = c('intercept',
+                                       'residual_sd'),
+                model.file = textConnection(jags_code_small_intercept_sd))
+jags_run_no_slope$BUGSoutput$mean # No slope value but otherwise more or less identical parameter means
+```
 
 ***
 
@@ -163,6 +221,23 @@ str(jags_run$BUGSoutput)
 1. Try creating some plots of the output, e.g. histograms of the posterior parameter values (hint: use the `pars` object created above)
 
 ***
+
+```{r}
+# Command to extract medians
+jags_run$BUGSoutput$median
+# or
+apply(jags_run$BUGSoutput$sims.matrix, 2, 'median')
+
+# Command to extract the 95% posterior confidence interval
+jags_run$BUGSoutput$summary[,c('2.5%', '97.5%')]
+
+# Create plots of output - could do a better job with ggplot2!
+# 1 Histograms of parameters
+hist(jags_run$BUGSoutput$sims.list$intercept, breaks = 30,
+     main = 'Histogram of intercept',
+     xlab = 'Intercept')
+```
+
 
 ## An introduction to Stan
 
@@ -227,9 +302,37 @@ plot(stan_run)
 
 Let's do the same exercises again for Stan:
 
-1. Try changing the `x` variable in the data list to `height`. How does the model change? 
+1. Try changing the `x` variable in the data list to `height`. How does the model change?
 
 1. Try adding in some prior distributions to the Stan code. For example, add `intercept ~ normal(0, 100);`. (If you get stuck there's an example below with priors for a diferent model). Again experiment with making these ranges small or large
+
+```{r}
+# Run with height instead of height_cm - should run without compilation
+stan_run_inches = stan(data = list(N = nrow(dat), 
+                            y = log(dat$earn),
+                            x = dat$height),
+                model_code = stan_code)
+print(stan_run_inches) # Should have same effect as JAGS above
+
+# New prior on intercept
+stan_code_with_intercept_prior = '
+data {
+  int<lower=0> N;
+  vector[N] x;
+  vector[N] y;
+}
+parameters {
+  real intercept;
+  real slope;
+  real<lower=0> residual_sd;
+} 
+model {
+  y ~ normal(intercept + slope * x, residual_sd);
+  intercept ~ normal(0, 100);
+}
+'
+```
+
 
 ***
 
@@ -272,6 +375,23 @@ As with JAGS:
 1. Try creating some plots of the output, e.g. histograms of the posterior parameter values
 
 ***
+
+```{r}
+# Get posterior medians - is there a better way?
+summary(stan_run)$summary[,'50%']
+# Or
+lapply(extract(stan_run), 'median')
+
+# Get the confidence intervals
+summary(stan_run)$summary[,c('2.5%', '97.5%')]
+# Or
+lapply(extract(stan_run), 'quantile', c(0.025, 0.975))
+
+# Some more plots of output
+stan_hist(stan_run)
+stan_trace(stan_run)
+```
+
 
 ## Fitting GLMs
 
@@ -379,6 +499,59 @@ Pick your favourite so far (either JAGS or Stan) and try these:
 
 Now try and swap programmes and try the above again! Then compare the results of JAGS vs Stan on the GLM. They should look similar, though the algorithm they use is stochastic so the results won't be identical.
 
+```{r}
+# JAGS version with both forest and elev
+jags_code_both = '
+model{
+  # Likelihood
+  for(i in 1:N) {
+    y[i] ~ dbin(p[i], 1)
+    logit(p[i]) <- alpha + beta1*forest[i] + beta2*elev[i]
+  }
+  # Priors
+  alpha ~ dnorm(0, 20^-2)
+  beta1 ~ dnorm(0, 20^-2)
+  beta2 ~ dnorm(0, 20^-2)
+}
+'
+jags_run_both = jags(data = list(N = nrow(swt), 
+                            y = swt$rep.1,
+                            forest = swt$forest,
+                            elev = swt$elev),
+                parameters.to.save = c('alpha',
+                                       'beta1',
+                                       'beta2'),
+                model.file = textConnection(jags_code_both))
+plot(jags_run_both) # Both positive effects, would be nice to plot effect of fitted values
+
+# Stan version with forest and elev
+stan_code_both = '
+data {
+  int<lower=0> N;
+  vector[N] forest;
+  vector[N] elev;
+  int y[N];
+}
+parameters {
+  real alpha;
+  real beta1;
+  real beta2;
+} model {
+  y ~ binomial_logit(1, alpha + beta1 * forest + beta2 * elev);
+  alpha ~ normal(0, 10);
+  beta1 ~ normal(0, 10);
+  beta2 ~ normal(0, 10);
+}
+'
+stan_run_both = stan(data = list(N = nrow(swt), 
+                            y = swt$rep.1,
+                            forest = swt$forest,
+                            elev = swt$elev),
+                model_code = stan_code_both)
+plot(stan_run_both, 
+     pars =c('beta1', 'beta2')) # Same as JAGS run - both positive
+```
+
 ***
 
 ## Checking and changing the model run
@@ -440,6 +613,3 @@ For the vast majority of problems we will cover (up until the last few classes) 
 1. We previously met a Poisson GLM but we didn't fit it to any data. Try fitting it using to the `whitefly.csv` data set using the `imm` variable as the response and the `trt` variable as a covariate. Don't worry about interpreting the output, just get the model to run and converge. 
 1. Next see if you can fit the above model in Stan. You'll need to look up the `poisson_log` function in the Stan manual
 1. The variable `n` in this data set is a potential offset. Use the notes on offsets in Class 2 to fit a model that uses the `n` variable as an offset. Again, don't worry about interpretation. Just get the models to run!
-
-The answer script is [here](https://andrewcparnell.github.io/bhm_course/practicals/practical_2_ANSWERS.html)
-

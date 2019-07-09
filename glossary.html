@@ -255,9 +255,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type="text/css">
 .main-container {
@@ -288,8 +286,6 @@ summary {
 </style>
 
 
-
-<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -364,13 +360,22 @@ $(document).ready(function () {
 
 
 
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
 
 <div class="fluid-row" id="header">
 
 
 
 <h1 class="title toc-ignore">Glossary</h1>
-<h4 class="author"><em>Andrew Parnell</em></h4>
+<h4 class="author">Andrew Parnell</h4>
 
 </div>
 
@@ -386,7 +391,7 @@ $(document).ready(function () {
 <li><strong>Link functions</strong>: A function which transforms a set of parameters in a probability distribution from a restricted to an unrestricted range. The unrestricted range can then be used to incorporate the covariates.</li>
 <li><strong>Directed Acyclic Graph (DAG)</strong>: A graphical display of a model used to identify the links between the parameters and the data. Circles are used to display parameters, squares for data, and arrows are used to identify links. Dashed lines are sometimes also used to display indexed variables (e.g. observations)</li>
 <li><strong>Information criteria</strong>: A set of tools used to compare between models. The attempt to penalise the deviance (minus twice the log-likelihood) by a measure of the complexity of the model, with the idea that the ‘best’ models will represent the data well and be relatively simple. Common information criteria for Bayesian models are the Deviance Information Criterion (DIC), and the Widely Applicable Information Criterion (WAIC). Smaller values of the IC tend to indicate ‘better’ models.</li>
-<li><strong>Deviance</strong>: A measure of the fit of the model using only the likelihood score. The Deviance is calculated as minus twice the log-likelihood score. It is popular because, for normally distributed data, the Deviance is equivalent to the Mean Square Error.</li>
+<li><strong>Deviance</strong>: A measure of the fit of the model using only the likelihood score. The Deviance is calculated as minus twice the log-likelihood score. It is popular because, for normally distributed data, the Deviance is equivalent to the Mean Square Error. JAGS reports the deviance as it is used as part of the Deviance Information Criterion, whereas Stan reports the log-posterior score (see definition below)</li>
 <li><strong>Cross validation (CV)</strong>: A technique whereby parts of the data are removed before fitting the model, and subsequently predicted from the new model output. CV is valuable because it tests the model performance on data the model has not seen. Common versions of CV include k-fold CV whereby the data are split into k groups and each is left out (and subsequently predicted) in turn, or leave-one-out (LOO-CV) where each observation is left out (and subsequently predicted) in turn.</li>
 <li><strong>Hierarchical model</strong>: A model where some parameters are given further prior distributions that depend on other parameters.</li>
 <li><strong>Markov chain Monte Carlo</strong>: A method for simulating values from a posterior distribution given a likelihood and a prior (and a data set). The method works by guessing initial values for the parameters, and scoring them against the likelihood and the prior. It subsequently updates the parameters and compares them with the previous score. Over thousands of iterations the model should eventually s</li>
@@ -398,6 +403,7 @@ $(document).ready(function () {
 <li><strong>Conditional distributions</strong>: A probability distribution that depends on further parameters and/or data.</li>
 <li><strong>Conditional independence</strong>: A situation that occurs when two parameters are not linked directly in a DAG.</li>
 <li><strong>Latent parameters</strong>: A parameter which is hidden in the data and can be estimated by using a statistical model (such as a hierarchical model)</li>
+<li><strong><code>lp__</code></strong>: Part of the output of a Stan model that represents the <em>log posterior</em> score. This is the log of the likelihood times the prior (or equivalently the sum of the log-likelihood plus the sum of the log-priors). It represents the overall score that Stan is trying to maximise (and subsequently hover around) to create the poserior distribution</li>
 </ul>
 
 

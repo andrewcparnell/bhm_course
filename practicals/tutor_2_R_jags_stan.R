@@ -1,7 +1,6 @@
 # Code taken from class 3 and 4
 
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-#setwd('slides')
 
 # First class 3 -----------------------------------------------------------
 

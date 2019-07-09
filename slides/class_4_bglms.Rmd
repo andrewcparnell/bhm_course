@@ -38,7 +38,7 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 $$y_i = \alpha + \beta x_i + \epsilon_i$$
 where $\alpha$ is the intercept, $\beta$ the slope, and $i=1, \ldots, N$ represents each of the $N$ observations
 
-- Usually we make the additional assumption that $\epsilon_i \sim N(0, \sigma^2)$ where $\sigma^2$ is the residual standard deviation
+- Usually we make the additional assumption that $\epsilon_i \sim N(0, \sigma^2)$ where $\sigma$ is the residual standard deviation
 
 - Under this assumption it is common to write $y_i|x_i, \alpha, \beta, \sigma \sim N(\alpha + \beta x_i, \sigma^2)$. 
 
@@ -62,8 +62,6 @@ y = -2 + 0.4 * x + eps
 - We can extend LMs to have multiple covariates if we want, e.g.
 ```{r, eval=FALSE}
 y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x2, sd = 1)
-p = inv.logit(-2 + 0.4 * x1 - 0.3 * x2)
-y = rbinom(N, size = 1, prob = p)
 ```
 
 - Alternatively we can incorporate multiplicative interactions...
@@ -140,8 +138,6 @@ alpha_mean = mean(post[,'alpha'])
 beta1_mean = mean(post[,'beta1'])
 beta2_mean = mean(post[,'beta2'])
 plot(dat$height_cm, log(dat$earn))
-lines(dat$height_cm, alpha_mean + 
-        beta1_mean * dat$height_cm)
 lines(dat$height_cm, alpha_mean + 
         beta1_mean * dat$height_cm, col = 'red')
 lines(dat$height_cm, alpha_mean + 
@@ -246,7 +242,7 @@ y = rbinom(N, size = 1, prob = p)
 y
 ```
 
-- The logit function itself is $\log \left( \frac{p}{1-p} \right)$ and will turn the probabilities form the range (0,1) to the range $(-\infty,\infty)$
+- The logit function itself is $\log \left( \frac{p}{1-p} \right)$ and will turn the probabilities from the range (0,1) to the range $(-\infty,\infty)$
 - This type of model is known as _logistic-Binomial_ regression (or just _logistic regression_) and the logit is known as the _link function_
 - It's also possible to generate data with maximum value bigger than 1 by changing the `size` parameter
 
@@ -446,7 +442,7 @@ JAGS and Stan have good default choices for these but for complex models you oft
 
 ## Plotting the iterations
 
-You can plot the iterations for all the parameters with `traceplot`, or for just one with  e.g. 
+You can plot the iterations for all the parameters with `traceplot`, or for just one with e.g. 
 ```{r, fig.width = 8, fig.height = 3.5}
 plot(post[,'alpha'], type = 'l')
 ```

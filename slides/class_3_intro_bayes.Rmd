@@ -189,28 +189,6 @@ There are several choices when it comes to specifying prior distributions:
 
 In fact, choosing the prior and choosing the likelihood are very similar problems
 
-
-## Lots of probability distributions
-
-Almost always, the likelihood and prior can be picked from the standard probability distributions:
-
-\tiny
-\begin{tabular}{p{2cm}lp{4cm}}
-\hline
-Distribution & Range of data & Useful for \\
-\hline
-Normal, $N(\mu,\sigma^2)$ & $(-\infty,\infty$) & A good default choice \\
-Uniform, $U(a,b)$ & $(a,b)$ & Vague priors when we only know the range of the parameter \\
-Binomial, $Bin(k,\theta)$ & $[0,k]$ & Count or binary data restricted to have an upper value \\
-Poisson, $Po(\lambda)$ & $[0,\infty)$ & Count data with no upper limit \\
-Gamma, $Ga(\alpha,\beta)$ & $(0,\infty)$ & Continuous data with a lower bound of zero \\
-Multivariate Normal, $MVN(\mu,\Sigma)$ & $(-\infty,\infty$) & Multivariate unbounded data with correlation between parameters/observations \\
-\hline
-\end{tabular}
-
-\normalsize
-The more probability distributions you know the better you will be at Bayes!
-
 ## Practical differences between frequentist statistics and Bayes
 
 - In frequentist statistics you tend to get a single best estimate of a parameter and a standard error, often assumed normally distributed, and a p-value
@@ -370,17 +348,6 @@ Some of this we will cover in later classes, but e.g. traditional residual analy
 - If you fit a model and the parameters do not match your views about the data, there must be some information you have not encoded in the prior, go back and change it!
 - In more complex models, you need the prior to constrain some of the parameters so that the model will fit. These are known as _regularisation_ priors
 - Use an _informative prior_ when you can
-
-## Replication in Science and the horror of p-values
-
-- We want our findings to be reproducible. We don't want to publish something which is only true for our own data
-- Unfortunately p-values do not do this because:
-
-1. A p-value is essentially a function of the sample size. If you want a smaller p-value simply collect more data
-1. A p-value tells you nothing about the null hypothesis. It's a probability on the data assuming the null hypothesis is true!
-1. The null hypothesis is never true. It's a straw man that is waiting to be knocked down by your data
-
-Bayesian hierarchical modelling is a great way to stop using p-values and start doing reproducible science
 
 ## General tips
 
