@@ -180,7 +180,7 @@ These look perhaps a little bit skewed at the low end.
 ***
 **Exercise 2b**  
 
-1. Another common plot is that of the residuals vs the fitted values. Creat a nice plot of this too. Interpret the plot.
+1. Another common plot is that of the residuals vs the fitted values. Create a nice plot of this too. Interpret the plot.
 1. Go back and re-fit the model to the raw earnings data (rather than log earnings - make sure to check your priors). Do they residual plots improve?
 
 ***
