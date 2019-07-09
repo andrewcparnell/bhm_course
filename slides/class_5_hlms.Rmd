@@ -43,7 +43,7 @@ x = sort(runif(N, 150, 190))
 
 ## Simulating psuedo-data continued
 
-- Before seeing the data I have no idea about whether height affects earnings, so I'd certainly be willing to consider a value of 0 for the slope. If there was a strong positive effect then people of about 190cm would be earning about 12 (on the log scale) and people of about 150cm would be earning the least. This gives a slope of about 0.05, but the opposite might also be true. To stay conservative let's a suggest a prior on the slop of $N(0, 0.1^2)$
+- Before seeing the data I have no idea about whether height affects earnings, so I'd certainly be willing to consider a value of 0 for the slope. If there was a strong positive effect then people of about 190cm would be earning about 12 (on the log scale) and people of about 150cm would be earning the least. This gives a slope of about 0.05, but the opposite might also be true. To stay conservative let's a suggest a prior on the slope of $N(0, 0.1^2)$
 - For the intercept we can guess that it is unlikely to be beyond the range (10, 12) so let's use $N(11, 2^2)$.
 - The residual standard deviation is unlikely to be much bigger than the range of salaries so let's use $U(0, 5)$
 
@@ -132,9 +132,9 @@ abline(a=0, b=1, col = 'red')
 
 $$y_i \sim N(\alpha + \beta_{\mbox{ethnicity}_i} (x_i - \bar{x}), \sigma^2) $$
 
-## Writing a varying intercepts slope model in JAGS/Stan
+## Writing a varying intercepts/slopes model in JAGS/Stan
 
-\small
+\tiny
 - One way is to simply include it as an extra covariate:
 ```
 log_earn[i] ~ dnorm(alpha + beta1 * height[i] + 
@@ -205,8 +205,6 @@ model{
 - The parameters $\sigma_\alpha$, and $\sigma_\beta$ have useful interpretations too: they are the variability in the intercept and slope between ethnicity
 
 - You may have met this type of model in other modelling courses when it is occasionally called _random effects_ modelling. More on this later
-
-- It's a good idea to try and draw a DAG for hierarchical models
 
 ## Running the model
 
