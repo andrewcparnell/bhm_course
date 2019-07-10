@@ -264,10 +264,9 @@ model{
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dt(alpha + beta * (x[i] - mean(x)), 
-                sigma, df[i] + 1)
-    df[i] ~ dbin(p, 10)
+                sigma, df[i])
+    df[i] ~ dcat(p)
   }
-  p ~ dunif(0, 1)
   alpha ~ dnorm(0, 1^-2)
   beta ~ dnorm(0, 1^-2)
   sigma ~ dt(0,1,1)T(0,)
@@ -278,6 +277,7 @@ model{
 ## Output from the model
 ```{r, echo = FALSE, message=FALSE, results = 'hide'}
 jags_run = jags(data = list(N = N,
+                            p = rep(1,10)/10,
                             y = y,
                             x = x),
                 parameters.to.save = c('alpha',
@@ -290,10 +290,10 @@ jags_run = jags(data = list(N = N,
 ```{r, fig.height=6}
 dfs = jags_run$BUGSoutput$median$df
 pars = jags_run$BUGSoutput$mean
-plot(x, y, col = as.factor(dfs))
+cols = rainbow(10)
+plot(x, y, col = cols[dfs])
 lines(x, as.numeric(pars$alpha) + 
-        as.numeric(pars$beta)*(x - mean(x)), 
-      col = 'red')
+        as.numeric(pars$beta)*(x - mean(x)))
 ```
 
 ## Prior distributions on the degrees of freedom
