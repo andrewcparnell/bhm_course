@@ -12,11 +12,9 @@ output:
 knitr::opts_chunk$set(dev = 'pdf')
 knitr::opts_knit$set(global.par = TRUE)
 set.seed(123)
-```
-```{r, include=FALSE}
+library(R2jags)
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 ```
-
 
 ## Learning outcomes:
 
@@ -36,103 +34,6 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 - A multi-layer model is one where have many (usually more than 2 or 3)  layers of parameters conditional on each other
 - It's very straightforward to add in these extra layers in JAGS/Stan
 - The question is whether they are necessary or not, and how much the data can tell us about them
-
-## A simple example
-
-- We will work through the `earnings` example, extending it to produce a much more complex model
-- The model we last met had the following JAGS code:
-```{r, eval = FALSE}
-  '
-  ...
-  y[i] ~ dnorm(alpha[eth[i]] + 
-                  beta[eth[i]]*(x[i] - mean(x)), 
-                    sigma^-2)
-  }
-  ...
-  # Priors
-  for(j in 1:N_eth) {
-    alpha[j] ~ dnorm(mu_alpha, sigma_alpha^-2)
-    beta[j] ~ dnorm(mu_beta, sigma_beta^-2)
-  }'
-```
-
-## Adding extra layers
-
-- The priors for the hyper-parameters at the bottom of the model were
-```{r, eval = FALSE}
-'
-  ...
-  mu_alpha ~ dnorm(11, 2^-2)
-  mu_beta ~ dnorm(0, 0.1^-2)
-  sigma ~ dunif(0, 5)
-  sigma_alpha ~ dunif(0, 2)
-  sigma_beta ~ dunif(0, 2)
-}
-'
-```
-
-- There is nothing to stop us adding in extra parameters beneath these layers
-
-## New JAGS code
-
-\tiny
-```{r}
-jags_code = '
-model{
-  # Likelihood
-  for(i in 1:N) {
-    y[i] ~ dnorm(alpha[eth[i]] + 
-                  beta[eth[i]]*(x[i] - mean(x)), 
-                    sigma^-2)
-  }
-  # Priors
-  for(j in 1:N_eth) {
-    alpha[j] ~ dnorm(mu_alpha, sigma_alpha^-2)
-    beta[j] ~ dnorm(mu_beta, sigma_beta^-2)
-  }
-  mu_alpha ~ dnorm(mu_alpha_0, sigma_alpha_0^-2)
-  mu_alpha_0 ~ dnorm(0, 20^-2)
-  sigma_alpha_0 ~ dt(0,5,1)T(0,)
-  mu_beta ~ dnorm(mu_beta_0, sigma_beta_0^-2)
-  mu_beta_0 ~ dnorm(0, 20^-2)
-  sigma_beta_0 ~ dt(0,5,1)T(0,)
-  sigma ~ dunif(0, 5)
-  sigma_alpha ~ dt(0,5,1)T(0,)
-  sigma_beta ~ dt(0,5,1)T(0,)
-}
-'
-```
-
-## What information is there about these extra parameters?
-
-```{r, message=FALSE, results='hide', echo = FALSE}
-library(R2jags)
-dat = read.csv('../data/earnings.csv')
-jags_run = jags(data = list(N = nrow(dat), 
-                            y = log(dat$earn),
-                            eth = dat$eth,
-                            N_eth = length(unique(dat$eth)),
-                            x = dat$height_cm),
-                parameters.to.save = c('mu_alpha_0',
-                                       'sigma_alpha_0',
-                                       'mu_beta_0',
-                                       'sigma_beta_0'),
-                model.file = textConnection(jags_code))
-```
-```{r, echo = FALSE}
-pars = jags_run$BUGSoutput$sims.matrix
-par(mfrow=c(2,2))
-for(i in 1:4) {
-  hist(pars[,i+1], main= colnames(pars)[i+1], xlab = '', breaks = 30)
-}
-par(mfrow=c(1,1))
-```
-
-## How many layers should I add?
-
-- We could go on adding layers here if we wanted to, but it's not clear what benefit it would have
-- For example, do we really need to know the standard deviation of the mean of the intercept? The answer to this will depend on the questions of interest, and the amount and type of prior information available
-- A general rule is, in the absence of any strong prior information, to add one extra layer of parameters beyond the latent parameters of key interest
 
 ## Writing the same model in different ways
 
@@ -158,24 +59,26 @@ $$y_{ij} \sim N(\alpha_j + \beta_j x_i, \sigma^2)$$
 
 ## Fixed vs random effect models
 
+\small
+
 - Thinking about this model in more detail
 $$y_{ij} \sim N(\alpha_j + \beta_j x_i, \sigma^2)$$
 - If the $\alpha_j$ and $\beta_j$ parameters are all given independent prior distributions, e.g. $\alpha_j \sim N(0, 100)$ or similar, then this is considered a _fixed effects_ model
 - If the $\alpha_j$ and $\beta_j$ are given prior distributions that tie the values together, e.g. $\alpha_j \sim N(\mu_\alpha, \sigma_\alpha^2)$, then this is often called a _random effects_ model
 - (In fact, nobody can agree on what a fixed or random effects model actually is)
-- If you have multiple different types of priors then this is called a _mixed effects_ model
 
 ## Mixed effects vs hierarchical models
 
 - The hierarchical models we have been studying all use the _random effects_ approach wherever possible
 - The big advantage of using this approach is that we get to _borrow_ strength between the different groups (here `eth`, but it could be anything)
 - Whenever we have a categorical covariate we should always be putting a constraining/tying prior distribution on them, and looking at how the effects vary between the groups
-- This is strongly linked to the idea of _partial pooling_ which we will meet later in the course
+- Mathematically you can write out the estimated mean of the parameters as a weighted average of the group means ($\alpha_j$) and the overall mean ($\mu_\alpha$) where the weights are dependent on the group and overall variance and sample sizes. 
+- Because of the weighted nature of the estimate this is often called _partial pooling_ or _shrinkage_
 
 ## Example: multi-layer earnings data
 
 - We will now go through and build a much more complicated model for the earnings data, taken from the Gelman and Hill book, using only weak priors
-- We can generate data from these models (either using the prior or the posterior), and we can draw a DAG
+- We can generate data from these models (either using the prior or the posterior)
 - Our goal is to explore the factors which explain earnings. We have variables on height, age, and ethnicity.
 - If we first plot the data
 ```{r, echo = FALSE, fig.height=4}
@@ -211,9 +114,9 @@ model{
                     sigma^-2)
   }
   # Priors
-  alpha ~ dnorm(0, 20^-2)
-  beta_height ~ dnorm(0, 20^-2)
-  sigma ~ dt(0,10,1)T(0,)
+  alpha ~ dnorm(11, 2^-2)
+  beta_height ~ dnorm(0, 0.1^-2)
+  sigma ~ dt(0,5,1)T(0,)
 }
 '
 jags_run = jags(data = list(N = nrow(dat), 
@@ -267,10 +170,10 @@ model{
   for(j in 1:N_eth) {
     alpha_eth[j] ~ dnorm(mu_eth, sigma_eth^-2)
   }
-  beta_height ~ dnorm(0, 20^-2)
-  mu_eth ~ dnorm(0, 20^-2)
-  sigma_eth ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  beta_height ~ dnorm(0, 0.1^-2)
+  mu_eth ~ dnorm(11, 2^-2)
+  sigma_eth ~ dt(0,5,1)T(0,)
+  sigma ~ dt(0,5,1)T(0,)
 }
 '
 ```
@@ -327,11 +230,11 @@ model{
     alpha_eth[j] ~ dnorm(mu_eth, sigma_eth^-2)
     beta_height[j] ~ dnorm(mu_beta_height, sigma_height^-2)
   }
-  mu_beta_height ~ dnorm(0, 20^-2)
-  mu_eth ~ dnorm(0, 20^-2)
-  sigma_eth ~ dt(0,10,1)T(0,)
-  sigma_height ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  mu_beta_height ~ dnorm(0, 0.1^-2)
+  mu_eth ~ dnorm(11, 2^-2)
+  sigma_eth ~ dt(0,5,1)T(0,)
+  sigma_height ~ dt(0,1,1)T(0,)
+  sigma ~ dt(0,5,1)T(0,)
 }
 '
 ```
@@ -393,11 +296,11 @@ model{
     alpha_eth[j] ~ dnorm(mu_eth, sigma_eth^-2)
     beta_height[j] ~ dnorm(mu_beta_height, sigma_height^-2)
   }
-  mu_beta_height ~ dnorm(0, 20^-2)
-  mu_eth ~ dnorm(0, 20^-2)
-  sigma_eth ~ dt(0,10,1)T(0,)
-  sigma_height ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  mu_beta_height ~ dnorm(0, 0.1^-2)
+  mu_eth ~ dnorm(11, 2^-2)
+  sigma_eth ~ dt(0,5,1)T(0,)
+  sigma_height ~ dt(0,1,1)T(0,)
+  sigma ~ dt(0,5,1)T(0,)
 }
 '
 jags_run = jags(data = list(N = nrow(dat), 
@@ -440,11 +343,11 @@ model{
       beta[j,k] ~ dnorm(mu_beta, sigma_beta^-2)
     }
   }
-  mu_alpha ~ dnorm(0, 20^-2)
-  mu_beta ~ dnorm(0, 20^-2)
-  sigma_alpha ~ dt(0,10,1)T(0,)
-  sigma_beta ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  mu_alpha ~ dnorm(11, 2^-2)
+  mu_beta ~ dnorm(0, 0.1^-2)
+  sigma_alpha ~ dt(0,5,1)T(0,)
+  sigma_beta ~ dt(0,1,1)T(0,)
+  sigma ~ dt(0,5,1)T(0,)
 }
 '
 ```
@@ -550,7 +453,6 @@ print(jags_run)
 
 ## Summary
 
-- We have seen how to create some rich multi-layers models
+- We have seen how to create some rich multi-layer models
 - We have gone through quite a detailed example
-- We have learnt about the multivariate normal distribution
 - We have discovered how to deal with missing and unbalanced data sets

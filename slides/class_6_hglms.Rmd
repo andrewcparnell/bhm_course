@@ -59,7 +59,7 @@ where $x_i$ is the percentage of forest cover
 
 - Useful side note: A value of 10 on the logit scale leads to a probability of about 1, and a value of -10 leads to a probability of about 0 (you can test this by typing `inv.logit(10)`) so I wouldn't expect the value of $logit(p_i)$ to ever get much bigger than 10 or smaller than -10
 
-- I have no idea whether we are more likely to find these birds in high percentage forest or low, so I'm happy to think that $\beta$ might be around zero, and be positive or negative. Forest cover ranges from 0 to 100 so that suggests that $\beta$ is every likely to be bigger than 0.1 or smaller than -0.1. Perhaps $\beta \sim N(0, 0.1^2)$ is a good prior
+- I have no idea whether we are more likely to find these birds in high percentage forest or low, so I'm happy to think that $\beta$ might be around zero, and be positive or negative. Forest cover ranges from 0 to 100 so that suggests that $\beta$ is very unlikely to be bigger than 0.1 or smaller than -0.1. Perhaps $\beta \sim N(0, 0.1^2)$ is a good prior
 
 - It looks to me like the intercept is very unlikely to be outside the range (-10, 10) so perhaps $\alpha \sim N(0, 5^2)$ is appropriate
 

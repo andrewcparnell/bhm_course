@@ -25,33 +25,10 @@ options(mc.cores = parallel::detectCores())
 
 ## Learning outcomes:
 
-- Be able to describe the advantages of partial pooling
 - Be able to fit some basic zero inflation and hurdle models
 - Be able to understand and fit some multinomial modelling examples
 
 \vspace{2cm}
-
-## A false dichotomy: fixed vs random effects
-
-- We've been fitting a model with varying intercepts and slopes to the earnings data:
-$$y_i \sim N(\alpha_{\mbox{eth}_i} + \beta_{\mbox{eth}_i} x_i, \sigma^2)$$
-where:
-$$\alpha_j \sim N(\mu_\alpha, \sigma_\alpha^2) \mbox{ and } \beta_j \sim N(\mu_\beta, \sigma_\beta^2)$$
-- In traditional parlance this is a random effects model
-- When we fit our model we are learning about the values of the slopes and intercepts, and also the values of their means and standard deviations
-
-## The extremes of varying vs fixed parameters
-
-- Now consider what happens when $\sigma_\alpha$ and $\sigma_\beta$ get smaller and smaller. What will happen to the values of the slopes and the intercepts?
-- Alternatively, consider what happens as $\sigma_\alpha$ and $\sigma_\beta$ get larger and larger?
-- Are these still random effects models?
-
-## The advantages of borrowing strength
-
-- The process of $\sigma_\alpha$ and $\sigma_\beta$ getting smaller or larger will control the degree to which the slopes and intercepts are similar to each other
-- If they are similar to each other we say they are _borrowing strength_ as data in the other groups is influencing the intercept/slope. This is a powerful idea
-- Mathematically you can write out the estimated mean of the parameters as a weighted average of the group mean and the overall mean where the weights are dependent on the group and overall variance and sample sizes. 
-- Because of the weighted nature of the estimate this is often called _partial pooling_
 
 ## Zero-inflation and hurdle models
 
@@ -351,7 +328,7 @@ model
 
 ## Let's fit it (first 500 obs only)
 
-```{r}
+```{r, results = 'hide', messages = FALSE}
 model_data = list(N = nrow(pollen[1:500,]), 
                   y = pollen[1:500,3:9],
                   x = cbind(1, scale(cbind(pollen[1:500,1:2],
@@ -397,6 +374,5 @@ abline(a=0, b=1)
 
 ## Summary
 
-- We have seen how partial pooling is a balance between a model of complete independence and complete dependence between groups
 - We have fitted some zero inflated and hurdle Poisson models in JAGS
 - We have seen a simple multinomial logistic regression

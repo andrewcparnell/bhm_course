@@ -6,6 +6,8 @@ output:
   beamer_presentation:
     includes:
       in_header: header.tex
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -30,7 +32,7 @@ So far we have:
 - The first is a way of getting good prior distributions
 - The latter is our posterior predictive check of model fit
 
-## Simulating psuedo-data before the experiment
+## Simulating pseudo-data before the experiment
 
 - Let's think again about the earnings data where we want to estimate log(earnings) from people's height in cm using a linear regression model with height is mean centered, i.e.
 $$\log(\mbox{earnings}) \sim N( \alpha + \beta \times (\mbox{height} - \mbox{mean(height)}), \sigma^2)$$
@@ -41,7 +43,7 @@ x = sort(runif(N, 150, 190))
 ```
 - Let's guess that the earnings are likely to be in the range of about 20k to 200k per year, so on the log scale this is from about 10 to 12
 
-## Simulating psuedo-data continued
+## Simulating pseudo-data continued
 
 - Before seeing the data I have no idea about whether height affects earnings, so I'd certainly be willing to consider a value of 0 for the slope. If there was a strong positive effect then people of about 190cm would be earning about 12 (on the log scale) and people of about 150cm would be earning the least. This gives a slope of about 0.05, but the opposite might also be true. To stay conservative let's a suggest a prior on the slope of $N(0, 0.1^2)$
 - For the intercept we can guess that it is unlikely to be beyond the range (10, 12) so let's use $N(11, 2^2)$.
@@ -50,7 +52,6 @@ x = sort(runif(N, 150, 190))
 ## A simulated data set
 
 ```{r, fig.height = 4}
-dat = read.csv('../data/earnings.csv')
 alpha = rnorm(1, mean = 10, sd = 2)
 beta = rnorm(1, mean = 0, sd = 0.1)
 sigma = runif(1, 0, 5)
@@ -80,6 +81,7 @@ model{
 '
 ```
 ```{r, messages=FALSE, include = FALSE}
+dat = read.csv('../data/earnings.csv')
 jags_run = jags(data = list(N = nrow(dat), 
                             y = log(dat$earn),
                             x = dat$height_cm),
@@ -128,24 +130,23 @@ abline(a=0, b=1, col = 'red')
     - Add ethnicity in as a covariate, this will lead to a _varying intercepts_ model
     - Add ethnicity in as an interaction with height, this will lead to a _varying slopes_ model
     
-- An example of the varying slopes model is:
+- An example of the varying intercepts model is:
 
-$$y_i \sim N(\alpha + \beta_{\mbox{ethnicity}_i} (x_i - \bar{x}), \sigma^2) $$
+$$y_i \sim N(\alpha_{\mbox{ethnicity}_i} + \beta (x_i - \bar{x}), \sigma^2) $$
 
 ## Writing a varying intercepts/slopes model in JAGS/Stan
 
 \small
-- One way is to simply include it as an extra covariate:
+- One way to write the varying intercepts model is to simply include it an extra effect:
 ```
-log_earn[i] ~ dnorm(alpha + beta1 * height[i] + 
-                      beta2 * ethnicity_1[i] 
-                        + beta3 * ethnicity_2[i] + ...,
+log_earn[i] ~ dnorm(alpha1 * ethnicity_1 + alpha2 * ethnicity_2 + ...
+                    + beta * height[i],
                           sigma^-2)
 ```
 
-- A neater way is to include it as part of the definition of the slope:
+- A neater way is to use the double indexing:
 ```
-log_earn[i] ~ dnorm(alpha + beta[ethnicity[i]] * height[i], 
+log_earn[i] ~ dnorm(alpha[ethnicity[i]] + beta * height[i], 
                       sigma^-2)
 ```
 
@@ -199,7 +200,7 @@ model{
 '
 ```
 
-## About the hierarhical model
+## About the hierarchical model
 
 - The parameters $\mu_\alpha$ and $\mu_\beta$ have useful interpretations: they are the overall mean intercept and the overall mean slope for all observations removing the effect of ethnicity
 
@@ -269,12 +270,6 @@ par(mfrow=c(1,1))
 - By contrast the standard deviations of alpha and beta, $\sigma_\alpha$ and $\sigma_\beta$ are estimated based on just the four different ethnicity groups
 - We therefore need to be a bit more careful with prior distributions for these parameters. The usual recommendation is to use a half-$t$-distribution on these parameters rather than a uniform
 
-## Side note: causation vs prediction as goals
-
-- When fitting models, there are often two competing goals
-- One is simply to find the model that best _predicts_ the response variable from the explanatory variable. Hierarchical models are good at this because we can allow lots of parameters to vary in complex ways
-- The other is to find which explanatory variables _causes_ the response variable. This is arguably impossible from a mathematical model but this is often what people want (and mistakenly use p-values for). Hierarchical are good at this too because they stop us from over-estimating effects
-
 ## Over-estimating effects
 
 - Suppose we had fitted the independent priors version of the model:
@@ -302,7 +297,7 @@ model{
 ## Results
 
 ```{r, echo = FALSE, message=FALSE, results = 'hide'}
-jags_run = jags(data = list(N = nrow(dat), 
+jags_run_ind = jags(data = list(N = nrow(dat), 
                             y = log(dat$earn),
                             eth = dat$eth,
                             N_eth = length(unique(dat$eth)),
@@ -315,9 +310,11 @@ eth_names = c('Blacks','Hispanics','Whites','Others')
 ```
 ```{r, echo = FALSE}
 par(mfrow=c(2,2))
-pars = jags_run$BUGSoutput$sims.list
+pars = jags_run_ind$BUGSoutput$sims.list
+pars_old = jags_run$BUGSoutput$sims.list
 for(i in 1:4) {
-  hist(pars$beta[,i], breaks = 30, main = eth_names[i], xlim = range(pars$beta), xlab = 'Slope value')  
+  hist(pars$beta[,i], breaks = 30, main = eth_names[i], xlim = range(pars$beta), xlab = 'Slope value', freq = FALSE) 
+  lines(density(pars_old$beta[,i]))
 }
 par(mfrow=c(1,1))
 ```
@@ -339,7 +336,7 @@ par(mfrow=c(1,1))
 - The general idea is that the score on the likelihood is a good measure of model fit, except for the fact that more complex models will generally have higher likelihood scores
 - If we penalise these scores by some measure of the complexity of the model then we can compare models across complexities
 - The usual measure of complexity is some function of the number of parameters
-- Because these are relative model comparisons, the best model acording to an IC might still be useless!
+- Because these are relative model comparisons, the best model according to an IC might still be useless!
 
 ## Different types of information criteria
 
@@ -411,7 +408,7 @@ model{
 \small
 ```{r, eval=FALSE}
 folds = sample(rep(1:5, length = nrow(dat)))
-rmsep = rep(NA, nrow(dat))
+mse_per_obs = rep(NA, nrow(dat))
 for(i in 1:5) {
   curr_data = subset(dat, folds != i)
   curr_pred = subset(dat, folds == i)
@@ -423,9 +420,9 @@ for(i in 1:5) {
                 parameters.to.save = 'y_pred',
                 model.file = textConnection(jags_code))
   out_pred = jags_run$BUGSoutput$mean$y_pred
-  rmsep[folds ==i] = (log(curr_pred$earn) - out_pred)^2
+  mse_per_obs[folds ==i] = (log(curr_pred$earn) - out_pred)^2
 }
-sqrt(mean(rmsep))
+sqrt(mean(mse_vals))
 ```
 
 ## Pros and cons of CV
@@ -434,13 +431,7 @@ sqrt(mean(rmsep))
 - CV is great because it actually directly measures the performance of the model on real data, based on data the model hasn't seen
 - However, it's computationally expensive, and problems occur in hierarchical models if some groups are small, and therefore might get left out of a fold
 
-## Other absolute model comparison
-
-- We've already met posterior predictive distributions, which is essentially leave none out CV. 
-- Another popular one is something called the _Bayes Factor_. This is created by first calculating the posterior distribution of a model given the data, a measure of absolute model fit. The ratios of these can be compared for different models to create a relative model criteria. 
-- However, Bayes Factors are really hard to calculate and often overly sensitive to irrelevant prior choices
-
-## Continuous model expansion
+## An alternative: continuous model expansion
 
 - There are lots of clever ways to set up prior distributions so that a model choice step is part of the model fit itself
 - One way is partial pooling, by which we force e.g. varying slope and intercept parameters to the same value (or not)
