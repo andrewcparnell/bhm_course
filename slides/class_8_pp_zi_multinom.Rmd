@@ -66,12 +66,15 @@ model
   # Likelihood
   for (i in 1:N) {
     y[i] ~ dpois(lambda[i])
+    y_pp[i] ~ dpois(lambda[i])
     log(lambda[i]) <- beta_trt[trt[i]]
   }
   # Priors
   for (j in 1:N_trt) {
-    beta_trt[j] ~ dnorm(0, 100^-2)
+    beta_trt[j] ~ dnorm(beta_mean, beta_sd^-2)
   }
+  beta_mean ~ dnorm(0, 10^-2)
+  beta_sd ~ dt(0, 5, 1)T(0,)
 }
 '
 ```
@@ -83,7 +86,8 @@ jags_run = jags(data = list(N = nrow(wf),
                             N_trt = length(unique(wf$trt)),
                             y = wf$imm,
                             trt = wf$trt),
-                parameters.to.save = 'beta_trt',
+                parameters.to.save = c('beta_trt', 'y_pp',
+                                       'beta_mean', 'beta_sd'),
                 model.file = textConnection(model_code))
 ```
 
@@ -98,12 +102,13 @@ Some clear treatment effects - treatment 5 in particular
 ## Did the model actually fit well?
 
 ```{r, fig.height=4}
-beta_means = jags_run$BUGSoutput$mean$beta_trt
-y_sim_mean = exp(beta_means[wf$trt])
-y_sim = rpois(nrow(wf), y_sim_mean)
-hist(wf$imm, breaks = seq(0,max(wf$imm)))
-hist(y_sim, breaks = seq(0,max(wf$imm)), 
-     add = TRUE, col = 'gray')
+y_pp = jags_run$BUGSoutput$mean$y_pp
+par(mfrow=c(1,2))
+hist(wf$imm, breaks = seq(0, max(wf$imm)),
+     main = 'Data vs posterior predictive fit')
+hist(y_pp, breaks = seq(0, max(wf$imm)), add = TRUE, col = 'gray')
+plot(wf$imm, y_pp); abline(a = 0, b = 1)
+par(mfrow=c(1,1))
 ```
 
 ## What about the zeros?
@@ -134,13 +139,16 @@ model
   # Likelihood
   for (i in 1:N) {
     y[i] ~ dpois(lambda[i] * z[i] + 0.0001)
+    y_pp[i] ~ dpois(lambda[i] * z[i] + 0.0001)
     log(lambda[i]) <- beta_trt[trt[i]]
     z[i] ~ dbinom(q_0, 1)
   }
   # Priors
   for (j in 1:N_trt) {
-    beta_trt[j] ~ dnorm(0, 100^-2)
+    beta_trt[j] ~ dnorm(beta_mean, beta_sd^-2)
   }
+  beta_mean ~ dnorm(0, 10^-2)
+  beta_sd ~ dt(0, 5, 1)T(0,)
   q_0 ~ dunif(0, 1)
 }
 '
@@ -153,7 +161,8 @@ jags_run = jags(data = list(N = nrow(wf),
                             N_trt = length(unique(wf$trt)),
                             y = wf$imm,
                             trt = wf$trt),
-                parameters.to.save = c('beta_trt','q_0'),
+                parameters.to.save = c('beta_trt','q_0', 'y_pp',
+                                       'beta_mean', 'beta_sd'),
                 model.file = textConnection(model_code))
 ```
 
@@ -167,22 +176,13 @@ plot(jags_run)
 
 \small
 ```{r}
-beta_means = jags_run$BUGSoutput$mean$beta_trt
-q_0_mean = jags_run$BUGSoutput$mean$q_0[1]
-y_sim_mean = exp(beta_means[wf$trt])
-rZIP = function(mean, q_0) {
-  pois = rpois(length(mean), mean)
-  pois[runif(length(mean))<q_0] = 0
-  return(pois)
-}
-y_sim = rZIP(y_sim_mean, q_0_mean)
-```
-
-## Did it work any better? - picture
-```{r, fig.height=5}
-hist(wf$imm, breaks = seq(0,max(wf$imm)))
-hist(y_sim, breaks = seq(0,max(wf$imm)), 
-     add = TRUE, col = rgb(0.75,0.75,0.75,0.4))
+y_pp = jags_run$BUGSoutput$mean$y_pp
+par(mfrow=c(1,2))
+hist(wf$imm, breaks = seq(0, max(wf$imm)),
+     main = 'Data vs posterior predictive fit')
+hist(y_pp, breaks = seq(0, max(wf$imm)), add = TRUE, col = 'gray')
+plot(wf$imm, y_pp); abline(a = 0, b = 1)
+par(mfrow=c(1,1))
 ```
 
 ## Some more notes on Zero-inflated Poisson
@@ -215,8 +215,10 @@ model
   }
   # Priors
   for (j in 1:N_trt) {
-    beta_trt[j] ~ dnorm(0, 100^-2)
+    beta_trt[j] ~ dnorm(beta_mean, beta_sd^-2)
   }
+  beta_mean ~ dnorm(0, 10^-2)
+  beta_sd ~ dt(0, 5, 1)T(0,)
   q_0 ~ dunif(0, 1)
 }
 '
@@ -231,7 +233,8 @@ jags_run = jags(data = list(N = nrow(wf[wf$imm > 0,]),
                             y_0 = as.integer(wf$imm == 0),
                             N_0 = nrow(wf),
                             trt = wf$trt[wf$imm > 0]),
-                parameters.to.save = c('beta_trt', 'q_0'),
+                parameters.to.save = c('beta_trt', 'q_0',
+                                       'beta_mean', 'beta_sd'),
                 model.file = textConnection(model_code))
 ```
 

@@ -54,7 +54,7 @@ where $\mbox{eth}_i$ takes the values 1, 2, 3, or 4
 
 - Commonly you'll see $y$ here re-defined as $y_{ij}$ where $j=1,..,4$ represents ethnicity, and $i=1,\ldots,N_j$ is the number of individuals with ethnicity $j$
 - The likelihood can then be written as:
-$$y_{ij} \sim N(\alpha_j + \beta_j x_i, \sigma^2)$$
+$$y_{ij} \sim N(\alpha_j + \beta_j x_{ij}, \sigma^2)$$
 - Note that this is exactly the same model, just re-written slightly differently. In fact, this latter model is much harder to write out in JAGS/Stan code
 
 ## Fixed vs random effect models
@@ -62,7 +62,7 @@ $$y_{ij} \sim N(\alpha_j + \beta_j x_i, \sigma^2)$$
 \small
 
 - Thinking about this model in more detail
-$$y_{ij} \sim N(\alpha_j + \beta_j x_i, \sigma^2)$$
+$$y_{ij} \sim N(\alpha_j + \beta_j x_{ij}, \sigma^2)$$
 - If the $\alpha_j$ and $\beta_j$ parameters are all given independent prior distributions, e.g. $\alpha_j \sim N(0, 100)$ or similar, then this is considered a _fixed effects_ model
 - If the $\alpha_j$ and $\beta_j$ are given prior distributions that tie the values together, e.g. $\alpha_j \sim N(\mu_\alpha, \sigma_\alpha^2)$, then this is often called a _random effects_ model
 - (In fact, nobody can agree on what a fixed or random effects model actually is)
@@ -72,7 +72,7 @@ $$y_{ij} \sim N(\alpha_j + \beta_j x_i, \sigma^2)$$
 - The hierarchical models we have been studying all use the _random effects_ approach wherever possible
 - The big advantage of using this approach is that we get to _borrow_ strength between the different groups (here `eth`, but it could be anything)
 - Whenever we have a categorical covariate we should always be putting a constraining/tying prior distribution on them, and looking at how the effects vary between the groups
-- Mathematically you can write out the estimated mean of the parameters as a weighted average of the group means ($\alpha_j$) and the overall mean ($\mu_\alpha$) where the weights are dependent on the group and overall variance and sample sizes. 
+- Mathematically you can write out the hierarchicaly estimated intercepts of a group ($\alpha_j$) as a weighted average of the group intercept means from the data ($\bar{\alpha}_j$) and the overall mean of the entire data set ($\mu$) where the weights are dependent on the group and overall variance and sample sizes. 
 - Because of the weighted nature of the estimate this is often called _partial pooling_ or _shrinkage_
 
 ## Example: multi-layer earnings data
