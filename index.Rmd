@@ -61,8 +61,8 @@ Click [here](https://docs.google.com/spreadsheets/d/12uN3Mh7OYrAOYDOwmhlyQ8ppcct
 
 Time  | Class
 ------------- | ----------------------------------------------------
-9:30-10:30 | Variable selection and non-parametrics [Stan version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel.pdf) [JAGS version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel_JAGS.pdf) 
-10:30-10:45 | Coffee break
-10:45-12:45 | Bring your data session part 1
-12:45-14:00 | Lunch
+9:30-10:15 | Variable selection and non-parametrics [Stan version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel.pdf) [JAGS version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel_JAGS.pdf) 
+10:15-10:30 | Coffee break
+10:30-13:00 | Bring your data session part 1
+13:00-14:00 | Lunch
 14:00-17:00 | Bring your data session part 2
