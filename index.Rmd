@@ -57,6 +57,8 @@ Time  | Class
 
 ## Day 5: Hierarchical models as tools
 
+Click [here](https://docs.google.com/spreadsheets/d/12uN3Mh7OYrAOYDOwmhlyQ8ppcct7KBmfLpSbMcl3oX8/edit?usp=sharing) for meeting spreadsheet
+
 Time  | Class
 ------------- | ----------------------------------------------------
 9:30-10:30 | Variable selection and non-parametrics [Stan version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel.pdf) [JAGS version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel_JAGS.pdf) 
