@@ -78,7 +78,7 @@ y = rnorm(N, mean = -2 + 0.4 * x1 - 0.3 * x1^2 +
 
 ## Example: earnings data
 
-- Going back to the earnings data, suppose we want to fit a model to predict log earnings based on sex and whether respondent is white (`eth==3`) or not
+- Going back to the earnings data, suppose we want to fit a model to predict log earnings based on height and whether respondent is white (`eth==3`) or not
 - The model is:
 $$\log(\mbox{earnings}) \sim N(\alpha + \beta_1 \mbox{height} + \beta_2 \mbox{white}, \sigma^2)$$
 - We want to get the posterior distribution of $\alpha, \beta_1, \beta_2$ and $\sigma$ given the data
