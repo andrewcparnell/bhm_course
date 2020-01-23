@@ -13,7 +13,7 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dev = 'pdf')
 par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
-setwd("~/GitHub/bhm_course/slides")
+#setwd("slides")
 ```
 
 ## Learning outcomes
@@ -139,7 +139,8 @@ $$y_i \sim N(\alpha_{\mbox{ethnicity}_i} + \beta (x_i - \bar{x}), \sigma^2) $$
 \small
 - One way to write the varying intercepts model is to simply include it an extra effect:
 ```
-log_earn[i] ~ dnorm(alpha1 * ethnicity_1 + alpha2 * ethnicity_2 + ...
+log_earn[i] ~ dnorm(alpha1 * ethnicity_1
+                    + alpha2 * ethnicity_2 + ...
                     + beta * height[i],
                           sigma^-2)
 ```
@@ -289,12 +290,12 @@ model{
     alpha[j] ~ dnorm(11, 10^-2)
     beta[j] ~ dnorm(0, 0.1^-2)
   }
-  sigma ~ dunif(0, 5)
+  sigma ~ dt(0, 2, 1)T(0,)
 }
 '
 ```
 
-## Results
+## Results (hierarchical model green, independent model red)
 
 ```{r, echo = FALSE, message=FALSE, results = 'hide'}
 jags_run_ind = jags(data = list(N = nrow(dat), 
@@ -313,8 +314,17 @@ par(mfrow=c(2,2))
 pars = jags_run_ind$BUGSoutput$sims.list
 pars_old = jags_run$BUGSoutput$sims.list
 for(i in 1:4) {
-  hist(pars$beta[,i], breaks = 30, main = eth_names[i], xlim = range(pars$beta), xlab = 'Slope value', freq = FALSE) 
-  lines(density(pars_old$beta[,i]))
+  ans1 = hist(pars$beta[,i], breaks = 30, plot = FALSE)
+  ans2 = hist(pars_old$beta[,i], breaks = 30, plot = FALSE)
+  yrange = range(c(ans1$density, ans2$density))
+  xrange = range(c(ans1$mids, ans2$mids))
+  hist(pars$beta[,i], breaks = 30, main = eth_names[i], xlim = xrange, ylim = yrange, 
+       xlab = 'Slope value', col = rgb(1,0,0,0.5), freq = FALSE, border = NA)
+  hist(pars_old$beta[,i], breaks = 30, add = TRUE, col = rgb(0,1,0,0.5), freq = FALSE,
+       border = NA) 
+  if(i==4) legend('topleft', legend = c('Hierarchical','Independent'), 
+                  pch = 15,
+                  col = c(rgb(0,1,0,0.5), rgb(1,0,0,0.5)))
 }
 par(mfrow=c(1,1))
 ```
