@@ -274,8 +274,9 @@ model{
 '
 ```
 
-## Output from the model
-```{r, echo = FALSE, message=FALSE, results = 'hide'}
+## Fitting the model
+
+```{r, message=FALSE, results = 'hide'}
 jags_run = jags(data = list(N = N,
                             p = rep(1,10)/10,
                             y = y,
@@ -285,6 +286,8 @@ jags_run = jags(data = list(N = N,
                                        'df'),
                 model.file = textConnection(jags_code))
 ```
+
+## Output from the model
 
 \tiny
 ```{r, fig.height=6}
@@ -298,10 +301,10 @@ lines(x, as.numeric(pars$alpha) +
 
 ## Prior distributions on the degrees of freedom
 
-- Here I've set a prior distribution on the degrees of freedom parameter to be Binomial with the maximum value to be 10+1 = 11
-- The probability of each observation being an outlier is $p$, set to be uniform between 0 and 1
-- We thus also create a posterior distribution for the probability that each observation is an outlier
-- The Binomial distribution we use has a peak at the degrees of freedom being 6 or 7, we might instead use a discrete uniform prior though this is harder to code in JAGS/Stan
+- Here I've set a prior distribution on the degrees of freedom parameter to be a categorical distribution with probabilities 0.1 for df = 1, 2, ..., 10
+- Smaller values of `df` mean that a data point is more likely to be an outlier
+- The categorical distribution automatically looks up the right `df` value for each probability
+- This model is impossible to fit in Stan, because it contains a discrete parameter
 
 ## Type 4: Ordinal data HGLMs
 
