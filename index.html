@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Andrew Parnell" />
@@ -269,7 +269,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -331,6 +330,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -342,18 +342,6 @@ summary {
   display: none;
 }
 </style>
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
 
 <!-- code folding -->
 
@@ -529,7 +517,7 @@ $(document).ready(function () {
 <tbody>
 <tr class="odd">
 <td>9:30-10:30</td>
-<td><a href="https://andrewcparnell.github.io/bhm_course/slides/class_7_multihms.pdf">Multivariate and multi-layer hierarchical models</a></td>
+<td><a href="https://andrewcparnell.github.io/bhm_course/slides/class_7_multihms.pdf">Multi-layer hierarchical models and missing data</a></td>
 </tr>
 <tr class="even">
 <td>10:30-10:45</td>
@@ -537,7 +525,7 @@ $(document).ready(function () {
 </tr>
 <tr class="odd">
 <td>10:45-11:45</td>
-<td><a href="https://andrewcparnell.github.io/bhm_course/slides/class_8_pp_zi_multinom.pdf">Partial pooling, zero-inflation, and missing data</a></td>
+<td><a href="https://andrewcparnell.github.io/bhm_course/slides/class_8_pp_zi_multinom.pdf">Zero-inflation and multinomial models</a></td>
 </tr>
 <tr class="even">
 <td>11:45-12:00</td>
@@ -614,6 +602,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
