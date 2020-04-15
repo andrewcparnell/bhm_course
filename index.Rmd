@@ -54,15 +54,3 @@ Time  | Class
 12:00-12:45 | Guided practical: Advanced examples of hierarchical models [(R code)](https://andrewcparnell.github.io/bhm_course/practicals/tutor_4_adv_hms.R)
 12:45-14:00 | Lunch
 14:00-17:00 | Self-guided practical [(html)](https://andrewcparnell.github.io/bhm_course/practicals/practical_4_advanced_hglms.html) [(pdf)](https://andrewcparnell.github.io/bhm_course/practicals/practical_4_advanced_hglms.pdf)
-
-## Day 5: Hierarchical models as tools
-
-Click [here](https://docs.google.com/spreadsheets/d/12uN3Mh7OYrAOYDOwmhlyQ8ppcct7KBmfLpSbMcl3oX8/edit?usp=sharing) for meeting spreadsheet
-
-Time  | Class
-------------- | ----------------------------------------------------
-9:30-10:15 | Variable selection and non-parametrics [Stan version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel.pdf) _or_ [JAGS version](https://andrewcparnell.github.io/bhm_course/slides/class_9_varsel_JAGS.pdf) 
-10:15-10:30 | Coffee break
-10:30-13:00 | Bring your data session part 1
-13:00-14:00 | Lunch
-14:00-17:00 | Bring your data session part 2

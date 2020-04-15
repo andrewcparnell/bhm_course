@@ -1,4 +1,4 @@
-# 5 day course: Introduction to Bayesian hierarchical modelling using R 
+# 4 day course: Introduction to Bayesian hierarchical modelling using R 
 
 ## About
 
