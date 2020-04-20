@@ -4,9 +4,11 @@ author: "Andrew Parnell"
 output: html_document
 ---
 
-In preparation for the course please install the following, preferably in the below suggested order. Make sure you run these as soon as you arrive in case of poor (or crowded!) internet.
+In preparation for the course please install the following, preferably in the below suggested order. Make sure you run these as soon as possible to avoid falling behind. JAGS and Stan are not required until day 2 so if you are having problems we can install together on the afternoon of the first day.
 
-Remember you will need to bring your own personal computer for the duration of the course.
+Remember you will need your own personal computer with administrator access for the duration of the course and a good internet connection.
+
+As this module will be delivered online please install [Zoom](https://www.zoom.us) and [Slack](https://slack.com) to access the videos and interactive components of the course. All the Zoom links to the meeting will be posted to the Slack `#General` channel.
 
 ### Step 1
 

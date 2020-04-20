@@ -7,6 +7,8 @@ output: html_document
 
 Module pre-requisites can be found [here](https://andrewcparnell.github.io/bhm_course/Prerequisites.html). All the raw files and code can be found [here](https://www.github.com/andrewcparnell/bhm_course) (click 'Download ZIP' near the top right if you want offline versions of everything). All links below are in pdf format for you to annotate. A glossary of technical terms is [here](https://andrewcparnell.github.io/bhm_course/glossary.html).
 
+Please note that the course will be recorded so please turn off video if you do not wish to be shown on the recordings. 
+
 ## Day 1: Basic concepts
 
 Time  | Class

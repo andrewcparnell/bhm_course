@@ -8,6 +8,7 @@ output:
   beamer_presentation:
     includes:
       in_header: header.tex
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +18,7 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 
 ## Let's get started
 
+- Introduction from Oliver Hooker, PR Statistics
 - Tell me:
     
     - who you are, 
@@ -36,9 +38,22 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
 - Let me know if you spot mistakes, as these can be easily updated on the GitHub page
 - There is a `bhm_course.Rproj` R project file from which you should be able to run all the code
 
+## Copyright statement
+
+All the non-GitHub materials provided in the Introduction to Bayesian Hierarchical Modelling are copyright of Andrew Parnell.
+
+This means:
+
+- As a user (the student) you have permission (licence) to access the materials to aid and
+support your individual studies.
+- You are not permitted to copy or distribute any materials without the relevant permission
+- As faculty we may reserve the right to remove a user in the event of any possible infringement
+
 ## Course format and other details
 
-- Lectures will take place in the morning, practical classes in the afternoon
+- Lectures will take place in the morning via Zoom, practical classes in the afternoon
+- In the practical classes I will go round the room asking people how they are getting on
+- If you want to send me a private message use Slack
 - Please ask lots of questions
 - Some good books:
 

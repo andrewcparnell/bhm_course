@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Andrew Parnell" />
@@ -269,7 +269,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -331,6 +330,7 @@ summary {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -342,18 +342,6 @@ summary {
   display: none;
 }
 </style>
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
 
 <!-- code folding -->
 
@@ -382,6 +370,7 @@ $(document).ready(function () {
 
 <p>In preparation for the course please install the following, preferably in the below suggested order. Make sure you run these as soon as you arrive in case of poor (or crowded!) internet.</p>
 <p>Remember you will need to bring your own personal computer for the duration of the course.</p>
+<p>As this module will be delivered online please install <a href="https://www.zoom.us">Zoom</a> and <a href="https://slack.com">Slack</a> to access the videos and interactive components of the course. All the Zoom links to the meeting will be posted to the Slack <code>#General</code> channel.</p>
 <div id="step-1" class="section level3">
 <h3>Step 1</h3>
 <p>Install the following using the corresponding links</p>
@@ -422,6 +411,23 @@ $(document).ready(function () {
 
 
 </script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
