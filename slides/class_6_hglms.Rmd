@@ -8,6 +8,7 @@ output:
       in_header: header.tex
 editor_options: 
   chunk_output_type: console
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -112,7 +113,7 @@ jags_run = jags(data = list(N = nrow(swt),
                                        'sigma_beta'),
                 model.file = textConnection(jags_code))
 ```
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$sims.list
 for(i in c(2,3,1)) {
@@ -123,7 +124,7 @@ par(mfrow=c(1,1))
 
 ## Model fit - Slopes
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$sims.list
 for(i in c(2,3,1)) {
@@ -136,7 +137,7 @@ par(mfrow=c(1,1))
 
 ## Model fit - estimated mean proportions
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height=5}
 library(boot)
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$mean
@@ -202,7 +203,7 @@ jags_run = jags(data = list(N = nrow(swt),
                 n.thin = 5,
                 model.file = textConnection(jags_code))
 ```
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$sims.list
 for(i in c(1:2,4)) {
@@ -236,7 +237,7 @@ y[i] ~ dpois(dur[i] * exp(log_lambda[i]))
 
 ## Normal vs $t$
 
-```{r}
+```{r, fig.height=5}
 curve(dnorm, from = -5, to = 5)
 curve(dt(x, df = 1), add = TRUE, col = 'red')
 curve(dt(x, df = 4), add = TRUE, col = 'blue')
@@ -246,7 +247,7 @@ curve(dt(x, df = 4), add = TRUE, col = 'blue')
 
 - Suppose we had some data which looked like this:
 
-```{r, echo = FALSE, fig.height= 6}
+```{r, echo = FALSE, fig.height= 5}
 N = 100
 set.seed(123)
 x = runif(N)
@@ -290,7 +291,7 @@ jags_run = jags(data = list(N = N,
 ## Output from the model
 
 \tiny
-```{r, fig.height=6}
+```{r, fig.height=5}
 dfs = jags_run$BUGSoutput$median$df
 pars = jags_run$BUGSoutput$mean
 cols = rainbow(10)
@@ -357,7 +358,7 @@ y = findInterval(z, cuts)
 
 ## Simulated data - plot
 
-```{r}
+```{r, fig.height=5}
 plot(x, z, col = y + 1)
 ```
 

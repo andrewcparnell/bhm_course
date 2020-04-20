@@ -8,6 +8,7 @@ output:
       in_header: header.tex
 editor_options: 
   chunk_output_type: console
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -133,7 +134,7 @@ head(post)
 
 ## Plots of output
 
-```{r, eval=FALSE}
+```{r, eval=FALSE, fig.height=5}
 alpha_mean = mean(post[,'alpha'])
 beta1_mean = mean(post[,'beta1'])
 beta2_mean = mean(post[,'beta2'])
@@ -147,7 +148,7 @@ lines(dat$height_cm, alpha_mean +
 
 ## Plots
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 alpha_mean = mean(post[,'alpha'])
 beta1_mean = mean(post[,'beta1'])
 beta2_mean = mean(post[,'beta2'])
@@ -183,7 +184,7 @@ model {
 
 ## Running the Stan version
 
-```{r, fig.height = 5, message=FALSE, results='hide'}
+```{r, fig.height = 4, message=FALSE, results='hide'}
 library(rstan)
 stan_run = stan(data = list(N = nrow(dat), 
                             y = log(dat$earn),
@@ -194,7 +195,7 @@ stan_run = stan(data = list(N = nrow(dat),
 
 ## Stan output
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.height=5}
 plot(stan_run)
 ```
 
@@ -303,7 +304,7 @@ jags_run = jags(data = list(N = nrow(swt),
 
 ## Looking at the output
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 pars = jags_run$BUGSoutput$sims.matrix
 par(mfrow=c(1,2))
 hist(pars[,'alpha'], breaks = 30)
@@ -315,7 +316,7 @@ par(mfrow=c(1,1))
 
 - It's not as easy to plot a fitted line in a Binomial regression model, but we can plot the probabilities:
 \small
-```{r, fig.height = 4}
+```{r, fig.height = 3}
 plot(swt$forest, swt$rep.1)
 points(swt$forest, 
       inv.logit(mean(pars[,'alpha']) + 
@@ -385,7 +386,7 @@ JAGS and Stan have good default choices for these but for complex models you oft
 ## Plotting the iterations
 
 You can plot the iterations for all the parameters with `traceplot`, or for just one with e.g. 
-```{r, fig.width = 8, fig.height = 3.5}
+```{r, fig.height = 3.5}
 plot(post[,'alpha'], type = 'l')
 ```
 
@@ -456,7 +457,7 @@ jags_run = jags(data = list(N = nrow(dat),
                 model.file = textConnection(jags_code))
 pars = jags_run$BUGSoutput$sims.list$y_sim
 ```
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 plot(log(dat$earn), apply(pars,2,'mean'))
 abline(a=0, b = 1, col = 'red')
 ```

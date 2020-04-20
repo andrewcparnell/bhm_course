@@ -8,6 +8,7 @@ output:
       in_header: header.tex
 editor_options: 
   chunk_output_type: console
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -43,7 +44,7 @@ The response variable here is the count `imm` of immature whiteflies, and the ex
 
 ## Look at those zeros!
 
-```{r}
+```{r, fig.height=5}
 barplot(table(wf$imm), 
         main = 'Number of immature whiteflies')
 ```
@@ -94,7 +95,7 @@ jags_run =
 
 ## Results
 
-```{r, fig.height=5}
+```{r, fig.height=4}
 plot(jags_run)
 ```
 
@@ -102,7 +103,7 @@ Some clear treatment effects - treatment 5 in particular
 
 ## Did the model actually fit well?
 
-```{r, fig.height=4}
+```{r, fig.height=3}
 y_pp = jags_run$BUGSoutput$mean$y_pp
 par(mfrow=c(1,2))
 hist(wf$imm, breaks = seq(0, max(wf$imm)),
@@ -172,14 +173,14 @@ jags_run =
 
 ## Results
 
-```{r, fig.height=5}
+```{r, fig.height=4}
 plot(jags_run)
 ```
 
 ## Did it work any better? - code
 
 \small
-```{r, fig.height = 4}
+```{r, fig.height = 3}
 y_pp = jags_run$BUGSoutput$mean$y_pp
 par(mfrow=c(1,2))
 hist(wf$imm, breaks = seq(0, max(wf$imm)),
@@ -248,7 +249,7 @@ jags_run =
 ## Results
 
 \tiny
-```{r, fig.height = 5}
+```{r, fig.height = 4}
 plot(jags_run)
 ```
 
@@ -285,7 +286,7 @@ These data are pollen counts of 7 varieties of pollen from modern samples with t
 
 - The two covariates represent the length of the growing season (GDD5) and harshness of the winter (MTCO)
 - The task is to find which climate regimes each pollen variety favours
-```{r, fig.height = 5, echo = FALSE}
+```{r, fig.height = 4, echo = FALSE}
 pollen$S = rowSums(pollen[,3:ncol(pollen)])
 plot(pollen$GDD5, pollen$Betula/pollen$S, xlab = 'Length of growing season', ylab = 'Estimated proportion')
 ```
@@ -354,13 +355,13 @@ model_run = jags(data = model_data,
 
 ## Results 1
 
-```{r}
+```{r, fig.height=5}
 plot(model_run)
 ```
 
 ## Results 2
 
-```{r, fig.height = 6, echo = FALSE}
+```{r, fig.height = 5, echo = FALSE}
 p3_model = model_run$BUGSoutput$mean$p[,3]
 p3_data = pollen$Betula/pollen$S
 plot(p3_data[1:500], p3_model,

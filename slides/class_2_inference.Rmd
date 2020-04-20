@@ -6,6 +6,8 @@ output:
   beamer_presentation:
     includes:
       in_header: header.tex
+classoption: "aspectratio=169"
+
 ---
 
 ```{r setup, include=FALSE}
@@ -45,7 +47,7 @@ We use these parameter estimates to make numerical predictions about the future
 
 ## Example: the normal distribution - picture
 
-```{r}
+```{r, fig.height = 5}
 x = seq(from = -3, to = 3, by = 0.1)
 plot(x, dnorm(x, mean = 0, sd = 1), type = 'l')
 ```
@@ -68,7 +70,7 @@ rnorm(20, mean = 0, sd = 1)
 
 ## Example 2: the Poisson distribution - picture
 
-```{r}
+```{r, fig.height = 5}
 x = seq(from = 0, to = 10, by = 1)
 barplot(dpois(x, lambda = 1), names.arg = x)
 ```
@@ -198,7 +200,7 @@ sum(dnorm(y, mean = 3 + 2*x, sd = 1, log = TRUE))
 
 ## A QQ-plot
 
-```{r, fig.height = 6}
+```{r, fig.height = 5}
 qqnorm(x)
 qqline(x)
 ```

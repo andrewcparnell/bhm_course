@@ -54,7 +54,7 @@ support your individual studies.
 - Lectures will take place in the morning via Zoom, practical classes in the afternoon
 - In the practical classes I will go round the room asking people how they are getting on
 - If you want to send me a private message use Slack
-- Please ask lots of questions
+- Please ask lots of questions, but __MUTE YOUR MICROPHONE__ when not asking them
 - Some good books:
 
     - _Data Analysis using Regression and Hierarchical Models_ by Gelman and Hill

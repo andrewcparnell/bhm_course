@@ -6,6 +6,7 @@ output:
   beamer_presentation:
     includes:
       in_header: header.tex
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -81,7 +82,7 @@ $$y_{ij} \sim N(\alpha_j + \beta_j x_{ij}, \sigma^2)$$
 - We can generate data from these models (either using the prior or the posterior)
 - Our goal is to explore the factors which explain earnings. We have variables on height, age, and ethnicity.
 - If we first plot the data
-```{r, echo = FALSE, fig.height=4}
+```{r, echo = FALSE, fig.height=3}
 dat = read.csv('../data/earnings.csv')
 par(mfrow=c(1,2))
 plot(jitter(dat$height_cm), dat$earn, xlab = 'Height (cm)', ylab = 'Earnings ($)')
@@ -311,7 +312,7 @@ jags_run = jags(data = list(N = nrow(dat),
                 parameters.to.save = c('log_earn_pred'),
                 model.file = textConnection(jags_code))
 ```
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height = 5}
 plot(log(dat$earn), jags_run$BUGSoutput$mean$log_earn_pred, xlab = 'True log(earnings)', ylab = 'Predicted log(earnings)')
 abline(a = 0, b = 1, col = 'red')
 ```
@@ -366,14 +367,14 @@ jags_run = jags(data = list(N = nrow(dat),
                                        'beta'),
                 model.file = textConnection(jags_code))
 ```
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height = 5}
 pars = jags_run$BUGSoutput$mean
 age_grp_names = c('18-34','35-49','50-64')
 eth_names = c('Blacks','Hispanics','Whites','Others')
 
-par(mfrow=c(4,3))
-for(i in 1:4) {
-  for(j in 1:3) {
+par(mfrow=c(3,4))
+for(j in 1:3) {
+  for(i in 1:4) {
     curr_dat = subset(dat, dat$eth == i & dat$age == j)
     plot(curr_dat$height_cm, log(curr_dat$earn), main = paste(eth_names[i], age_grp_names[j]), ylab = 'log(earnings)', xlab = 'Height (cm)')
     lines(dat$height_cm, pars$alpha[i,j] + pars$beta[i,j]*(dat$height_cm - mean (dat$height_cm)), col = i)    

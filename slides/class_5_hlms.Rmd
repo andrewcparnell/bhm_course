@@ -8,6 +8,7 @@ output:
       in_header: header.tex
 editor_options: 
   chunk_output_type: console
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -51,7 +52,7 @@ x = sort(runif(N, 150, 190))
 
 ## A simulated data set
 
-```{r, fig.height = 4}
+```{r, fig.height = 3}
 alpha = rnorm(1, mean = 10, sd = 2)
 beta = rnorm(1, mean = 0, sd = 0.1)
 sigma = runif(1, 0, 5)
@@ -94,7 +95,7 @@ jags_run = jags(data = list(N = nrow(dat),
 
 ## Plot the priors and posteriors
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 pars = jags_run$BUGSoutput$sims.list
 par(mfrow=c(1,3))
 dens = density(pars$alpha)
@@ -111,7 +112,7 @@ par(mfrow=c(1,1))
 
 ## Plot the posterior predictive
 
-```{r, fig.height=4}
+```{r, fig.height=3}
 pred = pars$y_sim
 y_sim_summary = apply(pred, 2, 'quantile', 
                       probs = c(0.05, 0.5, 0.95))
@@ -230,7 +231,7 @@ jags_run = jags(data = list(N = nrow(dat),
 
 ## Plotting the output - mean slopes
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 pars = jags_run$BUGSoutput$mean
 par(mfrow=c(2,2))
 eth_names = c('Blacks','Hispanics','Whites','Others')
@@ -244,7 +245,7 @@ par(mfrow=c(1,1))
 
 ## Are the slopes different?
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 par(mfrow=c(2,2))
 pars = jags_run$BUGSoutput$sims.list
 for(i in 1:4) {
@@ -309,7 +310,7 @@ jags_run_ind = jags(data = list(N = nrow(dat),
                 model.file = textConnection(jags_code))
 eth_names = c('Blacks','Hispanics','Whites','Others')
 ```
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height=5}
 par(mfrow=c(2,2))
 pars = jags_run_ind$BUGSoutput$sims.list
 pars_old = jags_run$BUGSoutput$sims.list

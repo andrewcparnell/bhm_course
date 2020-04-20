@@ -8,6 +8,7 @@ output:
       in_header: header.tex
 editor_options: 
   chunk_output_type: console
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -73,7 +74,7 @@ $$p(\theta|x) = \frac{p(x|\theta) \times p(\theta)}{p(x)}$$
 ## A very simple linear regression example
 
 Suppose you had some data that looked like this:
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height=5}
 dat = read.csv('../data/earnings.csv')
 with(dat, plot(height_cm, log(earn)))
 ```

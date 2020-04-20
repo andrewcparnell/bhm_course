@@ -6,6 +6,7 @@ output:
   beamer_presentation:
     includes:
       in_header: header.tex
+classoption: "aspectratio=169"
 ---
 
 ```{r setup, include=FALSE}
@@ -132,7 +133,7 @@ stan_run = stan(data = list(N = nrow(prostate),
 
 ## Stan output
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.height=5}
 stan_hist(stan_run, pars = c('beta','sigma_b'), bins = 30)
 ```
 
@@ -183,13 +184,13 @@ stan_run = stan(data = list(N = nrow(prostate),
 
 ## Stan output
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.height=5}
 stan_hist(stan_run, pars = c('beta','sigma_b'), bins = 30)
 ```
 
 ## Comparing ridge and lasso
 
-```{r, message = FALSE}
+```{r, message = FALSE, fig.height=5}
 library(rmutil)
 curve(dlaplace, from = -4, to = 4, col = 'red', ylab = '')
 curve(dnorm, from = -4, to = 4, add = TRUE)
@@ -247,7 +248,7 @@ stan_run = stan(data = list(N = nrow(prostate),
 
 ## Stan output
 
-```{r, message=FALSE}
+```{r, message=FALSE, fig.height=5}
 stan_hist(stan_run, pars = c('beta','sigma','tau'), bins = 30)
 ```
 
