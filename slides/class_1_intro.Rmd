@@ -2,8 +2,9 @@
 title: 'Class 1: An introduction to Bayesian Hierarchical Modelling'
 author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
   \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
-  \newline \vspace{2cm}
-  https://andrewcparnell.github.io/bhm_course
+  \newline \vspace{1cm}
+  https://andrewcparnell.github.io/bhm_course 
+  \newline PRESS RECORD 
 output:
   beamer_presentation:
     includes:
@@ -26,6 +27,7 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
     - your previous experience in working with R and regression models,
     - what you are working on,
     - what you want to get out of the week
+    - waht you are most looking forward to when we can all go outside again
 
 - Timetable for the week
 - Pre-requisites
@@ -69,7 +71,7 @@ support your individual studies.
 
 ## Thinking hierarchically: example 1
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height = 5}
 # Feed conversion rate example
 fcr = read.csv(file = '../data/fcr.csv')
 plot(fcr$food_wt, fcr$weight_gain, 
@@ -79,7 +81,7 @@ plot(fcr$food_wt, fcr$weight_gain,
 
 ## More information:
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height = 5}
 sex = fcr$sex
 plot(fcr$food_wt[sex=='male'], 
      fcr$weight_gain[sex=='male'], 
@@ -145,7 +147,7 @@ head(swt)
 - The data directory contains a few more data sets which we will play with throughout the week
 - The `data_descriptions.txt` file shows what they contain
 - If you have some spare time it's worth loading them in, exploring relationships, and fitting some simple models
-
+  
 ## Summary
 
 - In hierarchical models we avoid fitting models separately as much as possible

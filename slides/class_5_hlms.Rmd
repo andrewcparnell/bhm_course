@@ -2,6 +2,7 @@
 title: 'Class 5: Hierarchical regression models'
 author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
   \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+  \newline PRESS RECORD 
 output:
   beamer_presentation:
     includes:
