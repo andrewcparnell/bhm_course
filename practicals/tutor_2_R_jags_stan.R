@@ -26,7 +26,7 @@ model {
 }
 '
 model_parameters =  c("intercept", "slope", "residual_sd")
-model_run = jags(data = list(N=nrow(dat),
+model_run = jags(data = list(N = nrow(dat),
                              y = log(dat$earn),
                              x = dat$height_cm),
                  parameters.to.save = model_parameters,
