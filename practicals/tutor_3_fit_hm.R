@@ -8,7 +8,7 @@ x = sort(runif(N, 150, 190))
 
 
 ## ---- fig.height = 4-----------------------------------------------------
-dat = read.csv('../data/earnings.csv')
+dat = read.csv('data/earnings.csv')
 alpha = rnorm(1, mean = 10, sd = 2)
 beta = rnorm(1, mean = 0, sd = 0.1)
 sigma = runif(1, 0, 5)
@@ -117,7 +117,7 @@ eth_names = c('Blacks','Hispanics','Whites','Others')
 for(i in 1:4) {
   curr_dat = subset(dat, dat$eth == i)
   plot(curr_dat$height_cm, log(curr_dat$earn), main = eth_names[i], ylab = 'log(earnings)', xlab = 'Height (cm)')
-  lines(dat$height_cm, pars$alpha[i] + pars$beta[i]*(dat$height_cm - mean (dat$height_cm)), col = i)
+  lines(dat$height_cm, pars$alpha[i] + pars$beta[i]*(dat$height_cm - mean(dat$height_cm)), col = i)
 }
 par(mfrow=c(1,1))
 
@@ -213,7 +213,7 @@ model{
 # Class 6 -----------------------------------------------------------------
 
 ## ------------------------------------------------------------------------
-swt = read.csv('../data/swt.csv')
+swt = read.csv('data/swt.csv')
 head(swt)
 
 
@@ -286,7 +286,11 @@ library(boot)
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$mean
 for(i in c(2,3,1)) {
-  plot(swt$forest, y/N, main = paste('Altitude type:',levels(swt$alt)[i]), xlab = '% forest cover', ylab = 'Estimated proporton')
+  curr_rows = which(swt$alt == levels(swt$alt)[i])
+  plot(swt$forest[curr_rows], y[curr_rows]/N[curr_rows],
+       main = paste('Altitude type:',levels(swt$alt)[i]),
+       xlab = '% forest cover',
+       ylab = 'Estimated proporton')
   points(swt$forest, inv.logit(pars$alpha[i] + pars$beta[i] * swt$forest), col = i+1)
 }
 par(mfrow=c(1,1))
@@ -350,9 +354,8 @@ model{
   for(i in 1:N) {
     y[i] ~ dt(alpha + beta * (x[i] - mean(x)),
                 sigma, df[i] + 1)
-    df[i] ~ dbin(p, 10)
+    df[i] ~ dcat(p)
   }
-  p ~ dunif(0, 1)
   alpha ~ dnorm(0, 1^-2)
   beta ~ dnorm(0, 1^-2)
   sigma ~ dt(0,1,1)T(0,)
@@ -363,6 +366,7 @@ model{
 ## ---- echo = FALSE, message=FALSE, results = 'hide'----------------------
 jags_run = jags(data = list(N = N,
                             y = y,
+                            p = rep(1, 10)/10,
                             x = x),
                 parameters.to.save = c('alpha',
                                        'beta',

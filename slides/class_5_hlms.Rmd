@@ -139,15 +139,7 @@ $$y_i \sim N(\alpha_{\mbox{ethnicity}_i} + \beta (x_i - \bar{x}), \sigma^2) $$
 ## Writing a varying intercepts/slopes model in JAGS/Stan
 
 \small
-- One way to write the varying intercepts model is to simply include it an extra effect:
-```
-log_earn[i] ~ dnorm(alpha1 * ethnicity_1
-                    + alpha2 * ethnicity_2 + ...
-                    + beta * height[i],
-                          sigma^-2)
-```
-
-- A neater way is to use the double indexing:
+- The neat way to write this model is to use the double indexing:
 ```
 log_earn[i] ~ dnorm(alpha[ethnicity[i]] + beta * height[i], 
                       sigma^-2)
@@ -257,7 +249,7 @@ par(mfrow=c(1,1))
 
 ## Setting up hierarchical prior distributions
 
-- In general a hierarchical model is created whenever we put prior distributions on prior distributions
+- In general a hierarchical model is created whenever we put prior distributions on parameters that depend on other parameters
 
 - The lower level parameters in the model are often called _hyper-parameters_
 
@@ -280,19 +272,19 @@ par(mfrow=c(1,1))
 \small
 ```{r}
 jags_code = '
-model{
+model {
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dnorm(alpha[eth[i]] + 
                   beta[eth[i]]*(x[i] - mean(x)), 
                     sigma^-2)
   }
-  # Priors
+  # Independent priors
   for(j in 1:N_eth) {
     alpha[j] ~ dnorm(11, 10^-2)
     beta[j] ~ dnorm(0, 0.1^-2)
   }
-  sigma ~ dt(0, 2, 1)T(0,)
+  sigma ~ dt(0, 2, 1)T(0,) # Note new t prior
 }
 '
 ```
@@ -367,7 +359,7 @@ where $p$ is the number of parameters and $n$ is the number of observations
 - The first, called the _Deviance Information Criteria_ (DIC) is calculated via:
 $$\mbox{DIC}: - 2 \log L_{\mbox{max}} + 2p_D$$
 where $p_D$ is the _effective number of parameters_
-- The second called the Widely Applicable Information Criterion (WAIC) which is calculated as:
+- The second is called the Widely Applicable Information Criterion (WAIC) which is calculated as:
 $$\mbox{WAIC}: - 2 \log L_{\mbox{max}} + p_{\mbox{WAIC}}$$
 - Here $p_{\mbox{WAIC}}$ is a measure of the variability of the likelihood scores
 
