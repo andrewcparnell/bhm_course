@@ -35,24 +35,24 @@ model{
     y[i] ~ dinterval(z[i], cuts)
   }
   for(j in 1:N_pgf) {
-    alpha_pgf[j] ~ dnorm(mu_all, sigma_pgf^-2)  
+    alpha_pgf[j] ~ dnorm(mu_all, sigma_pgf^-2)
   }
   for(j in 1:N_country) {
-    alpha_country[j] ~ dnorm(0, sigma_country^-2)  
+    alpha_country[j] ~ dnorm(0, sigma_country^-2)
   }
   for(j in 1:N_habitat) {
-    alpha_habitat[j] ~ dnorm(0, sigma_habitat^-2)  
+    alpha_habitat[j] ~ dnorm(0, sigma_habitat^-2)
   }
   for(j in 1:N_use_type) {
-    alpha_use_type[j] ~ dnorm(0, sigma_use_type^-2)  
+    alpha_use_type[j] ~ dnorm(0, sigma_use_type^-2)
   }
 
   mu_all ~ dnorm(0, 10^-2)
   sigma_pgf ~ dt(0, 10, 1)T(0, )
-  sigma_country ~ dt(0, 10, 1)T(0, )
-  sigma_habitat ~ dt(0, 10, 1)T(0, )
-  sigma_use_type ~ dt(0, 10, 1)T(0, )
-  sigma ~ dt(0, 10, 1)T(0, )
+  sigma_country ~ dt(0, 10^-2, 1)T(0, )
+  sigma_habitat ~ dt(0, 10^-2, 1)T(0, )
+  sigma_use_type ~ dt(0, 10^-2, 1)T(0, )
+  sigma ~ dt(0, 10^-2, 1)T(0, )
 }
 '
 
@@ -82,7 +82,7 @@ jags_run = jags(data = list(N = N,
                             cuts = cuts),
                 inits = jags_inits,
                 n.iter = 10000,
-                n.burnin = 2000, 
+                n.burnin = 2000,
                 n.thin = 8,
                 parameters.to.save = c('alpha_pgf',
                                        'alpha_country',

@@ -8,7 +8,7 @@ model{
   }
   intercept ~ dnorm(0, 10^-2)
   slope ~ dnorm(0, 10^-2)
-  residual_sd ~ dt(0, 10, 1)T(0, )
+  residual_sd ~ dt(0, 10^-2, 1)T(0, )
 }
 '
 
@@ -26,9 +26,9 @@ model{
 
   mean_intercept ~ dnorm(0, 10^-2)
   mean_slope ~ dnorm(0, 10^-2)
-  residual_sd ~ dt(0, 10, 1)T(0, )
-  sd_intercept ~ dt(0, 10, 1)T(0, )
-  sd_slope ~ dt(0, 10, 1)T(0, )
+  residual_sd ~ dt(0, 10^-2, 1)T(0, )
+  sd_intercept ~ dt(0, 10^-2, 1)T(0, )
+  sd_slope ~ dt(0, 10^-2, 1)T(0, )
 }
 '
 
@@ -57,9 +57,9 @@ model{
 
   mean_intercept ~ dnorm(0, 10^-2)
   mean_slope ~ dnorm(0, 10^-2)
-  residual_sd ~ dt(0, 10, 1)T(0, )
-  sd_site_intercept ~ dt(0, 10, 1)T(0, )
-  sd_slope_intercept ~ dt(0, 10, 1)T(0, )
+  residual_sd ~ dt(0, 10^-2, 1)T(0, )
+  sd_site_intercept ~ dt(0, 10^-2, 1)T(0, )
+  sd_slope_intercept ~ dt(0, 10^-2, 1)T(0, )
 }
 '
 

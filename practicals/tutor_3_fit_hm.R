@@ -232,8 +232,8 @@ model{
   }
   mu_alpha ~ dnorm(0, 5^-2)
   mu_beta ~ dnorm(0, 0.1^-2)
-  sigma_alpha ~ dt(0,5,1)T(0,)
-  sigma_beta ~ dt(0,5,1)T(0,)
+  sigma_alpha ~ dt(0,5^-2,1)T(0,)
+  sigma_beta ~ dt(0,5^-2,1)T(0,)
 }
 '
 
@@ -303,7 +303,7 @@ model{
   }
   alpha ~ dnorm(0, 5^-2)
   beta ~ dnorm(0, 0.1^-2)
-  sigma ~ dt(0,5,1)T(0,)
+  sigma ~ dt(0,5^-2,1)T(0,)
 }
 '
 
@@ -349,7 +349,7 @@ model{
   # Likelihood
   for(i in 1:N) {
     y[i] ~ dt(alpha + beta * (x[i] - mean(x)),
-                sigma, df[i] + 1)
+                sigma^-2, df[i] + 1)
     df[i] ~ dbin(p, 10)
   }
   p ~ dunif(0, 1)
@@ -390,7 +390,7 @@ model{
   }
   alpha ~ dnorm(0, 100^-2)
   beta ~ dnorm(0, 100^-2)
-  sigma ~ dt(0, 10, 1)T(0, )
+  sigma ~ dt(0, 10^-2, 1)T(0, )
 }
 '
 

@@ -75,7 +75,7 @@ model
     beta_trt[j] ~ dnorm(beta_mean, beta_sd^-2)
   }
   beta_mean ~ dnorm(0, 10^-2)
-  beta_sd ~ dt(0, 5, 1)T(0,)
+  beta_sd ~ dt(0, 5^-2, 1)T(0,)
 }
 '
 ```
@@ -152,7 +152,7 @@ model
     beta_trt[j] ~ dnorm(beta_mean, beta_sd^-2)
   }
   beta_mean ~ dnorm(0, 10^-2)
-  beta_sd ~ dt(0, 5, 1)T(0,)
+  beta_sd ~ dt(0, 5^-2, 1)T(0,)
   q_0 ~ dunif(0, 1)
 }
 '
@@ -225,7 +225,7 @@ model
     beta_trt[j] ~ dnorm(beta_mean, beta_sd^-2)
   }
   beta_mean ~ dnorm(0, 10^-2)
-  beta_sd ~ dt(0, 5, 1)T(0,)
+  beta_sd ~ dt(0, 5^-2, 1)T(0,)
   q_0 ~ dunif(0, 1)
 }
 '

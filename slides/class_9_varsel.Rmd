@@ -290,7 +290,7 @@ model{
     gamma[j] ~ dnorm(0, 10^-2)
   }
   alpha ~ dnorm(0, 10^-2)
-  sigma ~ dt(0, 10, 1)T(0,)
+  sigma ~ dt(0, 10^-2, 1)T(0,)
 }
 '
 ```

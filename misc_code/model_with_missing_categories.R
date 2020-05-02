@@ -31,7 +31,7 @@ model{
     y[i] ~ dnorm(mu_all + alpha[cat1[i]] + beta[cat2[i]] , sigma^-2)
   }
   for(j in 1:N_cat1) {
-    alpha[j] ~ dnorm(0, sigma_cat1^-2)  
+    alpha[j] ~ dnorm(0, sigma_cat1^-2)
   }
   alpha[N_cat1 + 1] <- 0
   for(j in 1:N_cat2) {
@@ -40,9 +40,9 @@ model{
   beta[N_cat2 + 1] <- 0
 
   mu_all ~ dnorm(0, 10^-2)
-  sigma_cat1 ~ dt(0, 10, 1)T(0, )
-  sigma_cat2 ~ dt(0, 10, 1)T(0, )
-  sigma ~ dt(0, 10, 1)T(0, )
+  sigma_cat1 ~ dt(0, 10^-2, 1)T(0, )
+  sigma_cat2 ~ dt(0, 10^-2, 1)T(0, )
+  sigma ~ dt(0, 10^-2, 1)T(0, )
 }
 '
 

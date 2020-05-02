@@ -31,17 +31,17 @@ model{
     y[i] ~ dinterval(z[i], cuts)
   }
   for(j in 1:N_test) {
-    alpha_test[j] ~ dnorm(mu_all, sigma_test^-2)  
+    alpha_test[j] ~ dnorm(mu_all, sigma_test^-2)
   }
   test_diff = alpha_test[2] - alpha_test[1]
 
   for(k in 1:N_id) {
-    alpha_id[k] ~ dnorm(0, sigma_id^-2)  
+    alpha_id[k] ~ dnorm(0, sigma_id^-2)
   }
   mu_all ~ dnorm(0, 10^-2)
-  sigma_test ~ dt(0, 10, 1)T(0, )
-  sigma_id ~ dt(0, 10, 1)T(0, )
-  sigma ~ dt(0, 10, 1)T(0, )
+  sigma_test ~ dt(0, 10^-2, 1)T(0, )
+  sigma_id ~ dt(0, 10^-2, 1)T(0, )
+  sigma ~ dt(0, 10^-2, 1)T(0, )
 }
 '
 
@@ -64,7 +64,7 @@ jags_run = jags(data = list(N = N,
                             cuts = cuts),
                 inits = jags_inits,
                 n.iter = 10000,
-                n.burnin = 2000, 
+                n.burnin = 2000,
                 n.thin = 8,
                 parameters.to.save = c('alpha_test',
                                        'alpha_id',

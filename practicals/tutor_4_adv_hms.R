@@ -20,13 +20,13 @@ model {
   }
   mu_alpha ~ dnorm(mu_alpha_0, sigma_alpha_0^-2)
   mu_alpha_0 ~ dnorm(0, 20^-2)
-  sigma_alpha_0 ~ dt(0,5,1)T(0,)
+  sigma_alpha_0 ~ dt(0,5^-2,1)T(0,)
   mu_beta ~ dnorm(mu_beta_0, sigma_beta_0^-2)
   mu_beta_0 ~ dnorm(0, 20^-2)
-  sigma_beta_0 ~ dt(0,5,1)T(0,)
+  sigma_beta_0 ~ dt(0,5^-2,1)T(0,)
   sigma ~ dunif(0, 5)
-  sigma_alpha ~ dt(0,5,1)T(0,)
-  sigma_beta ~ dt(0,5,1)T(0,)
+  sigma_alpha ~ dt(0,5^-2,1)T(0,)
+  sigma_beta ~ dt(0,5^-2,1)T(0,)
 }
 '
 
@@ -70,7 +70,7 @@ model {
   # Priors
   alpha ~ dnorm(0, 20^-2)
   beta_height ~ dnorm(0, 20^-2)
-  sigma ~ dt(0,10,1)T(0,)
+  sigma ~ dt(0,10^-2,1)T(0,)
 }
 '
 jags_run = jags(data = list(N = nrow(dat),
@@ -108,8 +108,8 @@ model {
   }
   beta_height ~ dnorm(0, 20^-2)
   mu_eth ~ dnorm(0, 20^-2)
-  sigma_eth ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  sigma_eth ~ dt(0,10^-2,1)T(0,)
+  sigma ~ dt(0,10^-2,1)T(0,)
 }
 '
 
@@ -151,9 +151,9 @@ model {
   }
   mu_beta_height ~ dnorm(0, 20^-2)
   mu_eth ~ dnorm(0, 20^-2)
-  sigma_eth ~ dt(0,10,1)T(0,)
-  sigma_height ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  sigma_eth ~ dt(0,10^-2,1)T(0,)
+  sigma_height ~ dt(0,10^-2,1)T(0,)
+  sigma ~ dt(0,10^-2,1)T(0,)
 }
 '
 
@@ -201,9 +201,9 @@ model {
   }
   mu_beta_height ~ dnorm(0, 20^-2)
   mu_eth ~ dnorm(0, 20^-2)
-  sigma_eth ~ dt(0,10,1)T(0,)
-  sigma_height ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  sigma_eth ~ dt(0,10^-2,1)T(0,)
+  sigma_height ~ dt(0,10^-2,1)T(0,)
+  sigma ~ dt(0,10^-2,1)T(0,)
 }
 '
 jags_run = jags(data = list(N = nrow(dat),
@@ -236,9 +236,9 @@ model {
   }
   mu_alpha ~ dnorm(0, 20^-2)
   mu_beta ~ dnorm(0, 20^-2)
-  sigma_alpha ~ dt(0,10,1)T(0,)
-  sigma_beta ~ dt(0,10,1)T(0,)
-  sigma ~ dt(0,10,1)T(0,)
+  sigma_alpha ~ dt(0,10^-2,1)T(0,)
+  sigma_beta ~ dt(0,10^-2,1)T(0,)
+  sigma ~ dt(0,10^-2,1)T(0,)
 }
 '
 
@@ -293,7 +293,7 @@ model {
     mu_beta[l,1] ~ dnorm(0, 20^-2)
   }
   Sigma_beta_inv ~ dwish(R_beta,k_beta)
-  sigma ~ dt(0,10,1)T(0,)
+  sigma ~ dt(0,10^-2,1)T(0,)
 }
 '
 

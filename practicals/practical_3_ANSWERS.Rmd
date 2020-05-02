@@ -234,7 +234,7 @@ model{
   }
   alpha ~ dnorm(0, 10^-2)
   beta ~ dnorm(0, 10^-2)
-  sigma ~ dt(0,10,1)T(0,)
+  sigma ~ dt(0, 10^-2, 1)T(0,)
 }
 '
 ```
@@ -257,7 +257,7 @@ I got lots of warnings when I ran this - some of the `y_sim` values are infinite
 
 - For a start, if the mean number of birds per region is about 2 or 3, then this suggests that `alpha` should be about $log(2.5) \approx 1$, so perhaps $N(1,1)$ is a better prior. 
 - Similarly, if we expect the number of birds to be not much more than, say, 20 in a region, then a value for `beta_sim` of about +/- 0.02 seems reasonable (because $\exp(1 + 0.02*100) \approx 20$). Perhaps $N(0, 0.02)$ would be a good prior.
-- The value of `sigma_sim` is perhaps the hardest, but given that we're on the log scale I can't imagine that values of $\exp(0.1) \approx 1$ are very likely. I would suggest `sigma ~ dt(0,0.1,1)T(0,)` as a reasonable prior. 
+- The value of `sigma_sim` is perhaps the hardest, but given that we're on the log scale I can't imagine that values of $\exp(0.1) \approx 1$ are very likely. I would suggest `sigma ~ dt(0,0.1^-2,1)T(0,)` as a reasonable prior. 
 
 You are welcome to argue against these and make your own choices, especially on data sets where you are the subject expert!
 
@@ -310,7 +310,7 @@ model{
   }
   alpha ~ dnorm(1, 1^-2)
   beta ~ dnorm(0, 0.02^-2)
-  sigma ~ dt(0,0.1,1)T(0,)
+  sigma ~ dt(0,0.1^-2,1)T(0,)
 }
 '
 jags_run = jags(data = list(N = nrow(swt),
@@ -345,7 +345,7 @@ model{
   }
   alpha ~ dnorm(1, 1^-2)
   beta ~ dnorm(0, 0.02^-2)
-  sigma ~ dt(0,0.1,1)T(0,)
+  sigma ~ dt(0,0.1^-2,1)T(0,)
 }
 '
 jags_run_2 = jags(data = list(N = nrow(swt),

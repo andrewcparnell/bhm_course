@@ -117,7 +117,7 @@ model{
   # Priors
   alpha ~ dnorm(11, 2^-2)
   beta_height ~ dnorm(0, 0.1^-2)
-  sigma ~ dt(0,5,1)T(0,)
+  sigma ~ dt(0, 5^-2, 1)T(0,)
 }
 '
 jags_run = jags(data = list(N = nrow(dat), 
@@ -173,8 +173,8 @@ model{
   }
   beta_height ~ dnorm(0, 0.1^-2)
   mu_eth ~ dnorm(11, 2^-2)
-  sigma_eth ~ dt(0,5,1)T(0,)
-  sigma ~ dt(0,5,1)T(0,)
+  sigma_eth ~ dt(0, 5^-2, 1)T(0,)
+  sigma ~ dt(0, 5^-2, 1)T(0,)
 }
 '
 ```
@@ -233,9 +233,9 @@ model{
   }
   mu_beta_height ~ dnorm(0, 0.1^-2)
   mu_eth ~ dnorm(11, 2^-2)
-  sigma_eth ~ dt(0,5,1)T(0,)
-  sigma_height ~ dt(0,1,1)T(0,)
-  sigma ~ dt(0,5,1)T(0,)
+  sigma_eth ~ dt(0, 5^-2 ,1)T(0,)
+  sigma_height ~ dt(0, 1, 1)T(0,)
+  sigma ~ dt(0, 5^-2, 1)T(0,)
 }
 '
 ```
@@ -299,9 +299,9 @@ model{
   }
   mu_beta_height ~ dnorm(0, 0.1^-2)
   mu_eth ~ dnorm(11, 2^-2)
-  sigma_eth ~ dt(0,5,1)T(0,)
-  sigma_height ~ dt(0,1,1)T(0,)
-  sigma ~ dt(0,5,1)T(0,)
+  sigma_eth ~ dt(0, 5^-2, 1)T(0,)
+  sigma_height ~ dt(0, 1, 1)T(0,)
+  sigma ~ dt(0, 5^-2, 1)T(0,)
 }
 '
 jags_run = jags(data = list(N = nrow(dat), 
@@ -346,9 +346,9 @@ model{
   }
   mu_alpha ~ dnorm(11, 2^-2)
   mu_beta ~ dnorm(0, 0.1^-2)
-  sigma_alpha ~ dt(0,5,1)T(0,)
+  sigma_alpha ~ dt(0,5^-2,1)T(0,)
   sigma_beta ~ dt(0,1,1)T(0,)
-  sigma ~ dt(0,5,1)T(0,)
+  sigma ~ dt(0,5^-2,1)T(0,)
 }
 '
 ```

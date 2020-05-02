@@ -103,7 +103,7 @@ model
   }
   alpha ~ dnorm(0, 100^-2)
   sigma ~ dunif(0, 100)
-  sigma_b ~ dt(0, 2, 1)T(0,)
+  sigma_b ~ dt(0, 2^-2, 1)T(0,)
 }
 '
 ```
@@ -165,7 +165,7 @@ model
   }
   alpha ~ dnorm(0, 100^-2)
   sigma ~ dunif(0, 100)
-  sigma_b ~ dt(0, 2, 1)T(0,)
+  sigma_b ~ dt(0, 2^-2, 1)T(0,)
 }
 '
 ```
@@ -206,7 +206,7 @@ curve(dnorm, from = -4, to = 4, add = TRUE)
 ## A third alternative: Horseshoe
 
 - The _horseshoe_ prior aims to shrink even more than the Lasso:
-$$\beta_j \sim N(0, \lambda_j^2), \lambda_j \sim Cauchy^+(0, \tau \eta_j), $$
+$$\beta_j \sim N(0, \lambda_j^2), \lambda_j \sim Cauchy^+(0, (\tau \eta_j)^{-1}), $$
 $$\eta_j \sim U(0,1), \tau \sim Cauchy^+(0, 1)$$
 where $Cauchy^+$ are the half-Cauchy distributions we have been using already
 
@@ -299,7 +299,7 @@ model{
     gamma[j] ~ dnorm(0, 10^-2)
   }
   alpha ~ dnorm(0, 10^-2)
-  sigma ~ dt(0, 10, 1)T(0,)
+  sigma ~ dt(0, 10^-2, 1)T(0,)
 }
 '
 ```
@@ -465,8 +465,8 @@ model_code = '
 model
 {
   # Likelihood
-  y ~ dmnorm(Mu, Sigma.inv)
-  Sigma.inv <- inverse(Sigma)
+  y ~ dmnorm.vcov(Mu, Sigma)
+  
   # Set up mean and covariance matrix
   for(i in 1:N) {
     Mu[i] <- alpha
@@ -477,9 +477,9 @@ model
     }
   }
   alpha ~ dnorm(0, 10^-2)
-  sigma ~ dt(0, 5, 1)T(0,)
-  tau ~ dt(0, 5, 1)T(0,)
-  rho ~ dt(0, 5, 1)T(0,)
+  sigma ~ dt(0, 5^-2, 1)T(0,)
+  tau ~ dt(0, 5^-2, 1)T(0,)
+  rho ~ dt(0, 5^-2, 1)T(0,)
 }
 '
 ```

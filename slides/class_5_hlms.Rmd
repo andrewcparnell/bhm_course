@@ -291,7 +291,7 @@ model{
     alpha[j] ~ dnorm(11, 10^-2)
     beta[j] ~ dnorm(0, 0.1^-2)
   }
-  sigma ~ dt(0, 2, 1)T(0,)
+  sigma ~ dt(0, 2^-2, 1)T(0,)
 }
 '
 ```
