@@ -1,7 +1,8 @@
 ---
-title: 'Class 4: Bayesian Linear and generalised linear models (GLMs)'
+title: 'Class 4: Bayesian linear and generalised linear models (GLMs)'
 author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
   \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+  \newline PRESS RECORD 
 output:
   beamer_presentation:
     includes:

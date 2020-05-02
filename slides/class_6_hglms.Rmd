@@ -2,6 +2,7 @@
 title: 'Class 6: Hierarchical generalised linear models'
 author: Andrew Parnell \newline \texttt{andrew.parnell@mu.ie}   \newline \vspace{1cm}
   \newline \includegraphics[width=3cm]{maynooth_uni_logo.jpg}
+  \newline PRESS RECORD 
 output:
   beamer_presentation:
     includes:
@@ -142,7 +143,11 @@ library(boot)
 par(mfrow=c(1,3))
 pars = jags_run$BUGSoutput$mean
 for(i in c(2,3,1)) {
-  plot(swt$forest, y/N, main = paste('Altitude type:',levels(swt$alt)[i]), xlab = '% forest cover', ylab = 'Estimated proporton')
+  curr_rows = which(swt$alt == levels(swt$alt)[i])
+  plot(swt$forest[curr_rows], y[curr_rows]/N[curr_rows], 
+       main = paste('Altitude type:',levels(swt$alt)[i]),
+       xlab = '% forest cover', 
+       ylab = 'Estimated proporton')
   points(swt$forest, inv.logit(pars$alpha[i] + pars$beta[i] * swt$forest), col = i+1)
 }
 par(mfrow=c(1,1))

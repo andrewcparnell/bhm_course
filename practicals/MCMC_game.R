@@ -3,7 +3,7 @@
 # Likelihood is:
 # y[i] ~ normal(alpha, sigma^2)
 # Priors are:
-# alpha ~ normal(0, 2)
+# alpha ~ normal(0, 2^2)
 # sigma ~ uniform(0, 5)
 
 rnorm(1, mean = 0, sd = 2)
@@ -40,10 +40,10 @@ legend('topleft', pch = 1, legend = c('alpha','sigma'), col = c('blue','red'), b
 for(i in 1:iter) {
   alpha_new = rnorm(1, 0, 1)
   sigma_new = runif(1, 0, 5)
-  
+
   post_score_new = sum(dnorm(y, mean = alpha_new, sd = sigma_new, log = TRUE)) + dnorm(alpha, 0, 2, log=TRUE) + dunif(sigma, 0, 5, log=TRUE)
   post_score_old = sum(dnorm(y, mean = alpha, sd = sigma, log = TRUE)) + dnorm(alpha, 0, 2, log=TRUE) + dunif(sigma, 0, 5, log=TRUE)
-  
+
   U = runif(1)
   if(U < exp(post_score_new - post_score_old)) {
     alpha = alpha_new
