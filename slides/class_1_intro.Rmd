@@ -26,7 +26,7 @@ par(mar=c(3,3,2,1), mgp=c(2,.7,0), tck=-.01,las=1)
     - where you are from,
     - your previous experience in working with R and regression models,
     - what you are working on,
-    - what you want to get out of the week,
+    - what you want to get out of the course,
     - what you are most looking forward to when we can all go outside again.
 
 - Timetable for the week
