@@ -8,7 +8,7 @@ x = sort(runif(N, 150, 190))
 
 
 ## ---- fig.height = 4-----------------------------------------------------
-dat = read.csv('../data/earnings.csv')
+dat = read.csv('../data/earnings.csv') # Might need to set wd before running this
 alpha = rnorm(1, mean = 10, sd = 2)
 beta = rnorm(1, mean = 0, sd = 0.1)
 sigma = runif(1, 0, 5)

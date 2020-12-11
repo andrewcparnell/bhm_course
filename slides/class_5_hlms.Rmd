@@ -208,7 +208,7 @@ model{
 
 - The parameters $\sigma_\alpha$, and $\sigma_\beta$ have useful interpretations too: they are the variability in the intercept and slope between ethnicity
 
-- You may have met this type of model in other modelling courses when it is occasionally called _random effects_ modelling. More on this later
+- You may have met this type of model in other modelling courses when it is occasionally called _random effects_ modelling. 
 
 ## Running the model
 
@@ -262,7 +262,7 @@ par(mfrow=c(1,1))
 
 - The normal distribution is by far the most common probability distribution, but there are others which can also be useful, some of which we will come to later in the course
 
-- Because the parameters in the higher levels of the hierarchy have fewer values (e.g. only 4 slopes and intercepts) if there are explanatory variables that work on the level of ethnicity, we can include them at this level, rather than at the level of the observations. Again, more on this later.
+- Because the parameters in the higher levels of the hierarchy have fewer values (e.g. only 4 slopes and intercepts) if there are explanatory variables that work on the level of ethnicity, we can include them at this level, rather than at the level of the observations. 
 
 ## A note on priors for standard deviations
 
@@ -447,7 +447,6 @@ sqrt(mean(mse_vals))
 - There are lots of clever ways to set up prior distributions so that a model choice step is part of the model fit itself
 - One way is partial pooling, by which we force e.g. varying slope and intercept parameters to the same value (or not)
 - Another way is to put shrinkage or selection priors on the parameters in the model, possibly setting them to zero
-- More on all of these later in the course
 
 ## Summary
 
