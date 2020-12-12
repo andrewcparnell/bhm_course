@@ -44,8 +44,8 @@ model
   for(i in 1:N) {
     y[i] ~ dnorm(alpha + beta*(x[i] - mean(x)) + s[i], sigma_all[i]^-2)
     sigma_all[i] <- sqrt(var_1[i] + var_2[i] + sigma^2)
-    var_1[i] <- beta_1 * varIdentTransectTypeNew[i]
-    log(var_2[i]) <- beta_2 * CropSWIndex[i]
+    var_1[i] <- beta_1 * x2[i]
+    log(var_2[i]) <- beta_2 * x3[i]
   }
 
   # s is the spatial random effect

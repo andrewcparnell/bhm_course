@@ -46,7 +46,7 @@ $$y_i \sim Bin(N_i, p_i), logit(p_i) = \alpha + \beta (x_i - \bar{x})$$
 
 \tiny
 ```{r}
-swt = read.csv('../data/swt.csv')
+swt = read.csv('../data/swt.csv', stringsAsFactors = TRUE)
 head(swt)
 ```
 

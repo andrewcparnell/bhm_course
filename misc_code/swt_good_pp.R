@@ -56,6 +56,9 @@ jags_run = jags(data = list(N = nrow(swt),
 # Produce the posterior predictive plot
 y_pp = jags_run$BUGSoutput$mean$y_pp
 
-# In the main the y values agree iwth teh posterior predictive values
-plot(jitter(y, 0.1), y_pp, xlim = range(y), ylim = range(y), xlab = 'y', ylab = 'y_pp')
+# In the main the y values agree with the posterior predictive values
+plot(jitter(y, 0.2), y_pp, xlim = range(y), ylim = range(y), xlab = 'y', ylab = 'y_pp')
 abline(a=0, b = 1, col = 'red')
+
+y_pp2 = jags_run$BUGSoutput$median$y_pp
+table(y, y_pp2)
