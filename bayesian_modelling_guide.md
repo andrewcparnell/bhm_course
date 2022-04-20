@@ -6,10 +6,6 @@ output:
   html_document: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 1. __Exploratory data analysis (EDA)__. Plot your data to explore relationships, look for odd/missing values, and make sure you understand what you are analysing. Write down the key questions that you want to answer for this data set. 
 2. __Define variables__. Choose which variables are your response(s), which are continuous covariates, which are categorical covariates. Think about mean correcting or standardising continuous covariates.
 3. __Initial model building__. Pick a very simple model (maybe a regression model/GLM, maybe something else, depending on your data) and draw a DAG. From the DAG identify which variables will appear in your likelihood and which will require priors.
