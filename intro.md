@@ -2,7 +2,9 @@
 
 ## About
 
-This course will cover introductory hierarchical modelling for real-world data sets from a Bayesian perspective. These methods lie at the forefront of statistics research and are a vital tool in the scientist’s toolbox. The course focuses on introducing concepts and demonstrating good practice in hierarchical models. All methods are demonstrated with data sets which participants can run themselves. Participants will be taught how to fit hierarchical models using the Bayesian modelling software JAGS and Stan through the R software interface.
+This course will cover introductory hierarchical modelling for real-world data sets from a Bayesian perspective. Hierarchical (or mixed-effects) models arise when data have a structure that implies standard linear regression type models are inappropriate for estimating the effect of an explanatory variable on the response. Common examples of hierarchically-structured data include: data containing replicates, data having a nested structure (replicates within plots), or when some variables are required for modelling but are not of primary concern. 
+
+Bayesian Hierarchical Models (BHMs) lie at the forefront of statistics research and are a vital tool in the scientist’s toolbox. The course focuses on introducing concepts and demonstrating good practice in hierarchical models. All methods are demonstrated with data sets which participants can run themselves. Participants will be taught how to fit hierarchical models using the Bayesian modelling software JAGS and Stan through the R software interface.
 
 The course covers the full gamut from simple regression models through to full generalised multivariate hierarchical structures. A Bayesian approach is taken throughout, meaning that participants can include all available information in their models and estimate all unknown quantities with uncertainty. Participants are encouraged to bring their own data sets for discussion with the course tutors.
 
